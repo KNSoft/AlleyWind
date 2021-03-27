@@ -1,0 +1,169 @@
+#include "AlleyWind.h"
+
+VOID AW_OpenWndPropDlg(HWND hWnd) {
+    Proc_CreateThread(OpenWndPropDlgThread, (PVOID)hWnd, FALSE, NULL);
+}
+
+HWND AW_GetWndPropHWnd(HWND hDlg) {
+    return GetProp(hDlg, AW_WNDPROP_HWND);
+}
+
+BOOL AW_SetWndPropHWnd(HWND hDlg, HWND hWnd) {
+    return SetProp(hDlg, AW_WNDPROP_HWND, hWnd);
+}
+
+HWND AW_RemoveWndPropHWnd(HWND hDlg) {
+    return RemoveProp(hDlg, AW_WNDPROP_HWND);
+}
+
+VOID AW_SetPropCtlFormat(HWND hDlg, UINT uCtlID, BOOL bSuccess, _Printf_format_string_ LPTSTR lpszFormat, ...) {
+    HWND    hCtl;
+    TCHAR   szBuffer[1024];
+    INT     iCch = 0;
+    va_list args;
+    hCtl = GetDlgItem(hDlg, uCtlID);
+    if (bSuccess) {
+        va_start(args, lpszFormat);
+        iCch = Str_CchVPrintf(szBuffer, lpszFormat, args);
+    }
+    UI_SetWndTextNoNotify(hCtl, iCch > 0 ? szBuffer : NULL);
+    EnableWindow(hCtl, bSuccess);
+}
+
+VOID AW_SetPropCtlStringW(HWND hDlg, UINT uCtlID, LPCWSTR lpszString, BOOL bSuccess) {
+    HWND    hCtl = GetDlgItem(hDlg, uCtlID);
+    UI_SetWndTextNoNotifyW(hCtl, bSuccess ? lpszString : NULL);
+    EnableWindow(hCtl, bSuccess);
+}
+
+VOID AW_SetPropCtlStringA(HWND hDlg, UINT uCtlID, LPCSTR lpszString, BOOL bSuccess) {
+    HWND    hCtl = GetDlgItem(hDlg, uCtlID);
+    UI_SetWndTextNoNotifyA(hCtl, bSuccess ? lpszString : NULL);
+    EnableWindow(hCtl, bSuccess);
+}
+
+VOID AW_SetPropCtlRect(HWND hDlg, UINT uCtlID, PRECT lpRect, BOOL bSuccess) {
+    HWND    hCtl;
+    TCHAR   szBuffer[1024];
+    INT     iCch;
+    hCtl = GetDlgItem(hDlg, uCtlID);
+    if (bSuccess) {
+        iCch = Str_CchPrintf(szBuffer, TEXT("LT(%ld, %ld)-RB(%ld, %ld) [%ldx%ld]"), lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
+        UI_SetWndTextNoNotify(hCtl, iCch > 0 ? szBuffer : NULL);
+    } else
+        EnableWindow(hCtl, FALSE);
+}
+
+VOID AW_SetPropCtlCheck(HWND hDlg, UINT uCtlID, UINT_PTR uCheck, BOOL bSuccess) {
+    HWND    hCtl = GetDlgItem(hDlg, uCtlID);
+    SendMessage(hCtl, BM_SETCHECK, bSuccess ? uCheck : BST_UNCHECKED, 0);
+    EnableWindow(hCtl, bSuccess);
+}
+
+CTL_LISTCTL_COLUME aExtraBytesListCol[] = {
+    { I18NIndex_Offset, 80 },
+    { I18NIndex_Data, 180 }
+};
+
+BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT uSize, DWORD dwError, LPARAM lParam) {
+    TCHAR   szBuffer[1024];
+    LVITEM  stLVItem;
+    INT     iCch;
+    stLVItem.mask = LVIF_TEXT;
+    iCch = Str_CchPrintf(szBuffer, TEXT("+%u"), dwOffset);
+    stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+    stLVItem.iItem = MAXINT;
+    stLVItem.iSubItem = 0;
+    stLVItem.iItem = (INT)SendMessage((HWND)lParam, LVM_INSERTITEM, 0, (LPARAM)&stLVItem);
+    if (stLVItem.iItem != -1) {
+        stLVItem.iSubItem++;
+        iCch = 0;
+        if (dwError == ERROR_SUCCESS) {
+            iCch = Str_CchPrintf(szBuffer, TEXT("%p"), (LPVOID)lBytes);
+            if (iCch > 0)
+                szBuffer[uSize * 2] = '\0';
+        }
+        stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+        SendMessage((HWND)lParam, LVM_SETITEM, 0, (LPARAM)&stLVItem);
+    }
+    return TRUE;
+}
+
+BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
+    NTSTATUS                lStatus;
+    HANDLE                  hProc = NULL;
+    DWORD                   dwExtraSize, dwNextOffset, dwOffset;
+    LONG_PTR                lBytes;
+    UINT                    uWordSize;
+    HIJACK_CALLPROCHEADER   stCallProc;
+    HIJACK_CALLPROCPARAM    stGLParams[] = {
+        { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+        { 0, 0, FALSE }
+    };
+    BOOL                    bUseHijack = FALSE, b32Proc;
+    LPSTR                   lpszGLFunc;
+    NT_LastErrorClear();
+    dwExtraSize = (DWORD)GetClassLongPtr(hWnd, bClassExtraBytes ? GCL_CBCLSEXTRA : GCL_CBWNDEXTRA);
+    if (dwExtraSize) {
+        if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
+            DWORD       dwPID;
+            GetWindowThreadProcessId(hWnd, &dwPID);
+            hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID);
+            if (hProc) {
+                if (IsWow64Process(hProc, &b32Proc)) {
+                    lpszGLFunc = bClassExtraBytes ?
+                        (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
+                        (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
+                    lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure);
+                    if (NT_SUCCESS(lStatus)) {
+                        stCallProc.RetValue = 0;
+                        stCallProc.CallConvention = 0;
+                        stCallProc.ParamCount = ARRAYSIZE(stGLParams);
+                        bUseHijack = TRUE;
+                    }
+                }
+                if (!bUseHijack) {
+                    NtClose(hProc);
+                    hProc = NULL;
+                }
+            }
+        }
+        uWordSize = bUseHijack ?
+            (b32Proc ? sizeof(DWORD) : sizeof(QWORD)) :
+            sizeof(LONG_PTR);
+        dwOffset = 0;
+        do {
+            if (bUseHijack) {
+                stGLParams[1].Value = dwOffset;
+                lStatus = Hijack_CallProc(hProc, &stCallProc, stGLParams, INFINITE);
+                if (NT_SUCCESS(lStatus) && stCallProc.LastError == ERROR_SUCCESS) {
+                    lBytes = (LONG_PTR)stCallProc.RetValue;
+                } else {
+                    lBytes = 0;
+                    NT_LastErrorSet(ERROR_READ_FAULT);
+                }
+                if (b32Proc)
+                    lBytes = (DWORD)lBytes;
+            } else {
+                NT_LastErrorClear();
+                // GetXXXLongPtr may crash when have no administrator privilege
+                __try {
+                    lBytes = (LONG_PTR)(bClassExtraBytes ? GetClassLongPtr(hWnd, dwOffset) : GetWindowLongPtr(hWnd, dwOffset));
+                } __except (NT_SEH_NopHandler(NULL)) {
+                    lBytes = 0;
+                    NT_LastErrorSet(ERROR_READ_FAULT);
+                }
+            }
+            dwNextOffset = dwOffset + uWordSize;
+            if (!AW_WndPropExtraBytesEnumProc(dwOffset, lBytes, dwNextOffset > dwExtraSize ? dwExtraSize - dwOffset : uWordSize, lBytes ? ERROR_SUCCESS : NT_LastErrorGet(), lParam))
+                return FALSE;
+            dwOffset = dwNextOffset;
+        } while (dwOffset < dwExtraSize);
+        if (bUseHijack) {
+            NtClose(hProc);
+            hProc = NULL;
+        }
+        return TRUE;
+    } else
+        return NT_LastErrorSucceed();
+}

@@ -1,0 +1,30 @@
+{
+    "General": {
+        "en": "General",
+        "zh-Hans": "常规"
+    },
+    "Resource": {
+        "en": "Resource",
+        "zh-Hans": "资源"
+    },
+    "Relationship": {
+        "en": "Relationship",
+        "zh-Hans": "关系"
+    },
+    "Class": {
+        "en": "Class",
+        "zh-Hans": "类"
+    },
+    "Operation": {
+        "en": "Operation",
+        "zh-Hans": "操作"
+    },
+    "Message": {
+        "en": "Message",
+        "zh-Hans": "消息"
+    },
+    "Window": {
+        "en": "Window",
+        "zh-Hans": "窗口"
+    }
+}

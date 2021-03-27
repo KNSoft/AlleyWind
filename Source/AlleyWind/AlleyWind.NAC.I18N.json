@@ -1,0 +1,34 @@
+{
+    "None": {
+        "en": "None",
+        "zh-Hans": "无"
+    },
+    "OK": {
+        "en": "OK",
+        "zh-Hans": "确定"
+    },
+    "Apply": {
+        "en": "Apply",
+        "zh-Hans": "应用"
+    },
+    "NotApplicable": {
+        "en": "(N/A)",
+        "zh-Hans": "（不可用）"
+    },
+    "Refresh": {
+        "en": "Refresh",
+        "zh-Hans": "刷新"
+    },
+    "Cancel": {
+        "en": "Cancel",
+        "zh-Hans": "取消"
+    },
+    "OperationSucceeded": {
+        "en": "Operation succeeded",
+        "zh-Hans": "操作成功完成"
+    },
+    "OperationFailed": {
+        "en": "Operation failed",
+        "zh-Hans": "操作失败"
+    }
+}

@@ -1,0 +1,31 @@
+#include "AlleyWind.h"
+
+CTL_PROPSHEETPAGE astWndPropSheetPage[] = {
+    { I18NIndex_General, NULL, IDD_WNDPROP_GENERAL, WndPropGeneralDlgProc },
+    { I18NIndex_Resource, NULL, IDD_WNDPROP_RESOURCE, WndPropResourceDlgProc },
+    { I18NIndex_Relationship, NULL, IDD_WNDPROP_RELATIONSHIP, WndPropRelationshipDlgProc },
+    { I18NIndex_Class, NULL, IDD_WNDPROP_CLASS, WndPropClassDlgProc },
+    { I18NIndex_Operation, NULL, IDD_WNDPROP_OPERATION, WndPropOperationDlgProc },
+    //{ I18NIndex_Message, NULL, IDD_WNDPROP_MESSAGE, WndPropMessageDlgProc }
+};
+
+INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    if (uMsg == WM_INITDIALOG) {
+        TCHAR   szCaption[MAX_PATH];
+        INT     iCch;
+        KNS_DialogSetSubclass(hDlg);
+        iCch = Str_CchPrintf(szCaption, TEXT("%s %08X"), I18N_GetString(I18NIndex_Window), (DWORD)(DWORD_PTR)lParam);
+        SendMessage(hDlg, WM_SETTEXT, 0, iCch > 0 ? (LPARAM)szCaption : 0);
+        UI_SetWindowIcon(hDlg, KNS_GetIcon());
+        Ctl_SetPropertySheet(hDlg, IDC_WNDPROPTAB, ARRAYSIZE(astWndPropSheetPage), astWndPropSheetPage, lParam);
+    } else if (uMsg == WM_CLOSE) {
+        EndDialog(hDlg, 0);
+        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);
+    } else
+        return FALSE;
+    return TRUE;
+}
+
+DWORD WINAPI OpenWndPropDlgThread(PVOID lParam) {
+    return (DWORD)DialogBoxParam(IMAGE_BASE, MAKEINTRESOURCE(IDD_WNDPROP), NULL, WndPropDlgProc, (LPARAM)lParam);
+}

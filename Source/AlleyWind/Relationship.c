@@ -1,0 +1,169 @@
+#include "AlleyWind.h"
+
+#define IDM_PROC_EXPLORE 1
+#define IDM_PROC_TERMINATE 2
+#define IDM_PROC_PROP 3
+
+HMENU hPropRelationshipProcMenu;
+
+CTL_MENU stPropRelationshipProcMenu[] = {
+    { MF_STRING, IDM_PROC_EXPLORE, I18NIndex_Explore, NULL, 0 },
+    { MF_STRING, IDM_PROC_TERMINATE, I18NIndex_Terminate, NULL, 0 },
+    { MF_STRING, IDM_PROC_PROP, I18NIndex_Property, NULL, 0 }
+};
+
+I18N_TEXTCTL astWndPropRelationshipTextCtl[] = {
+    { IDC_WNDPROP_RELATIONSHIP_PROCESS_TEXT, I18NIndex_Process },
+    { IDC_WNDPROP_RELATIONSHIP_THREAD_TEXT, I18NIndex_Thread },
+    { IDC_WNDPROP_RELATIONSHIP_WINDOW_TEXT, I18NIndex_RelatedWindow }
+};
+
+CTL_LISTCTL_COLUME aRelateWindowListCol[] = {
+    { I18NIndex_Relationship, 180 },
+    { I18NIndex_Handle, 140 },
+    { I18NIndex_Caption, 200 },
+    { I18NIndex_Class, 200 }
+};
+
+typedef enum _AW_WINDOW_RELATIONSHIP {
+    AWWindowRelationshipParent,
+    AWWindowRelationshipOwner,
+    AWWindowRelationshipPrevious,
+    AWWindowRelationshipNext,
+    AWWindowRelationshipFirstChild,
+    AWWindowRelationshipFirst,
+    AWWindowRelationshipLast,
+    AWWindowRelationshipPreviousTabControl,
+    AWWindowRelationshipNextTabControl,
+    AWWindowRelationshipPreviousGroupControl,
+    AWWindowRelationshipNextGroupControl
+} AW_WINDOW_RELATIONSHIP, * PAW_WINDOW_RELATIONSHIP;
+
+typedef struct _AW_WINDOW_RELATIONSHIPITEM {
+    AW_WINDOW_RELATIONSHIP  Relationship;
+    UINT_PTR                I18NIndex;
+} AW_WINDOW_RELATIONSHIPITEM, * PAW_WINDOW_RELATIONSHIPITEM;
+
+AW_WINDOW_RELATIONSHIPITEM aRelationshipItems[] = {
+    { AWWindowRelationshipParent, I18NIndex_ParentWindow },
+    { AWWindowRelationshipOwner, I18NIndex_OwnerWindow },
+    { AWWindowRelationshipPrevious, I18NIndex_PreviousWindow },
+    { AWWindowRelationshipNext, I18NIndex_NextWindow },
+    { AWWindowRelationshipFirstChild, I18NIndex_FirstChildWindow },
+    { AWWindowRelationshipFirst, I18NIndex_FirstEqualWindow },
+    { AWWindowRelationshipLast, I18NIndex_LastEqualWindow }
+};
+
+VOID WndPropRelationshipInit() {
+    hPropRelationshipProcMenu = CreatePopupMenu();
+    Ctl_CreateMenu(stPropRelationshipProcMenu, hPropRelationshipProcMenu);
+}
+
+VOID WndPropRelationshipUninit() {
+    Ctl_DestroyMenu(stPropRelationshipProcMenu, hPropRelationshipProcMenu);
+}
+
+HWND WndPropRelationshipGetWindow(HWND hWnd, AW_WINDOW_RELATIONSHIP eRelationship) {
+    if (eRelationship == AWWindowRelationshipParent)
+        return GetParent(hWnd);
+    else if (eRelationship == AWWindowRelationshipOwner)
+        return GetWindow(hWnd, GW_OWNER);
+    else if (eRelationship == AWWindowRelationshipPrevious)
+        return GetWindow(hWnd, GW_HWNDPREV);
+    else if (eRelationship == AWWindowRelationshipNext)
+        return GetWindow(hWnd, GW_HWNDNEXT);
+    else if (eRelationship == AWWindowRelationshipFirstChild)
+        return GetWindow(hWnd, GW_CHILD);
+    else if (eRelationship == AWWindowRelationshipFirst)
+        return GetWindow(hWnd, GW_HWNDFIRST);
+    else if (eRelationship == AWWindowRelationshipLast)
+        return GetWindow(hWnd, GW_HWNDLAST);
+    else
+        return NULL;
+}
+
+INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    if (uMsg == WM_INITDIALOG) {
+        HWND        hWnd, hCtl;
+        TCHAR       szTempPath[MAX_PATH], szBuffer[1024];
+        DWORD       dwPID, dwTID;
+        HANDLE      hProc, hThread;
+        PVOID       pThreadStartAddr;
+        DWORD_PTR   dwpTemp;
+        INT         i, iTemp;
+        UINT        uTemp;
+        hWnd = (HWND)lParam;
+        AW_SetWndPropHWnd(hDlg, hWnd);
+        // Initialize
+        KNS_DialogSetSubclass(hDlg);
+        I18N_InitTextCtls(hDlg, astWndPropRelationshipTextCtl);
+        // Process and Thread
+        dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
+        hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID);
+        uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath, ARRAYSIZE(szTempPath)) : 0;
+        iTemp = Str_CchPrintf(szBuffer, TEXT("(%ld) %s"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
+        AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_EDIT, szBuffer, iTemp > 0);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_BTN, hProc != NULL);
+        hThread = RProc_OpenThread(THREAD_QUERY_INFORMATION, dwTID);
+        uTemp = hProc && hThread && NT_SUCCESS(NtQueryInformationThread(hThread, ThreadQuerySetWin32StartAddress, &pThreadStartAddr, sizeof(pThreadStartAddr), NULL)) ?
+            RProc_TranslateAddress(hProc, pThreadStartAddr, szTempPath, ARRAYSIZE(szTempPath)) :
+            0;
+        iTemp = Str_CchPrintf(szBuffer, TEXT("(%ld) %s"), dwTID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
+        AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_THREAD_EDIT, szBuffer, iTemp > 0);
+        if (hProc)
+            NtClose(hProc);
+        if (hThread)
+            NtClose(hThread);
+        // Related Window
+        hCtl = GetDlgItem(hDlg, IDC_WNDPROP_RELATIONSHIP_WINDOW_LIST);
+        Ctl_InitListCtl(hCtl, aRelateWindowListCol, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+        for (i = 0; i < ARRAYSIZE(aRelationshipItems); i++) {
+            LVITEM  stLVItem;
+            HWND    hWndRelated;
+            hWndRelated = WndPropRelationshipGetWindow(hWnd, aRelationshipItems[i].Relationship);
+            stLVItem.mask = LVIF_TEXT | LVIF_PARAM;
+            stLVItem.pszText = (LPTSTR)I18N_GetString(aRelationshipItems[i].I18NIndex);
+            stLVItem.iItem = MAXINT;
+            stLVItem.iSubItem = 0;
+            stLVItem.lParam = (LPARAM)hWndRelated;
+            stLVItem.iItem = (INT)SendMessage(hCtl, LVM_INSERTITEM, 0, (LPARAM)&stLVItem);
+            if (stLVItem.iItem != -1) {
+                stLVItem.mask = LVIF_TEXT;
+                stLVItem.iSubItem++;
+                stLVItem.pszText = hWndRelated && Str_CchPrintf(szBuffer, TEXT("%08X"), (DWORD)(DWORD_PTR)hWndRelated) > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+                SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
+                stLVItem.iSubItem++;
+                if (!AW_SendMsgTO(hWndRelated, WM_GETTEXT, ARRAYSIZE(szBuffer), (LPARAM)szBuffer, &dwpTemp))
+                    dwpTemp = 0;
+                szBuffer[dwpTemp] = '\0';
+                stLVItem.pszText = szBuffer;
+                SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
+                stLVItem.iSubItem++;
+                iTemp = GetClassName(hWndRelated, szBuffer, ARRAYSIZE(szBuffer));
+                stLVItem.pszText = iTemp == 0 ? (LPWSTR)I18N_GetString(I18NIndex_NotApplicable) : szBuffer;
+                SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
+            }
+        }
+    } else if (uMsg == WM_COMMAND) {
+        if (wParam == MAKEWPARAM(IDC_WNDPROP_RELATIONSHIP_PROCESS_BTN, BN_CLICKED)) {
+            RECT rcBtn;
+            if (GetWindowRect((HWND)lParam, &rcBtn))
+                Ctl_PopupMenu(hPropRelationshipProcMenu, rcBtn.right, rcBtn.top, hDlg);
+        } else if (wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0)) {
+            TCHAR   szPath[MAX_PATH];
+            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath, ARRAYSIZE(szPath)))
+                UI_ShellExec(szPath, NULL, UIShellExecExplore, SW_SHOWDEFAULT, NULL);
+        } else if (wParam == MAKEWPARAM(IDM_PROC_TERMINATE, 0)) {
+            HANDLE  hProc = UI_OpenProc(PROCESS_TERMINATE, AW_GetWndPropHWnd(hDlg));
+            if (hProc) {
+                NtTerminateProcess(hProc, 1);
+                NtClose(hProc);
+            }
+        } else if (wParam == MAKEWPARAM(IDM_PROC_PROP, 0)) {
+            TCHAR   szPath[MAX_PATH];
+            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath, ARRAYSIZE(szPath)))
+                UI_ShellExec(szPath, NULL, UIShellExecProperties, SW_SHOWDEFAULT, NULL);
+        }
+    }
+    return FALSE;
+}

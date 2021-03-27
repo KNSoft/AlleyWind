@@ -1,0 +1,54 @@
+{
+    "File": {
+        "en": "File",
+        "zh-Hans": "文件"
+    },
+    "Tool": {
+        "en": "Tool",
+        "zh-Hans": "工具"
+    },
+    "Help": {
+        "en": "Help",
+        "zh-Hans": "帮助"
+    },
+    "Reload": {
+        "en": "Reload",
+        "zh-Hans": "重新加载"
+    },
+    "ExportTree": {
+        "en": "Export Tree",
+        "zh-Hans": "导出树"
+    },
+    "Options": {
+        "en": "Options",
+        "zh-Hans": "选项"
+    },
+    "Exit": {
+        "en": "Exit",
+        "zh-Hans": "退出"
+    },
+    "FindWindow": {
+        "en": "Find Window",
+        "zh-Hans": "查找窗口"
+    },
+    "About": {
+        "en": "About",
+        "zh-Hans": "关于"
+    },
+    "Homepage": {
+        "en": "Homepage",
+        "zh-Hans": "主页"
+    },
+    "ExportTreeFilter": {
+        "en": "Text Files(*.txt)\u0000*.txt\u0000",
+        "zh-Hans": "文本文档(*.txt)\u0000*.txt\u0000"
+    },
+    "ExportTreeFailed": {
+        "en": "Export window tree failed",
+        "zh-Hans": "导出窗口树失败"
+    },
+    "SearchResult": {
+        "en": "Search Result",
+        "zh-Hans": "搜索结果"
+    }
+}

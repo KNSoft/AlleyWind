@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NAC I18N Files">
+      <UniqueIdentifier>{f3729266-6a7e-4bad-87b2-8c8595353a04}</UniqueIdentifier>
+      <Extensions>NAC.I18N.json</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AlleyWind.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Operation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WndProp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Class.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="General.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FindWnd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainDlg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AWWndProp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AWDatabase.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AWWndIO.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlleyWind.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NAC_Output.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Relationship.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AWSettings.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AlleyWind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AWDatabase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AWWndIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AWWndProp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NAC_Output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\NTAssassin\include\NTAssassin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AWSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\App.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Capture.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Pick.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Operation.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="Resource.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="Class.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="FindWnd.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="AWDatabase.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="MainDlg.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="General.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="WndProp.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="AlleyWind.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+    <None Include="Relationship.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
