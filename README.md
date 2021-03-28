@@ -11,6 +11,9 @@ AlleyWind is an advanced Win32-based and open-sourced utility that helps you to 
 ## Homepage
 \>\>\> Click our homepage [KNSoft.org](https://knsoft.org) for more information! <<<
 
+## Topic
+[看雪论坛](https://bbs.pediy.com/)：[[原创]AlleyWind - 专业窗口管理工具](https://bbs.pediy.com/thread-266706.htm)
+
 ## Latest Version
 AlleyWind V1.0.0.0 Alpha
 
