@@ -7,12 +7,16 @@ KNS_INFO stKNSInfo = {
     {
         RGB(255, 140, 0),
         IDI_APP,
-        { IDD_MAIN, MainDlgProc },
-        { IDC_MAINBANNER, { TRUE, FALSE } },
-        { 0 },
-        { ARRAYSIZE(NAC_I18N_Lang_Table), NAC_I18N_Lang_Table, NAC_I18N_ITEM_COUNT }
+        IDD_MAIN,
+        MainDlgProc,
+        IDC_MAINBANNER,
+        0,
+        0,
+        FALSE
     },
+    { NAC_I18N_Lang_Table, ARRAYSIZE(NAC_I18N_Lang_Table), NAC_I18N_ITEM_COUNT },
     {
+        TEXT("https://knsoft.org"),
         TEXT("https://knsoft.org"),
         TEXT("https://knsoft.org/Products/AlleyWind/Download/Update.xml"),
         NULL

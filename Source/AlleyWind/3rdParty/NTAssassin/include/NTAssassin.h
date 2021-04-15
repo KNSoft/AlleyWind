@@ -194,7 +194,7 @@
 #include "NTAPI.h"
 
 #ifdef NTA_EXPORTS
-#include "NTA_NAC_Output.h"
+#include "..\NTA_NAC_Output.h"
 #endif
 
 #include "NTANT.h"
@@ -220,3 +220,4 @@
 #include "NTATime.h"
 #include "NTASys.h"
 #include "NTAHijack.h"
+#include "NTADPI.h"

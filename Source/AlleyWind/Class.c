@@ -1,6 +1,6 @@
 #include "AlleyWind.h"
 
-I18N_TEXTCTL astWndPropClassTextCtl[] = {
+I18N_CTLTEXT astWndPropClassTextCtl[] = {
     { IDC_WNDPROP_CLASS_NAME_TEXT, I18NIndex_Name },
     { IDC_WNDPROP_CLASS_HINST_TEXT, I18NIndex_InstanceHandle },
     { IDC_WNDPROP_CLASS_WNDPROC_TEXT, I18NIndex_WindowProcedure },
@@ -25,8 +25,8 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
         hWnd = (HWND)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astWndPropClassTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astWndPropClassTextCtl);
         // Name
         iTemp = GetClassName(hWnd, szBuffer, ARRAYSIZE(szBuffer));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_CLASS_NAME_EDIT, szBuffer, iTemp != 0);

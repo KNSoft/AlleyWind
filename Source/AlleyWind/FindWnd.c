@@ -2,7 +2,7 @@
 
 #define AW_FINDWND_CAPTUREBORDER 2
 
-I18N_TEXTCTL astFindWndTextCtl[] = {
+I18N_CTLTEXT astFindWndTextCtl[] = {
     { IDC_FINDWND_CAPTION_CHECK, I18NIndex_Caption },
     { IDC_FINDWND_CLASS_CHECK, I18NIndex_Class },
     { IDC_FINDWND_RECT_TEXT, I18NIndex_Rectangle },
@@ -166,8 +166,8 @@ VOID FindWndCheckItem(HWND hDlg, UINT uCtlID, BOOL bSetCheck, BOOL bCheck) {
 
 INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astFindWndTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astFindWndTextCtl);
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)I18N_GetString(I18NIndex_FindWindow));
         UI_SetWindowIcon(hDlg, KNS_GetIcon());
         UI_SendDlgItemMsg(hDlg, IDC_FINDWND_CAPTURE_PIC, STM_SETIMAGE, IMAGE_CURSOR, (LPARAM)stFindWndCaptureScreenSnapshot.hCursor);

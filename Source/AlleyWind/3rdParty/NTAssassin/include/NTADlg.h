@@ -1,65 +1,58 @@
 #pragma once
 
+#define DLG_PADDING_X   14
+#define DLG_PADDING_Y   20
+#define DLG_CONTROL_H   28
+#define DLG_BUTTON_W    124
+
 #include "NTAssassin.h"
+
+typedef struct _DLG_TEMPLATE {
+    DLGTEMPLATE Template;
+    WORD        wMenu;
+    WORD        wClass;
+    WORD        wTitle;
+} DLG_TEMPLATE, * PDLG_TEMPLATE;
+
 #include "NTADlg_ValueEditor.h"
+#include "NTADlg_RectEditor.h"
+
+/**
+  * @brief Initialize DLGTEMPLATE structure
+  */
+NTA_API LPDLGTEMPLATEW NTAPI Dlg_InitTemplate(PDLG_TEMPLATE Template, DWORD Style, DWORD ExtendedStyle, INT X, INT Y, INT Width, INT Height);
 
 /**
   * @see "MessageBox"
   */
-#define Dlg_MsgBoxW(hWnd, lpText, lpCaption, uType) MessageBoxTimeoutW(hWnd, lpText, lpCaption, uType, 0, -1)
-#define Dlg_MsgBoxA(hWnd, lpText, lpCaption, uType) MessageBoxTimeoutA(hWnd, lpText, lpCaption, uType, 0, -1)
-#ifdef UNICODE
-#define Dlg_MsgBox Dlg_MsgBoxW
-#else
-#define Dlg_MsgBox Dlg_MsgBoxA
-#endif
+#define Dlg_MsgBox(Owner, Text, Title, Type) MessageBoxTimeoutW(Owner, Text, Title, Type, 0, -1)
 
 /**
   * @see "GetOpenFileName" and "GetSaveFileName"
   */
-NTA_API BOOL NTAPI Dlg_GetOpenFileNameExW(HWND hwndOwner, LPCWSTR lpstrFilter, LPWSTR lpstrFile, DWORD nMaxFile, LPCWSTR lpstrDefExt);
-NTA_API BOOL NTAPI Dlg_GetOpenFileNameExA(HWND hwndOwner, LPCSTR lpstrFilter, LPSTR lpstrFile, DWORD nMaxFile, LPCSTR lpstrDefExt);
-NTA_API BOOL NTAPI Dlg_GetSaveFileNameExW(HWND hwndOwner, LPCWSTR lpstrFilter, LPWSTR lpstrFile, DWORD nMaxFile, LPCWSTR lpstrDefExt);
-NTA_API BOOL NTAPI Dlg_GetSaveFileNameExA(HWND hwndOwner, LPCSTR lpstrFilter, LPSTR lpstrFile, DWORD nMaxFile, LPCSTR lpstrDefExt);
-#define Dlg_GetOpenFileNameW(hwndOwner, lpstrFilter, lpstrFile, lpstrDefExt) Dlg_GetOpenFileNameExW(hwndOwner, lpstrFilter, lpstrFile, ARRAYSIZE(lpstrFile), lpstrDefExt)
-#define Dlg_GetOpenFileNameA(hwndOwner, lpstrFilter, lpstrFile, lpstrDefExt) Dlg_GetOpenFileNameExA(hwndOwner, lpstrFilter, lpstrFile, ARRAYSIZE(lpstrFile), lpstrDefExt)
-#define Dlg_GetSaveFileNameW(hwndOwner, lpstrFilter, lpstrFile, lpstrDefExt) Dlg_GetSaveFileNameExW(hwndOwner, lpstrFilter, lpstrFile, ARRAYSIZE(lpstrFile), lpstrDefExt)
-#define Dlg_GetSaveFileNameA(hwndOwner, lpstrFilter, lpstrFile, lpstrDefExt) Dlg_GetSaveFileNameExA(hwndOwner, lpstrFilter, lpstrFile, ARRAYSIZE(lpstrFile), lpstrDefExt)
-#ifdef UNICODE
-#define Dlg_GetOpenFileNameEx Dlg_GetOpenFileNameExW
-#define Dlg_GetSaveFileNameEx Dlg_GetSaveFileNameExW
-#define Dlg_GetOpenFileName Dlg_GetOpenFileNameW
-#define Dlg_GetSaveFileName Dlg_GetSaveFileNameW
-#else
-#define Dlg_GetOpenFileNameEx Dlg_GetOpenFileNameExA
-#define Dlg_GetSaveFileNameEx Dlg_GetSaveFileNameExA
-#define Dlg_GetOpenFileName Dlg_GetOpenFileNameA
-#define Dlg_GetSaveFileName Dlg_GetSaveFileNameA
-#endif
+NTA_API BOOL NTAPI Dlg_GetOpenFileNameEx(HWND Owner, PCWSTR Filter, PWSTR File, DWORD MaxFile, PCWSTR DefExt);
+NTA_API BOOL NTAPI Dlg_GetSaveFileNameEx(HWND Owner, PCWSTR Filter, PWSTR File, DWORD MaxFile, PCWSTR DefExt);
+#define Dlg_GetOpenFileName(Owner, Filter, File, DefExt) Dlg_GetOpenFileNameEx(Owner, Filter, File, ARRAYSIZE(File), DefExt)
+#define Dlg_GetSaveFileName(Owner, Filter, File, DefExt) Dlg_GetSaveFileNameEx(Owner, Filter, File, ARRAYSIZE(File), DefExt)
 
 /**
   * @see "ChooseColor"
-  * @param[in] hwndOwner Handle to owner window
-  * @param[in, out] lpcrColor Pointer to a COLORREF specifies initial color and receives the result
+  * @param[in] Owner Handle to owner window
+  * @param[in, out] ColorPointer Pointer to a COLORREF specifies initial color and receives the result
   * @return Returns TRUE if a color was chosen, otherwise returns FALSE
   */
-NTA_API BOOL NTAPI Dlg_ChooseColor(HWND hwndOwner, LPCOLORREF lpcrColor);
+NTA_API BOOL NTAPI Dlg_ChooseColor(HWND Owner, LPCOLORREF ColorPointer);
 
 /**
   * @see "ChooseFont"
-  * @param[in] hwndOwner Handle to owner window
-  * @param[in, out] lplfFont Pointer to a LOGFONT specifies initial font and receives the result
-  * @param[in, out] lpcrColor Pointer to a COLORREF specifies initial font color and receives the result, or NULL if ignore effects of font
+  * @param[in] Owner Handle to owner window
+  * @param[in, out] FontPointer Pointer to a LOGFONT specifies initial font and receives the result
+  * @param[in, out] ColorPointer Pointer to a COLORREF specifies initial font color and receives the result, or NULL if ignore effects of font
   * @return Returns TRUE if a font was chosen, otherwise returns FALSE
   */
-NTA_API BOOL NTAPI Dlg_ChooseFontW(HWND hwndOwner, LPLOGFONTW lplfFont, LPCOLORREF lpcrColor);
-#ifdef UNICODE
-#define Dlg_ChooseFont Dlg_ChooseFontW
-#else
-#define Dlg_ChooseFont Dlg_ChooseFontA
-#endif
+NTA_API BOOL NTAPI Dlg_ChooseFont(HWND Owner, PLOGFONTW FontPointer, LPCOLORREF ColorPointer);
 
-typedef struct _DLG_SCREENSNAPSHOTW {
+typedef struct _DLG_SCREENSNAPSHOT {
     // Input
     WNDPROC     lpfnWndProc;
     HCURSOR     hCursor;
@@ -75,29 +68,24 @@ typedef struct _DLG_SCREENSNAPSHOTW {
     INT         iScreenCY;
     HDC         hdcMirror;
     HBITMAP     hbmMirror;
-} DLG_SCREENSNAPSHOTW, * PDLG_SCREENSNAPSHOTW;
-#ifdef UNICODE
-#define DLG_SCREENSNAPSHOT DLG_SCREENSNAPSHOTW
-#else
-#define DLG_SCREENSNAPSHOT DLG_SCREENSNAPSHOTA
-#endif
+} DLG_SCREENSNAPSHOT, * PDLG_SCREENSNAPSHOT;
 
 /**
   * @brief Take snapshot for current screen and provide a new created window
-  * @param[in] lpstScreenSnapshot Pointer to DLG_SCREENSNAPSHOT structure, input window parameters and receive screen size and snapshot DC
+  * @param[in] ScreenSnapshot Pointer to DLG_SCREENSNAPSHOT structure, input window parameters and receive screen size and snapshot DC
   * @note Useful to implement screen capturer or picker, and supports multiple-monitor
   * @return Returns TRUE if the window created and ended successfully, or FALSE if failed
   */
-NTA_API BOOL NTAPI Dlg_ScreenSnapshotW(PDLG_SCREENSNAPSHOTW lpstScreenSnapshot);
-#ifdef UNICODE
-#define Dlg_ScreenSnapshot Dlg_ScreenSnapshotW
-#else
-#define Dlg_ScreenSnapshot Dlg_ScreenSnapshotA
-#endif
+NTA_API BOOL NTAPI Dlg_ScreenSnapshot(PDLG_SCREENSNAPSHOT ScreenSnapshot);
 
-typedef struct _DLG_TEMPLATE {
-    DLGTEMPLATE Template;
-    WORD        wMenu;
-    WORD        wClass;
-    WORD        wTitle;
-} DLG_TEMPLATE, * PDLG_TEMPLATE;
+typedef VOID(CALLBACK* DLG_RESIZEDPROC)(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc);
+
+/**
+  * @brief Subclasses a dialog box to help support of resizing
+  * @param[in] Dialog Handle to the dialog box
+  * @param[in] MinWidth Minimum width of window, set to 0 will no limitation
+  * @param[in] MinWidth Minimum height of window, set to 0 will no limitation
+  * @param[in] ResizedProc Callback procedure will be invoked when the size of dialog box changed
+  * @return Returns TRUE if subclass successfully, or FALSE if failed
+  */
+NTA_API BOOL NTAPI Dlg_SetResizingSubclass(HWND Dialog, LONG MinWidth, LONG MinHeight, DLG_RESIZEDPROC ResizedProc);

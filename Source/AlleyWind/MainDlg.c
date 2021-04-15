@@ -189,13 +189,22 @@ HWND AW_GetMainDlg() {
     return hMainDlg;
 }
 
+VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc) {
+    SetWindowPos(hBanner, NULL, 0, 0, NewWidth, lBannerHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+    SetWindowPos(hTree, NULL, 0, lBannerHeight, NewWidth, NewHeight - lBannerHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+}
+
 INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
-        // Obtain basic info of window and controls
+        
+        KNS_SetDialogSubclass(hDlg, MainDlgResizeProc);
         hMainDlg = hDlg;
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)AW_NAME);
+
+        // Obtain basic info of window and controls
         hBanner = GetDlgItem(hDlg, IDC_MAINBANNER);
         hTree = GetDlgItem(hDlg, IDC_MAINTREE);
+        UI_SetTheme(hTree);
         GetWindowRect(hBanner, &rcTemp);
         lBannerHeight = rcTemp.bottom - rcTemp.top;
         // Prepare controls and resources
@@ -215,14 +224,6 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         WndPropOperationInit();
         // Load window tree
         AW_LoadWindowTreeAsync(TRUE, NULL, NULL);
-    } else if (uMsg == WM_SIZE) {
-        // Adjust controls when the window is sizing
-        if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED) {
-            SetWindowPos(hBanner, NULL, 0, 0, LOWORD(lParam), lBannerHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-            SetWindowPos(hTree, NULL, 0, lBannerHeight, LOWORD(lParam), HIWORD(lParam) - lBannerHeight, SWP_NOZORDER | SWP_NOACTIVATE);
-            UI_Redraw(hDlg);
-        }
-        SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDM_RELOAD, 0)) {
             AW_LoadWindowTreeAsync(TRUE, NULL, NULL);

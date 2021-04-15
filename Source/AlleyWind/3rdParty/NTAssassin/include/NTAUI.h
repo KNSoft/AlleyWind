@@ -19,19 +19,6 @@ typedef struct _UI_DPIINFO {
 }UI_DPIINFO, * PUI_DPIINFO;
 
 /**
-  * @brief Creates a logical font
-  * @see "CreateFont"
-  * @return Returns handle to a logical font, or NULL if failed
-  */
-NTA_API HFONT NTAPI UI_CreateFontW(INT iFontSize, INT iFontWeight, LPCWSTR lfFaceName);
-NTA_API HFONT NTAPI UI_CreateFontA(INT iFontSize, INT iFontWeight, LPCSTR lfFaceName);
-#ifdef UNICODE
-#define UI_CreateFont UI_CreateFontW
-#else
-#define UI_CreateFont UI_CreateFontA
-#endif
-
-/**
   * @brief Gets rectangle of window relative to specified window
   * @param[in] hWnd Handle to the window to obtain the rectangle
   * @param[in] hWndRef Handle to the window relative to, parent window used if it is NULL
@@ -57,12 +44,6 @@ NTA_API VOID NTAPI UI_EndPaint(HWND hWnd, PUI_WINDBPAINT lpPaint);
   * @note Implemented by "GetWindow"
   */
 NTA_API VOID NTAPI UI_EnumChildWindows(HWND hWndParent, WNDENUMPROC lpfnEnum, LPARAM lParam);
-
-/**
-  * @see "IsProcessDPIAware"
-  * @return Returns TRUE if the process is DPI aware, or FALSE if not or failed.
-  */
-NTA_API BOOL NTAPI UI_IsProcessDPIAware();
 
 /**
   * @see "SetWindowDisplayAffinity"
@@ -194,14 +175,6 @@ NTA_API BOOL NTAPI UI_ShellExecA(LPCSTR lpszFile, LPCSTR lpParameters, UI_SHELLE
   * @see "SetWindowPos"
   */
 #define UI_SetWindowRect(hWnd, lprc) SetWindowPos(hWnd, NULL, (lprc)->left, (lprc)->top, (lprc)->right - (lprc)->left, (lprc)->bottom - (lprc)->top, SWP_NOZORDER | SWP_NOACTIVATE);
-
-// High DPI Support
-NTA_API VOID NTAPI UI_DPIInit(PUI_DPIINFO lpstDPIInfo, HWND hWnd);
-NTA_API DWORD NTAPI UI_DPIFromWindow(HWND hWnd);
-NTA_API VOID NTAPI UI_DPISet(PUI_DPIINFO lpstDPIInfo, DWORD dwDPINew);
-NTA_API VOID NTAPI UI_DPIScaleValueX(PUI_DPIINFO lpstDPIInfo, PINT lpValue);
-NTA_API VOID NTAPI UI_DPIScaleValueY(PUI_DPIINFO lpstDPIInfo, PINT lpValue);
-NTA_API VOID NTAPI UI_DPIScaleRect(PUI_DPIINFO lpstDPIInfo, PRECT lpRect);
 
 /**
   * @brief Inverses a RGB color

@@ -2,111 +2,66 @@
 
 #include "NTAssassin.h"
 
-typedef struct _CTL_MENUW CTL_MENUW, * PCTL_MENUW;
+typedef struct _CTL_MENU CTL_MENU, * PCTL_MENU;
 
-struct _CTL_MENUW {
-    UINT        uFlags;
-    UINT_PTR    uID;
+struct _CTL_MENU {
+    UINT        Flags;
+    UINT_PTR    ID;
     union {
         UINT_PTR    I18NIndex;
-        LPARAM      lParam;     // MF_OWNERDRAW
-        HBITMAP     hBmp;       // MF_BITMAP
-        LPCWSTR     lpszText;   // MF_STRING
+        LPARAM      Param;  // MF_OWNERDRAW
+        HBITMAP     Bitmap; // MF_BITMAP
+        PCWSTR      Text;   // MF_STRING
     };
-    PCTL_MENUW  lpSubMenu;
+    PCTL_MENU   SubMenu;
     UINT        SubMenuCount;
     HMENU       Handle;
 };
 
-#ifdef UNICODE
-#define CTL_MENU CTL_MENUW
-#define PCTL_MENU PCTL_MENUW
-#else
-#define CTL_MENU CTL_MENUA
-#define PCTL_MENU PCTL_MENUA
-#endif
-
-typedef struct _CTL_PROPSHEETPAGEW CTL_PROPSHEETPAGEW, * PCTL_PROPSHEETPAGEW;
-struct _CTL_PROPSHEETPAGEW {
+typedef struct _CTL_PROPSHEETPAGE CTL_PROPSHEETPAGE, * PCTL_PROPSHEETPAGE;
+struct _CTL_PROPSHEETPAGE {
     union {
         UINT_PTR    I18NIndex;
-        LPCWSTR     Title;
+        PCWSTR      Title;
     };
     HINSTANCE   Instance;
     UINT        DlgResID;
     DLGPROC     DlgProc;
+    HWND        Handle;
 };
 
-#ifdef UNICODE
-#define CTL_PROPSHEETPAGE CTL_PROPSHEETPAGEW
-#define PCTL_PROPSHEETPAGE PCTL_PROPSHEETPAGEW
-#else
-#define CTL_PROPSHEETPAGE CTL_PROPSHEETPAGEA
-#define PCTL_PROPSHEETPAGE PCTL_PROPSHEETPAGEA
-#endif
-
-typedef struct _CTL_LISTCTL_COLUMEW {
+typedef struct _CTL_LISTCTL_COLUME {
     union {
         UINT_PTR    I18NIndex;
-        LPCWSTR     Title;
+        PCWSTR      Title;
     };
     INT     Width;
-} CTL_LISTCTL_COLUMEW, * PCTL_LISTCTL_COLUMEW;
+} CTL_LISTCTL_COLUME, * PCTL_LISTCTL_COLUME;
 
-#ifdef UNICODE
-#define CTL_LISTCTL_COLUME CTL_LISTCTL_COLUMEW
-#define PCTL_LISTCTL_COLUME PCTL_LISTCTL_COLUMEW
-#else
-#define CTL_LISTCTL_COLUME CTL_LISTCTL_COLUMEA
-#define PCTL_LISTCTL_COLUME PCTL_LISTCTL_COLUMEA
-#endif
-
-typedef struct _CTL_COMBOBOXCTL_ITEMW {
+typedef struct _CTL_COMBOBOXCTL_ITEM {
     union {
         UINT_PTR    I18NIndex;
-        LPCWSTR     String;
+        PCWSTR      String;
     };
     LPARAM          Param;
-} CTL_COMBOBOXCTL_ITEMW, * PCTL_COMBOBOXCTL_ITEMW;
-
-#ifdef UNICODE
-#define CTL_COMBOBOXCTL_ITEM CTL_COMBOBOXCTL_ITEMW
-#define PCTL_COMBOBOXCTL_ITEM PCTL_COMBOBOXCTL_ITEMW
-#else
-#define CTL_COMBOBOXCTL_ITEM CTL_COMBOBOXCTL_ITEMA
-#define PCTL_COMBOBOXCTL_ITEM PCTL_COMBOBOXCTL_ITEMA
-#endif
+} CTL_COMBOBOXCTL_ITEM, * PCTL_COMBOBOXCTL_ITEM;
 
 /**
   * @brief Creates window menu
-  * @param[in] stMenus Pointer to an UI_MENU structures array, contains information about submenus to be created
-  * @param[in] uCount Number of UI_MENU structures in stMenus parameter point to
-  * @param[in] hParent Handle to parent menu, or NULL if create a top-level menu
+  * @param[in] Menus Pointer to an UI_MENU structures array, contains information about submenus to be created
+  * @param[in] Count Number of UI_MENU structures in Menus parameter
+  * @param[in] Parent Handle to parent menu, or NULL if create a top-level menu
   * @return Returns handle to the new menu
   */
-NTA_API HMENU NTAPI Ctl_CreateMenuExW(CTL_MENUW stMenus[], UINT uCount, HMENU hParent);
-#define Ctl_CreateMenuW(stMenus, hParent) Ctl_CreateMenuExW(stMenus, ARRAYSIZE(stMenus), hParent)
-#ifdef UNICODE
-#define Ctl_CreateMenuEx Ctl_CreateMenuExW
-#define Ctl_CreateMenu Ctl_CreateMenuW
-#else
-#define Ctl_CreateMenuEx Ctl_CreateMenuExA
-#define Ctl_CreateMenu Ctl_CreateMenuA
-#endif
+NTA_API HMENU NTAPI Ctl_CreateMenuEx(CTL_MENU Menus[], UINT Count, HMENU Parent);
+#define Ctl_CreateMenu(Menus, Parent) Ctl_CreateMenuEx(Menus, ARRAYSIZE(Menus), Parent)
 
 /**
   * @brief Creates a menu and append to specified window
   * @see "Ctl_CreateMenuEx" and "SetMenu"
   */
-#define Ctl_SetMenuExW(hWnd, stMenus, uCount) SetMenu(hWnd, Ctl_CreateMenuExW(stDlgMenu, uCount, NULL));
-#define Ctl_SetMenuW(hWnd, stMenus) SetMenu(hWnd, Ctl_CreateMenuExW(stDlgMenu, ARRAYSIZE(stMenus), NULL));
-#ifdef UNICODE
-#define Ctl_SetMenuEx Ctl_SetMenuExW
-#define Ctl_SetMenu Ctl_SetMenuW
-#else
-#define Ctl_SetMenuEx Ctl_SetMenuExA
-#define Ctl_SetMenu Ctl_SetMenuA
-#endif
+#define Ctl_SetMenuEx(Window, Menus, Count) SetMenu(Window, Ctl_CreateMenuEx(Menus, Count, NULL));
+#define Ctl_SetMenu(Window, Menus) SetMenu(Window, Ctl_CreateMenuEx(Menus, ARRAYSIZE(Menus), NULL));
 
 /**
   * @brief Popups the menu
@@ -117,57 +72,36 @@ NTA_API HMENU NTAPI Ctl_CreateMenuExW(CTL_MENUW stMenus[], UINT uCount, HMENU hP
 /**
   * @brief Destroies the menu created by "Ctl_CreateMenuEx"
   */
-NTA_API VOID NTAPI Ctl_DestroyMenuEx(PCTL_MENUW lpstMenus, UINT uCount, HMENU hMenu);
-#define Ctl_DestroyMenu(lpstMenus, hMenu) Ctl_DestroyMenuEx(lpstMenus, ARRAYSIZE(lpstMenus), hMenu)
+NTA_API VOID NTAPI Ctl_DestroyMenuEx(PCTL_MENU Menus, UINT Count, HMENU Menu);
+#define Ctl_DestroyMenu(Menus, Menu) Ctl_DestroyMenuEx(Menus, ARRAYSIZE(Menus), Menu)
 
 /**
   * @brief Initializes tab control with property sheet feature powered
-  * @param[in] hDlg Handle to the dialog contains the tab control
-  * @param[in] uTabCtlID Control ID of tab control
-  * @param[in] uSheetCount Number of UI_PROPSHEETPAGE structures in Sheets parameter point to
-  * @param[in] Sheets Pointer to an UI_PROPSHEETPAGE structures array, contains information about property sheet of tabs
-  * @param[in] lParam User defined parameter, will be passed to each DlgProc in UI_PROPSHEETPAGE structure by WM_INITDIALOG message
+  * @param[in] Dialog Handle to the dialog contains the tab control
+  * @param[in] TabCtlID Control ID of tab control
+  * @param[in] Sheets Pointer to an CTL_PROPSHEETPAGE structures array, contains information about property sheet of tabs
+  * @param[in] SheetCount Number of CTL_PROPSHEETPAGE structures in Sheets parameter
+  * @param[in] Param User defined parameter, will be passed to each DlgProc in UI_PROPSHEETPAGE structure by WM_INITDIALOG message
   */
-NTA_API VOID NTAPI Ctl_SetPropertySheetW(HWND hDlg, UINT uTabCtlID, UINT uSheetCount, CTL_PROPSHEETPAGEW Sheets[], LPARAM lParam);
-#ifdef UNICODE
-#define Ctl_SetPropertySheet Ctl_SetPropertySheetW
-#else
-#define Ctl_SetPropertySheet Ctl_SetPropertySheetA
-#endif
+NTA_API VOID NTAPI Ctl_SetPropertySheetEx(HWND Dialog, INT TabCtlID, CTL_PROPSHEETPAGE Sheets[], UINT SheetCount, LPARAM Param);
+#define Ctl_SetPropertySheet(Dialog, TabCtlID, Sheets, Param) Ctl_SetPropertySheetEx(Dialog, TabCtlID, Sheets, ARRAYSIZE(Sheets), Param)
 
 /**
   * @brief Initializes List-View control by specified columes
-  * @param[in] hList Handle to the List-View control
-  * @param[in] uCols Number of UI_LISTCTL_COLUME structures specified in Cols parameter
-  * @param[in] Cols Pointer to an UI_LISTCTL_COLUME structures array, contains information about columes
-  * @param[in] lExStyle Extended styles set to the List-View control
+  * @param[in] List Handle to the List-View control
+  * @param[in] Cols Pointer to an CTL_LISTCTL_COLUME structures array, contains information about columes
+  * @param[in] ColCount Number of CTL_LISTCTL_COLUME structures specified in Cols parameter
+  * @param[in] ExStyle Extended styles set to the List-View control
   */
-NTA_API VOID NTAPI Ctl_InitListCtlExW(HWND hList, UINT uCols, CTL_LISTCTL_COLUMEW Cols[], LONG_PTR lExStyle);
-#ifdef UNICODE
-#define Ctl_InitListCtlEx Ctl_InitListCtlExW
-#else
-#define Ctl_InitListCtlEx Ctl_InitListCtlExA
-#endif
+NTA_API VOID NTAPI Ctl_InitListCtlEx(HWND List, CTL_LISTCTL_COLUME Cols[], UINT ColCount, LONG_PTR ExStyle);
+#define Ctl_InitListCtl(List, Cols, ExStyle) Ctl_InitListCtlEx(List, Cols, ARRAYSIZE(Cols), ExStyle)
 
-#define Ctl_InitListCtlW(hList, Cols, lExStyle) Ctl_InitListCtlExW(hList, ARRAYSIZE(Cols), Cols, lExStyle)
-#define Ctl_InitListCtlA(hList, Cols, lExStyle) Ctl_InitListCtlExA(hList, ARRAYSIZE(Cols), Cols, lExStyle)
-#ifdef UNICODE
-#define Ctl_InitListCtl Ctl_InitListCtlW
-#else
-#define Ctl_InitListCtl Ctl_InitListCtlA
-#endif
-
-NTA_API VOID NTAPI Ctl_InitComboBoxExW(HWND hComboBox, PCTL_COMBOBOXCTL_ITEMW lpstItems, UINT uItems, BOOL bSetParam);
-#ifdef UNICODE
-#define Ctl_InitComboBoxEx Ctl_InitComboBoxExW
-#else
-#define Ctl_InitComboBoxEx Ctl_InitComboBoxExA
-#endif
-
-#define Ctl_InitComboBoxW(hComboBox, lpstItems, bSetParam) Ctl_InitComboBoxExW(hComboBox, lpstItems, ARRAYSIZE(lpstItems), bSetParam)
-#define Ctl_InitComboBoxA(hComboBox, lpstItems, bSetParam) Ctl_InitComboBoxExA(hComboBox, lpstItems, ARRAYSIZE(lpstItems), bSetParam)
-#ifdef UNICODE
-#define Ctl_InitComboBox Ctl_InitComboBoxW
-#else
-#define Ctl_InitComboBox Ctl_InitComboBoxA
-#endif
+/**
+  * @brief Initializes ComboBox control by specified items
+  * @param[in] ComboBox Handle to the ComboBox control
+  * @param[in] Items Pointer to a CTL_COMBOBOXCTL_ITEM structures array, contains information about items
+  * @param[in] ItemCount Number of CTL_COMBOBOXCTL_ITEM structures specified in Items parameter
+  * @param[in] SetParam Set to TRUE to makes Param member in CTL_COMBOBOXCTL_ITEM will be applied to the item
+  */
+NTA_API VOID NTAPI Ctl_InitComboBoxEx(HWND ComboBox, PCTL_COMBOBOXCTL_ITEM Items, UINT ItemCount, BOOL SetParam);
+#define Ctl_InitComboBox(ComboBox, Items, SetParam) Ctl_InitComboBoxEx(ComboBox, Items, ARRAYSIZE(Items), SetParam)

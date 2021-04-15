@@ -12,7 +12,7 @@ CTL_MENU stPropRelationshipProcMenu[] = {
     { MF_STRING, IDM_PROC_PROP, I18NIndex_Property, NULL, 0 }
 };
 
-I18N_TEXTCTL astWndPropRelationshipTextCtl[] = {
+I18N_CTLTEXT astWndPropRelationshipTextCtl[] = {
     { IDC_WNDPROP_RELATIONSHIP_PROCESS_TEXT, I18NIndex_Process },
     { IDC_WNDPROP_RELATIONSHIP_THREAD_TEXT, I18NIndex_Thread },
     { IDC_WNDPROP_RELATIONSHIP_WINDOW_TEXT, I18NIndex_RelatedWindow }
@@ -95,8 +95,8 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         hWnd = (HWND)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astWndPropRelationshipTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astWndPropRelationshipTextCtl);
         // Process and Thread
         dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID);

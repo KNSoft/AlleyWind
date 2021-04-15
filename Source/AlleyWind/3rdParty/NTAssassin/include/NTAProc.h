@@ -100,11 +100,22 @@ NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByAddr(PVOID Address);
 
 /**
   * @brief Loads specified DLL
-  * @param[in] lpszLib Name of DLL
-  * @param[in] bDontResolveRef Set to TRUE to don't resolve references
+  * @param[in] LibName Name of DLL
+  * @param[in] DontResolveRef Set to TRUE to don't resolve references
   * @return Returns handle to the DLL or NULL if failed
   */
-NTA_API HMODULE NTAPI Proc_LoadDllW(LPWSTR lpszLib, BOOL bDontResolveRef);
+NTA_API HMODULE NTAPI Proc_LoadDll(PCWSTR LibName, BOOL DontResolveRef);
+
+/**
+  * @see "GetProcAddress"
+  */
+NTA_API PVOID NTAPI Proc_GetProcAddr(HMODULE Module, PCSTR ProcName);
+
+/**
+  * @brief Loads procedure address of specified module, module will be loaded if not yet
+  * @see "LoadLibrary" and "GetProcAddress"
+  */
+NTA_API PVOID NTAPI Proc_LoadProcAddr(PCWSTR LibName, PCSTR ProcName);
 
 /**
   * @brief Adjusts current process privilege

@@ -1,6 +1,6 @@
 #include "AlleyWind.h"
 
-I18N_TEXTCTL astWndPropGeneralTextCtl[] = {
+I18N_CTLTEXT astWndPropGeneralTextCtl[] = {
     { IDC_WNDPROP_GENERAL_CAPTION_TEXT, I18NIndex_Caption },
     { IDC_WNDPROP_GENERAL_HANDLE_TEXT, I18NIndex_Handle },
     { IDC_WNDPROP_GENERAL_WNDPROC_TEXT, I18NIndex_WindowProcedure },
@@ -43,8 +43,8 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         hWnd = (HWND)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astWndPropGeneralTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astWndPropGeneralTextCtl);
         UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK, TRUE);
         NT_LastErrorClear();
         dwStyle = (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE);
@@ -94,7 +94,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
                 dwpTemp = 0;
         } else
             dwpTemp = GetWindowLongPtr(hWnd, GWLP_WNDPROC);
-        uTemp = hProc ? RProc_TranslateAddress(hProc, (PVOID)dwpTemp, szTempPath, ARRAYSIZE(szTempPath)) : 0;
+        uTemp = hProc && dwpTemp ? RProc_TranslateAddress(hProc, (PVOID)dwpTemp, szTempPath, ARRAYSIZE(szTempPath)) : 0;
         iTemp = Str_CchPrintf(szBuffer, TEXT("%s (%s)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), IsWindowUnicode(hWnd) ? TEXT("Unicode") : TEXT("ANSI"));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_WNDPROC_EDIT, szBuffer, iTemp > 0);
         if (hProc)

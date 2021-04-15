@@ -8,33 +8,31 @@
 #define DVE_VALUE_HEXDWORD      0x100
 #define DVE_VALUE_HEXQWORD      0x200
 
-typedef struct _DLG_VALUEEDITOR_CONSTW {
+typedef struct _DLG_VALUEEDITOR_CONST {
     QWORD   Value;
-    LPCWSTR Name;
-    LPCWSTR Info;
-} DLG_VALUEEDITOR_CONSTW, * PDLG_VALUEEDITOR_CONSTW;
+    PCWSTR  Name;
+    PCWSTR  Info;
+} DLG_VALUEEDITOR_CONST, * PDLG_VALUEEDITOR_CONST;
 
-typedef struct _DLG_VALUEEDITORW {
+typedef struct _DLG_VALUEEDITOR {
     HWND                    hwndOwner;
     DWORD                   Flags;
-    LPCWSTR                 *lpstr;     // ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
-    PDLG_VALUEEDITOR_CONSTW lpstConsts;
+    PCWSTR                  *lpstr;     // ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
+    PDLG_VALUEEDITOR_CONST  lpstConsts;
     UINT                    uConsts;
     QWORD                   qwValue;
     QWORD                   Reserved;   // Reserved, do not use
-} DLG_VALUEEDITORW, * PDLG_VALUEEDITORW;
+} DLG_VALUEEDITOR, * PDLG_VALUEEDITOR;
 
-NTA_API BOOL NTAPI Dlg_ValueEditorW(HWND hwndOwner, DWORD dwFlags, LPCWSTR *lpsz, LPQWORD lpqwValue, PDLG_VALUEEDITOR_CONSTW lpstConsts, UINT uConsts);
-#ifdef UNICODE
-#define Dlg_ValueEditor Dlg_ValueEditorW
-#define DLG_VALUEEDITOR DLG_VALUEEDITORW
-#define PDLG_VALUEEDITOR PDLG_VALUEEDITORW
-#define DLG_VALUEEDITOR_CONST DLG_VALUEEDITOR_CONSTW
-#define PDLG_VALUEEDITOR_CONST PDLG_VALUEEDITOR_CONSTW
-#else
-#define Dlg_ValueEditor Dlg_ValueEditorA
-#define DLG_VALUEEDITOR DLG_VALUEEDITORA
-#define PDLG_VALUEEDITOR PDLG_VALUEEDITORA
-#define DLG_VALUEEDITOR_CONST DLG_VALUEEDITOR_CONSTA
-#define PDLG_VALUEEDITOR_CONST PDLG_VALUEEDITOR_CONSTA
-#endif
+/**
+  * @brief Edit value as combination or enumeration
+  * @param[in] Owner Handle to owner window
+  * @param[in] Flags Can be combined with one of DVE_TYPE_XXX and one of DVE_VALUE_XXX
+  * @param[in] Strings String table to display text on the dialog, default strings is ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
+  * @param[in, out] ValuePointer Pointer to the value
+  * @param[in] Consts Constant members of value
+  * @param[in] ConstCount Number of constants in Consts parameter
+  * @return Returns BOOL
+  */
+NTA_API BOOL NTAPI Dlg_ValueEditorEx(HWND Owner, DWORD Flags, PCWSTR *Strings, PQWORD ValuePointer, PDLG_VALUEEDITOR_CONST Consts, UINT ConstCount);
+#define Dlg_ValueEditor(Owner, Flags, Strings, ValuePointer, Consts) Dlg_ValueEditorEx(Owner, Flags, Strings, ValuePointer, Consts, ARRAYSIZE(Consts))

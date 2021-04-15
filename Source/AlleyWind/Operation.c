@@ -8,7 +8,7 @@
 
 #define AW_WNDPROP_OPERATION_THEMT_MAX_CCH 128
 
-I18N_TEXTCTL astWndPropOperationTextCtl[] = {
+I18N_CTLTEXT astWndPropOperationTextCtl[] = {
     { IDC_WNDPROP_OPERATION_QUICKSTYLE_GROUP, I18NIndex_QuickStyle },
     { IDC_WNDPROP_OPERATION_VISIBLE_CHECK, I18NIndex_Visible },
     { IDC_WNDPROP_OPERATION_ENABLED_CHECK, I18NIndex_Enable },
@@ -296,8 +296,8 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         hWnd = (HANDLE)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astWndPropOperationTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astWndPropOperationTextCtl);
         UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER, TBM_SETRANGE, FALSE, MAKELPARAM(0, MAXBYTE));
         UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_OPERATION_PICK_PIC, STM_SETIMAGE, IMAGE_CURSOR, (LPARAM)stWndPropOperationPickColorScreenSnapshot.hCursor);
         // Visible and Enable

@@ -9,7 +9,7 @@ typedef struct _HIJACK_CREATETHREAD {
     SIZE_T                  ProcSize32;
     LPTHREAD_START_ROUTINE  Proc64;
     SIZE_T                  ProcSize64;
-    LPVOID                  Param;
+    PVOID                   Param;
     SIZE_T                  ParamSize;
     DWORD                   ExitCode;
 } HIJACK_CREATETHREAD, * PHIJACK_CREATETHREAD;
@@ -33,13 +33,13 @@ typedef struct _HIJACK_INJECTTHREAD {
 #pragma pack(push)
 #pragma pack(4)
 typedef struct _HIJACK_CALLPROCHEADER {
-    QWORD                       Procedure;
-    DWORD                       CallConvention;
-    QWORD                       RetValue;
-    DWORD                       LastError;
-    NTSTATUS                    LastStatus;
-    DWORD                       ExceptionCode;
-    UINT                        ParamCount; // PHIJACK_CALLPROCPARAM
+    QWORD       Procedure;
+    DWORD       CallConvention;
+    QWORD       RetValue;
+    DWORD       LastError;
+    NTSTATUS    LastStatus;
+    DWORD       ExceptionCode;
+    UINT        ParamCount; // PHIJACK_CALLPROCPARAM
 } HIJACK_CALLPROCHEADER, * PHIJACK_CALLPROCHEADER;
 
 typedef struct _HIJACK_CALLPROCPARAM {
@@ -63,9 +63,10 @@ typedef struct _HIJACK_CALLPROCPARAM {
 //  LPVOID  lpProc;         // OUT OPTIONAL, Receive address of the procedure
 
 // Initialize parameter structure of Hijack_LoadProcAddr
-NTA_API LPVOID NTAPI Hijack_LoadProcAddr_InitParamEx(LPVOID lpBuffer, UINT uBufferSize, LPWSTR lpszLib, LPSTR lpszProc, LPVOID** lpppRemoteProc);
-#define Hijack_LoadProcAddr_InitParam(lpBuffer, lpszLib, lpszProc, lpppRemoteProc) Hijack_LoadProcAddr_InitParamEx(lpBuffer, sizeof(lpBuffer), lpszLib, lpszProc, (LPVOID**)(lpppRemoteProc))
+NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, UINT BufferSize, PWSTR LibName, LPSTR ProcName, PVOID** ProcAddrPointer);
+#define Hijack_LoadProcAddr_InitParam(Buffer, LibName, ProcName, ProcAddrPointer) Hijack_LoadProcAddr_InitParamEx(Buffer, sizeof(Buffer), LibName, ProcName, (LPVOID**)(ProcAddrPointer))
 
-NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE hProc, LPWSTR LibName, LPSTR ProcName, LPVOID *ProcAddr);
+NTA_API NTSTATUS NTAPI Hijack_CreateThread(HANDLE ProcessHandle, PHIJACK_CREATETHREAD HijackThread, DWORD Timeout);
+NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID *ProcAddr);
 
-NTA_API NTSTATUS NTAPI Hijack_CallProc(HANDLE hProc, PHIJACK_CALLPROCHEADER lpstCallProc, PHIJACK_CALLPROCPARAM lpParams, DWORD dwMilliseconds);
+NTA_API NTSTATUS NTAPI Hijack_CallProc(HANDLE ProcessHandle, PHIJACK_CALLPROCHEADER HijackCallProc, PHIJACK_CALLPROCPARAM HijackParams, DWORD Timeout);

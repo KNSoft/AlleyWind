@@ -73,6 +73,6 @@ NTA_API VOID NTAPI NT_InitObjectW(POBJECT_ATTRIBUTES lpstObject, PUNICODE_STRING
   * @param[in] lpstObjectName ObjectName member to OBJECT_ATTRIBUTES
   * @param[in] hRootDirectory RootDirectory member to OBJECT_ATTRIBUTES
   */
-NTA_API NTSTATUS NTAPI NT_InitPathObject(LPWSTR lpszPath, POBJECT_ATTRIBUTES lpstObject, PUNICODE_STRING lpstObjectName, HANDLE hRootDirectory);
+NTA_API NTSTATUS NTAPI NT_InitPathObject(LPCWSTR lpszPath, POBJECT_ATTRIBUTES lpstObject, PUNICODE_STRING lpstObjectName, HANDLE hRootDirectory);
 
 NTA_API int NT_SEH_NopHandler(LPEXCEPTION_POINTERS lpstExceptionInfo);

@@ -15,5 +15,5 @@ typedef struct _IMAGE_DATA {
     UINT                uRows;
     UINT                uCols;
     IMAGE_DATA_FORMAT   Format;
-    LPVOID              lpData;
+    PVOID               lpData;
 } IMAGE_DATA, * PIMAGE_DATA;

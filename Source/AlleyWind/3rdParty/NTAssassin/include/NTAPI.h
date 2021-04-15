@@ -14,6 +14,16 @@ LdrLoadDll(
     OUT PVOID* BaseAddress
 );
 
+NTSYSAPI
+NTSTATUS
+NTAPI
+LdrGetProcedureAddress(
+    IN PVOID BaseAddress,
+    IN PANSI_STRING Name,
+    IN ULONG Ordinal,
+    OUT PVOID* ProcedureAddress
+    );
+
 // Rtl*
 
 #undef RtlMoveMemory
@@ -121,6 +131,17 @@ RtlLeaveCriticalSection(
 );
 
 NTSYSAPI
+NTSTATUS
+NTAPI
+RtlFindMessage(
+    IN PVOID 	BaseAddress,
+    IN ULONG 	Type,
+    IN ULONG 	Language,
+    IN ULONG 	MessageId,
+    OUT PMESSAGE_RESOURCE_ENTRY * 	MessageResourceEntry
+);
+
+NTSYSAPI
 BOOL
 NTAPI
 RtlDosPathNameToNtPathName_U(
@@ -150,6 +171,24 @@ RtlUnicodeToMultiByteN(
     PULONG BytesInMultiByteString,
     PCWCH  UnicodeString,
     ULONG  BytesInUnicodeString
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlUnicodeStringToInteger(
+    PCUNICODE_STRING String,
+    ULONG            Base,
+    PULONG           Value
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlIntegerToUnicodeString(
+    ULONG           Value,
+    ULONG           Base,
+    PUNICODE_STRING String
 );
 
 // Nt*/Zw*

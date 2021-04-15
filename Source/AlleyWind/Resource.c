@@ -1,6 +1,6 @@
 #include "AlleyWind.h"
 
-I18N_TEXTCTL astWndPropResourceTextCtl[] = {
+I18N_CTLTEXT astWndPropResourceTextCtl[] = {
     { IDC_WNDPROP_RESOURCE_IMAGE_TEXT, I18NIndex_ClientAreaImage },
     { IDC_WNDPROP_RESOURCE_HINSTANCE_TEXT, I18NIndex_InstanceHandle },
     { IDC_WNDPROP_RESOURCE_HFONT_TEXT, I18NIndex_FontHandle },
@@ -69,8 +69,8 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         hWnd = (HWND)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
-        KNS_DialogSetSubclass(hDlg);
-        I18N_InitTextCtls(hDlg, astWndPropResourceTextCtl);
+        KNS_SetDialogSubclass(hDlg, NULL);
+        I18N_InitCtlTexts(hDlg, astWndPropResourceTextCtl);
         NT_LastErrorClear();
         dwStyle = (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE);
         dwStyleError = NT_LastErrorGet();
@@ -108,7 +108,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             EnableWindow(hCtl, FALSE);
         // Property List
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_RESOURCE_PROP_LIST);
-        Ctl_InitListCtlEx(hCtl, ARRAYSIZE(aPropListCol), aPropListCol, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+        Ctl_InitListCtl(hCtl, aPropListCol, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
         EnumPropsEx(hWnd, WndPropResourcePropEnumProc, (LPARAM)hCtl);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HFONT_BTN, BN_CLICKED)) {
@@ -146,7 +146,8 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             TCHAR       szExpImageFileName[MAX_PATH];
             HWND        hWnd;
             HDC         hDC, hMemDC;
-            HBITMAP     hBmp, hMemBmp;
+            HBITMAP     hMemBmp;
+            HGDIOBJ     hPrevBmp;
             SIZE_T      uSize;
             FILE_MAP    stFileMap;
             RECT        rcWnd; // right and bottom are corresponding to CX and CY
@@ -162,15 +163,15 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             hDC = GetDC(hWnd);
             hMemDC = CreateCompatibleDC(hDC);
             hMemBmp = CreateCompatibleBitmap(hDC, rcWnd.right - rcWnd.left, rcWnd.bottom - rcWnd.top);
-            SelectObject(hMemDC, hMemBmp);
+            hPrevBmp = SelectObject(hMemDC, hMemBmp);
             BitBlt(hMemDC, 0, 0, rcWnd.right, rcWnd.bottom, hDC, rcWnd.left, rcWnd.top, SRCCOPY);
-            hBmp = (HBITMAP)GetCurrentObject(hMemDC, OBJ_BITMAP);
+            SelectObject(hMemDC, hPrevBmp);
             if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0)) {
-                if (hBmp && NT_SUCCESS(GDI_WriteBitmap(hDC, hBmp, NULL, 0, &uSize)) && uSize) {
+                if (NT_SUCCESS(GDI_WriteBitmap(hMemDC, hMemBmp, NULL, 0, &uSize)) && uSize) {
                     szExpImageFileName[0] = '\0';
                     if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, lpszExpImageFileExt)) {
-                        if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, TRUE, ViewUnmap))) {
-                            GDI_WriteBitmap(hDC, hBmp, stFileMap.Mem.VirtualAddress, uSize, &uSize);
+                        if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap))) {
+                            GDI_WriteBitmap(hMemDC, hMemBmp, stFileMap.Mem.VirtualAddress, uSize, &uSize);
                             stFileMap.Mem.NumberOfBytes = uSize;
                             File_Unmap(&stFileMap);
                         }
@@ -179,7 +180,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             } else {
                 OpenClipboard(hDlg);
                 EmptyClipboard();
-                SetClipboardData(CF_BITMAP, hBmp);
+                SetClipboardData(CF_BITMAP, hMemBmp);
                 CloseClipboard();
             }
             DeleteDC(hMemDC);

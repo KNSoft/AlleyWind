@@ -127,7 +127,7 @@ I18N_ITEM NAC_I18N_Lang_en_Items[122] = {
 	{0xC4558787, TEXT("Message")},
 	{0x94A2E010, TEXT("Window")}
 };
-I18N_LANGUAGE NAC_I18N_Lang_en = { {('en'), 0, 0}, NULL, TEXT("English"), NULL, FALSE, NAC_I18N_Lang_en_Items };
+I18N_LANGUAGE NAC_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), NULL, FALSE, NAC_I18N_Lang_en_Items };
 
 I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[122] = {
 	{0x642A6E98, TEXT("无")},
@@ -253,7 +253,7 @@ I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[122] = {
 	{0xC4558787, TEXT("消息")},
 	{0x94A2E010, TEXT("窗口")}
 };
-I18N_LANGUAGE NAC_I18N_Lang_zh_Hans = { {('zh'), ('Hans'), 0}, NULL, TEXT("中文"), TEXT("微软雅黑"), FALSE, NAC_I18N_Lang_zh_Hans_Items };
+I18N_LANGUAGE NAC_I18N_Lang_zh_Hans = { {('zh'), ('Hans'), 0}, 4, NULL, TEXT("中文"), TEXT("微软雅黑"), FALSE, NAC_I18N_Lang_zh_Hans_Items };
 
 PI18N_LANGUAGE NAC_I18N_Lang_Table[2] = { &NAC_I18N_Lang_en, &NAC_I18N_Lang_zh_Hans };
 
