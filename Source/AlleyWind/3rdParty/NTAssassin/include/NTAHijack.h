@@ -1,3 +1,5 @@
+// Still in testing, no more information available
+
 #pragma once
 
 #include "NTAssassin.h"
@@ -62,11 +64,15 @@ typedef struct _HIJACK_CALLPROCPARAM {
                             // Could be empty string if load DLL only
 //  LPVOID  lpProc;         // OUT OPTIONAL, Receive address of the procedure
 
-// Initialize parameter structure of Hijack_LoadProcAddr
-NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, UINT BufferSize, PWSTR LibName, LPSTR ProcName, PVOID** ProcAddrPointer);
+// Initializes parameter structure of Hijack_LoadProcAddr
+NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, UINT BufferSize, PWSTR LibName, PSTR ProcName, PVOID** ProcAddrPointer);
 #define Hijack_LoadProcAddr_InitParam(Buffer, LibName, ProcName, ProcAddrPointer) Hijack_LoadProcAddr_InitParamEx(Buffer, sizeof(Buffer), LibName, ProcName, (LPVOID**)(ProcAddrPointer))
 
+// Creates remote thread to execute given code
 NTA_API NTSTATUS NTAPI Hijack_CreateThread(HANDLE ProcessHandle, PHIJACK_CREATETHREAD HijackThread, DWORD Timeout);
+
+// Gets remote procedure address
 NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID *ProcAddr);
 
+// Calls remote procedure
 NTA_API NTSTATUS NTAPI Hijack_CallProc(HANDLE ProcessHandle, PHIJACK_CALLPROCHEADER HijackCallProc, PHIJACK_CALLPROCPARAM HijackParams, DWORD Timeout);

@@ -1,7 +1,8 @@
 #include "AlleyWind.h"
 
 // I18N strings for Dlg_ValueEditor
-LPCWSTR lpszDVE[7];
+PCWSTR lpszDVE[7];
+PCWSTR lpszDRE[9];
 
 // ********** Data **********
 
@@ -518,12 +519,20 @@ PAW_SYSCLASSINFO AW_DBFindSysClassInfo(HWND hWnd) {
 VOID AWDatabaseInit() {
     // I18N strings for Dlg_ValueEditor
     lpszDVE[0] = I18N_GetString(I18NIndex_CombinedValueEditor);
-    lpszDVE[1] = I18N_GetString(I18NIndex_Reset);
-    lpszDVE[2] = I18N_GetString(I18NIndex_OK);
+    lpszDVE[1] = lpszDRE[1] = I18N_GetString(I18NIndex_Reset);
+    lpszDVE[2] = lpszDRE[2] = I18N_GetString(I18NIndex_OK);
     lpszDVE[3] = I18N_GetString(I18NIndex_Member);
     lpszDVE[4] = I18N_GetString(I18NIndex_Value);
     lpszDVE[5] = I18N_GetString(I18NIndex_Description);
     lpszDVE[6] = I18N_GetString(I18NIndex_DVEUnknow);
+    // I18N strings for Dlg_RectEditor
+    lpszDRE[0] = I18N_GetString(I18NIndex_RectEditor);
+    lpszDRE[3] = I18N_GetString(I18NIndex_Left);
+    lpszDRE[4] = I18N_GetString(I18NIndex_Top);
+    lpszDRE[5] = I18N_GetString(I18NIndex_Right);
+    lpszDRE[6] = I18N_GetString(I18NIndex_Bottom);
+    lpszDRE[7] = I18N_GetString(I18NIndex_Width);
+    lpszDRE[8] = I18N_GetString(I18NIndex_Height);
 }
 
 BOOL AW_DBEditValue(HWND hDlg, HWND hWnd, AW_VALUETYPE eType, PDWORD lpdwValue) {

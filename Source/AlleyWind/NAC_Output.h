@@ -5,7 +5,7 @@
 
 #include "3rdParty\NTAssassin\include\NTAssassin.h"
 
-#define NAC_I18N_ITEM_COUNT 122
+#define NAC_I18N_ITEM_COUNT 129
 
 typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_None,
@@ -22,6 +22,13 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Value,
 	I18NIndex_Description,
 	I18NIndex_DVEUnknow,
+	I18NIndex_RectEditor,
+	I18NIndex_Left,
+	I18NIndex_Top,
+	I18NIndex_Right,
+	I18NIndex_Bottom,
+	I18NIndex_Width,
+	I18NIndex_Height,
 	I18NIndex_Desktop,
 	I18NIndex_Dialog,
 	I18NIndex_Animation,
@@ -132,9 +139,9 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Window
 } I18N_ITEM_INDEX, * PI18N_ITEM_INDEX;
 
-EXTERN_C I18N_ITEM NAC_I18N_Lang_en_Items[122];
+EXTERN_C I18N_ITEM NAC_I18N_Lang_en_Items[129];
 EXTERN_C I18N_LANGUAGE NAC_I18N_Lang_en;
-EXTERN_C I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[122];
+EXTERN_C I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[129];
 EXTERN_C I18N_LANGUAGE NAC_I18N_Lang_zh_Hans;
 EXTERN_C PI18N_LANGUAGE NAC_I18N_Lang_Table[2];
 

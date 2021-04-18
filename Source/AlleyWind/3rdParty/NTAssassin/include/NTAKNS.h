@@ -27,16 +27,6 @@ typedef struct _KNS_VERSION_INFO {
     USHORT  Type;   // KNS_VERSION_*
 } KNS_VERSION_INFO, * PKNS_VERSION_INFO;
 
-typedef struct _KNS_I18NMENU KNS_I18NMENU, * PKNS_I18NMENU;
-
-struct _KNS_I18NMENUW {
-    UINT        uFlags;
-    UINT_PTR    uID;
-    UINT        uI18NText;
-    KNS_I18NMENU(*SubMenu)[ANYSIZE_ARRAY];
-    UINT        cSubMenu;
-};
-
 typedef struct _KNS_INFO {
     PWSTR               Name;           // Name of software
     BOOL                KNSOfficial;    // Is official software of KNSoft
@@ -64,26 +54,11 @@ typedef struct _KNS_INFO {
     } OnlineService;
 } KNS_INFO, * PKNS_INFO;
 
-typedef struct _KNS_SUBCLASS_BANNER_REFW {
-    HWND        hStatic;
-    LONG        lWidth;
-    LONG        lHeight;
-    HICON       hIcon;
-    LONG        lIconHotspot;
-    HFONT       hFontBig;
-    HFONT       hFontSmall;
-    LPCWSTR     lpszName;
-    LPCWSTR     lpszComment;
-} KNS_SUBCLASS_BANNER_REFW, * PKNS_SUBCLASS_BANNER_REFW;
-
 NTA_API INT_PTR NTAPI KNS_Startup(PKNS_INFO KNSInfo);
 
-NTA_API INT NTAPI KNS_MsgBoxW(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
-#ifdef UNICODE
-#define KNS_MsgBox KNS_MsgBoxW
-#else
-#define KNS_MsgBox KNS_MsgBoxA
-#endif
+NTA_API INT NTAPI KNS_MsgBox(HWND Owner, PCWSTR Text, PCWSTR Title, UINT Type);
+
+NTA_API VOID NTAPI KNS_ErrorMsgBox(HWND Owner, DWORD Error);
 
 NTA_API BOOL NTAPI KNS_GetVersionStringEx(PWSTR StrVersion, UINT ChCount);
 #define KNS_GetVersionString(StrVersion) KNS_GetVersionStringEx(StrVersion, ARRAYSIZE(StrVersion))
@@ -93,3 +68,5 @@ NTA_API HICON NTAPI KNS_GetIcon();
 NTA_API VOID NTAPI KNS_SetDialogSubclass(HWND Dialog, DLG_RESIZEDPROC ResizedProc);
 
 NTA_API VOID NTAPI KNS_DlgAbout(HWND hwndOwner);
+
+NTA_API VOID NTAPI KNS_OpenHomePage();

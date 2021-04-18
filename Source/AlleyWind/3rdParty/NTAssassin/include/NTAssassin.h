@@ -140,9 +140,6 @@
 // Current system locale
 #define CURRENT_LOCALE ((LCID)NT_GetTEBMember(CurrentLocale))
 
-// Max number of characters of a string represents a pointer
-#define MAX_POINTER_CCH (sizeof(PVOID) * 2 + 1)
-
 // Gets equality of two value after masked
 #define IS_EQUAL_MASKED(val1, val2, mask) (!(((val1) ^ (val2)) & (mask)))
 // Sets or removes a flag from a combination value
@@ -169,6 +166,7 @@
 #define MAX_ATOM_CCH                            255
 #define MAX_REG_VALUE_SIZE                      4096
 #define MAX_LOCALENAME_CCH                      85
+#define MAX_POINTER_CCH                         (sizeof(PVOID) * 2 + 1)
 #define CURRENT_PROCESS_HANDLE                  ((HANDLE)-1)
 #define CURRENT_THREAD_HANDLE                   ((HANDLE)-2)
 #define CURRENT_PROCESS_TOKEN_HANDLE            ((HANDLE)-4)

@@ -89,7 +89,6 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         DWORD       dwPID, dwTID;
         HANDLE      hProc, hThread;
         PVOID       pThreadStartAddr;
-        DWORD_PTR   dwpTemp;
         INT         i, iTemp;
         UINT        uTemp;
         hWnd = (HWND)lParam;
@@ -100,13 +99,13 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         // Process and Thread
         dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID);
-        uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath, ARRAYSIZE(szTempPath)) : 0;
+        uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath) : 0;
         iTemp = Str_CchPrintf(szBuffer, TEXT("(%ld) %s"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_EDIT, szBuffer, iTemp > 0);
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_BTN, hProc != NULL);
         hThread = RProc_OpenThread(THREAD_QUERY_INFORMATION, dwTID);
         uTemp = hProc && hThread && NT_SUCCESS(NtQueryInformationThread(hThread, ThreadQuerySetWin32StartAddress, &pThreadStartAddr, sizeof(pThreadStartAddr), NULL)) ?
-            RProc_TranslateAddress(hProc, pThreadStartAddr, szTempPath, ARRAYSIZE(szTempPath)) :
+            RProc_TranslateAddress(hProc, pThreadStartAddr, szTempPath) :
             0;
         iTemp = Str_CchPrintf(szBuffer, TEXT("(%ld) %s"), dwTID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_THREAD_EDIT, szBuffer, iTemp > 0);
@@ -133,9 +132,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
                 stLVItem.pszText = hWndRelated && Str_CchPrintf(szBuffer, TEXT("%08X"), (DWORD)(DWORD_PTR)hWndRelated) > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
                 stLVItem.iSubItem++;
-                if (!AW_SendMsgTO(hWndRelated, WM_GETTEXT, ARRAYSIZE(szBuffer), (LPARAM)szBuffer, &dwpTemp))
-                    dwpTemp = 0;
-                szBuffer[dwpTemp] = '\0';
+                AW_GetWindowText(hWndRelated, szBuffer);
                 stLVItem.pszText = szBuffer;
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
                 stLVItem.iSubItem++;
@@ -151,7 +148,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
                 Ctl_PopupMenu(hPropRelationshipProcMenu, rcBtn.right, rcBtn.top, hDlg);
         } else if (wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0)) {
             TCHAR   szPath[MAX_PATH];
-            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath, ARRAYSIZE(szPath)))
+            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath))
                 UI_ShellExec(szPath, NULL, UIShellExecExplore, SW_SHOWDEFAULT, NULL);
         } else if (wParam == MAKEWPARAM(IDM_PROC_TERMINATE, 0)) {
             HANDLE  hProc = UI_OpenProc(PROCESS_TERMINATE, AW_GetWndPropHWnd(hDlg));
@@ -161,7 +158,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             }
         } else if (wParam == MAKEWPARAM(IDM_PROC_PROP, 0)) {
             TCHAR   szPath[MAX_PATH];
-            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath, ARRAYSIZE(szPath)))
+            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath))
                 UI_ShellExec(szPath, NULL, UIShellExecProperties, SW_SHOWDEFAULT, NULL);
         }
     }

@@ -1,7 +1,7 @@
 #include "AlleyWind.h"
 
 KNS_INFO stKNSInfo = {
-    AW_NAME,
+    KNS_NAME,
     TRUE,
     { AW_VER_MAJOR, AW_VER_MINOR, AW_VER_REVISION, AW_VER_BUILD, AW_VER_TYPE },
     {

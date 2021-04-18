@@ -48,7 +48,7 @@ typedef struct _CTL_COMBOBOXCTL_ITEM {
 
 /**
   * @brief Creates window menu
-  * @param[in] Menus Pointer to an UI_MENU structures array, contains information about submenus to be created
+  * @param[in, out] Menus Pointer to an UI_MENU structures array, contains information about submenus to be created
   * @param[in] Count Number of UI_MENU structures in Menus parameter
   * @param[in] Parent Handle to parent menu, or NULL if create a top-level menu
   * @return Returns handle to the new menu
@@ -79,7 +79,7 @@ NTA_API VOID NTAPI Ctl_DestroyMenuEx(PCTL_MENU Menus, UINT Count, HMENU Menu);
   * @brief Initializes tab control with property sheet feature powered
   * @param[in] Dialog Handle to the dialog contains the tab control
   * @param[in] TabCtlID Control ID of tab control
-  * @param[in] Sheets Pointer to an CTL_PROPSHEETPAGE structures array, contains information about property sheet of tabs
+  * @param[in, out] Sheets Pointer to an CTL_PROPSHEETPAGE structures array, contains information about property sheet of tabs
   * @param[in] SheetCount Number of CTL_PROPSHEETPAGE structures in Sheets parameter
   * @param[in] Param User defined parameter, will be passed to each DlgProc in UI_PROPSHEETPAGE structure by WM_INITDIALOG message
   */

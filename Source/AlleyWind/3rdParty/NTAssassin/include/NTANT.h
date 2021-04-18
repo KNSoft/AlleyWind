@@ -22,9 +22,17 @@
   * @return Returns the value of member in QWORD(x64 only)/DWORD/WORD/BYTE
   */
 #if defined(_M_AMD64)
+// NT_SetTEBMember may cause code analysis warning, use following NT_SetTEBMember[QWORD/DWORD/WORD/BYTE] instead
 #define NT_SetTEBMember(m, val) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD64) ? __writegsqword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __writegsdword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __writegsword(FIELD_OFFSET(TEB, m), val) : __writegsbyte(FIELD_OFFSET(TEB, m), val)))))
+#define NT_SetTEBMemberQWORD(m, val) __writegsqword(FIELD_OFFSET(TEB, m), val)
+#define NT_SetTEBMemberDWORD(m, val) __writegsdword(FIELD_OFFSET(TEB, m), val)
+#define NT_SetTEBMemberWORD(m, val) __writegsword(FIELD_OFFSET(TEB, m), val)
+#define NT_SetTEBMemberBYTE(m, val) __writegsbyte(FIELD_OFFSET(TEB, m), val)
 #elif defined(_M_IX86)
 #define NT_SetTEBMember(m, val) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __writefsdword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __writefsword(FIELD_OFFSET(TEB, m), val) : __writefsbyte(FIELD_OFFSET(TEB, m), val))))
+#define NT_SetTEBMemberDWORD(m, val) __writefsdword(FIELD_OFFSET(TEB, m), val)
+#define NT_SetTEBMemberWORD(m, val) __writefsword(FIELD_OFFSET(TEB, m), val)
+#define NT_SetTEBMemberBYTE(m, val) __writefsbyte(FIELD_OFFSET(TEB, m), val)
 #endif
 
 /**
@@ -47,32 +55,31 @@
 #define NT_GetKUSD() ((PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
 
 // Last error value
-#define NT_LastErrorClear() NT_SetTEBMember(LastErrorValue, ERROR_SUCCESS)
-#define NT_LastErrorGet() NT_GetTEBMember(LastErrorValue)
-#define NT_LastErrorSet(dwError) NT_SetTEBMember(LastErrorValue, dwError)
+#define NT_ClearLastError() NT_SetTEBMember(LastErrorValue, ERROR_SUCCESS)
+#define NT_GetLastError() NT_GetTEBMember(LastErrorValue)
+#define NT_SetLastError(dwError) NT_SetTEBMemberDWORD(LastErrorValue, dwError)
 #define NT_LastErrorSucceed() (NT_GetTEBMember(LastErrorValue) == ERROR_SUCCESS)
 
 /**
   * @brief Initializes OBJECT_ATTRIBUTES structure
-  * @param[in] lpstObject Pointer to OBJECT_ATTRIBUTES to be filled
-  * @param[in] lpstObjectName ObjectName member to OBJECT_ATTRIBUTES
-  * @param[in] hRootDirectory RootDirectory member to OBJECT_ATTRIBUTES
-  * @param[in] ulAttributes Attributes member to OBJECT_ATTRIBUTES
+  * @param[out] Object Pointer to OBJECT_ATTRIBUTES to be filled
+  * @param[in] RootDirectory RootDirectory member of OBJECT_ATTRIBUTES
+  * @param[in] ObjectName ObjectName member of OBJECT_ATTRIBUTES
+  * @param[in] Attributes Attributes member of OBJECT_ATTRIBUTES
   */
-NTA_API VOID NTAPI NT_InitObjectW(POBJECT_ATTRIBUTES lpstObject, PUNICODE_STRING lpstObjectName, HANDLE hRootDirectory, ULONG ulAttributes);
-#ifdef UNICODE
-#define NT_InitObject NT_InitObjectW
-#else
-#define NT_InitObject NT_InitObjectA
-#endif
+NTA_API VOID NTAPI NT_InitObject(POBJECT_ATTRIBUTES Object, HANDLE RootDirectory, PUNICODE_STRING ObjectName, ULONG Attributes);
 
 /**
   * @brief Initializes OBJECT_ATTRIBUTES structure of path
-  * @param[in] lpszPath Pointer to path string
-  * @param[in] lpstObject Pointer to OBJECT_ATTRIBUTES to be filled
-  * @param[in] lpstObjectName ObjectName member to OBJECT_ATTRIBUTES
-  * @param[in] hRootDirectory RootDirectory member to OBJECT_ATTRIBUTES
+  * @param[in] Path Pointer to path string
+  * @param[in] RootDirectory RootDirectory member of OBJECT_ATTRIBUTES
+  * @param[out] Object Pointer to OBJECT_ATTRIBUTES to be filled
+  * @param[out] ObjectName ObjectName member of OBJECT_ATTRIBUTES
   */
-NTA_API NTSTATUS NTAPI NT_InitPathObject(LPCWSTR lpszPath, POBJECT_ATTRIBUTES lpstObject, PUNICODE_STRING lpstObjectName, HANDLE hRootDirectory);
+NTA_API NTSTATUS NTAPI NT_InitPathObject(PCWSTR Path, HANDLE RootDirectory, POBJECT_ATTRIBUTES Object, PUNICODE_STRING ObjectName);
 
-NTA_API int NT_SEH_NopHandler(LPEXCEPTION_POINTERS lpstExceptionInfo);
+/**
+  * @brief A SEH handler do nothing just returns EXCEPTION_EXECUTE_HANDLER
+  * @details __try {...} __except (NT_SEH_NopHandler(NULL)) {...}
+  */
+NTA_API int NT_SEH_NopHandler(LPEXCEPTION_POINTERS ExceptionInfo);

@@ -22,22 +22,22 @@ NTA_API BOOL NTAPI GDI_FrameRect(HDC DC, PRECT Rect, INT Width, DWORD ROP);
   * @brief Writes bitmap data to buffer
   * @param[in] DC Handle to the DC
   * @param[in] Bitmap Handle to the bitmap
-  * @param[in] Buffer Pointer to buffer to receive bitmap data
+  * @param[out] Buffer Pointer to buffer to receive bitmap data
   * @param[in] BufferSize Size in bytes of buffer
-  * @param[in, opt] BytesWritten Pointer to the variable receives the number of bytes written
+  * @param[out, opt] BytesWritten Pointer to the variable receives the number of bytes written
   * @return Returns NTSTATUS
   */
 NTA_API NTSTATUS NTAPI GDI_WriteBitmap(HDC DC, HBITMAP Bitmap, PVOID Buffer, SIZE_T BufferSize, PSIZE_T BytesWritten);
 
 /**
   * @brief Initializes ENUMLOGFONTEXDVW structure members EXCEPT LOGFONT (elfEnumLogfontEx.elfLogFont)
-  * @param[in] InternalFontInfo Pointer to the ENUMLOGFONTEXDVW structure
+  * @param[out] InternalFontInfo Pointer to the ENUMLOGFONTEXDVW structure
   */
 NTA_API VOID NTAPI GDI_InitInternalFontInfo(PENUMLOGFONTEXDVW InternalFontInfo);
 
 /**
   * @brief Initializes LOGFONTW structure with default and specified attributes
-  * @param[in] FontInfo Pointer to the LOGFONTW structure
+  * @param[out] FontInfo Pointer to the LOGFONTW structure
   * @param[in] FontSize Font size
   * @param[in] FontWeight Font weight
   * @param[in] FontName Font's famliy name, or NULL to use the first font matches attributes
@@ -55,7 +55,7 @@ HFONT NTAPI GDI_CreateFont(LONG FontSize, LONG FontWeight, PCWSTR FontName);
 /**
   * @brief Retrieves information for the font
   * @param[in] Font Handle to the font
-  * @param[in] FontInfo Pointer to the LOGFONTW structure receives information
+  * @param[out] FontInfo Pointer to the LOGFONTW structure receives information
   * @return Number of bytes stored or 0 if failed
   * @see "GetObject"
   */

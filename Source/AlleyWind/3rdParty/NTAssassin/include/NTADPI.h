@@ -1,3 +1,5 @@
+// High-DPI support
+
 #pragma once
 
 #include "NTAssassin.h"
@@ -12,21 +14,21 @@ NTA_API VOID NTAPI DPI_FromWindow(HWND Window, PUINT DPIX, PUINT DPIY);
 
 /**
   * @brief Scales a value according to given DPI
-  * @param[in, out] RectPointer Pointer to the RECT structure to be scaled
+  * @param[in, out] Value Pointer to the RECT structure to be scaled
   * @param[in] OldDPI Old DPI value
   * @param[in] NewDPI New DPI value
   */
-NTA_API VOID NTAPI DPI_Scale(PINT ValuePointer, UINT OldDPI, UINT NewDPI);
+NTA_API VOID NTAPI DPI_Scale(PINT Value, UINT OldDPI, UINT NewDPI);
 
 /**
   * @brief Scales a value according to given DPI
-  * @param[in, out] RectPointer Pointer to the RECT structure to be scaled
+  * @param[in, out] Rect Pointer to the RECT structure to be scaled
   * @param[in] OldDPIX Old DPI-X value
   * @param[in] NewDPIX New DPI-X value
   * @param[in] OldDPIY Old DPI-Y value
   * @param[in] NewDPIY New DPI-Y value
   */
-VOID NTAPI DPI_ScaleRect(PRECT RectPointer, UINT OldDPIX, UINT NewDPIX, UINT OldDPIY, UINT NewDPIY);
+VOID NTAPI DPI_ScaleRect(PRECT Rect, UINT OldDPIX, UINT NewDPIX, UINT OldDPIY, UINT NewDPIY);
 
 /**
   * @see "IsProcessDPIAware"
@@ -37,7 +39,8 @@ NTA_API BOOL NTAPI DPI_IsAware();
 /**
   * @brief Subclasses a dialog box to support High-DPI
   * @param[in] Dialog Handle to the dialog box
-  * @param[in] Font Handle to the font apply to the dialog box
+  * @param[in, opt] Font Handle to the font apply to the dialog box
   * @return Returns TRUE if subclass successfully, or FALSE if failed
+  * @see "SetDialogDpiChangeBehavior"
   */
 NTA_API BOOL NTAPI DPI_SetAutoAdjustSubclass(HWND Dialog, HFONT Font);

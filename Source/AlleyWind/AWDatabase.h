@@ -2,13 +2,14 @@
 
 #include "AlleyWind.h"
 
-EXTERN_C LPCWSTR lpszDVE[7];
+EXTERN_C PCWSTR lpszDVE[7];
+EXTERN_C PCWSTR lpszDRE[9];
 
 typedef struct _AW_SYSCLASSINFO {
-    LPTSTR  ClassName;
+    PTSTR  ClassName;
     union {
         UINT_PTR    I18NIndex;
-        LPWSTR      DisplayName;
+        PWSTR       DisplayName;
     };
     PDLG_VALUEEDITOR_CONST  StyleConsts;
     UINT                    StyleConstsCount;

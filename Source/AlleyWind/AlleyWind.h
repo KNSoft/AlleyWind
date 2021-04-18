@@ -24,7 +24,7 @@
 #endif
 #endif
 
-#define AW_NAME TEXT("AlleyWind")
+#define KNS_NAME TEXT("AlleyWind")
 
 #define AW_VER_MAJOR 1
 #define AW_VER_MINOR 0
@@ -33,8 +33,6 @@
 #define AW_VER_TYPE KNS_VERSION_ALPHA
 
 #define MAX_WNDCAPTION_CCH 128
-
-EXTERN_C KNS_INFO stKNSInfo;
 
 INT_PTR WINAPI MainDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

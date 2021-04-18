@@ -45,11 +45,11 @@ typedef enum _PROC_LM_SE_NAMES {
 
 /**
   * @brief Callback procedure to enumerate DLL modules
-  * @param[in] lpstDll Pointer to LDR_DATA_TABLE_ENTRY of each DLL modules
-  * @param[in] lParam User defined value passed to the callback
+  * @param[in] DllLdrEntry Pointer to LDR_DATA_TABLE_ENTRY of each DLL modules
+  * @param[in] Param User defined value passed to the callback
   * @return Returns FALSE to stop the enumeration, or TRUE to continue
   */
-typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY lpstDll, LPARAM lParam);
+typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY DllLdrEntry, LPARAM Param);
 
 /**
  * @brief Gets current process command line
@@ -61,7 +61,7 @@ typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY lpstDll, LPARAM l
  * @brief Creates a new thread
  * @return Returns NTSTATUS
  */
-#define Proc_CreateThread(lpStartAddress, Parameter, bCreateSuspended, lphThread) RtlCreateUserThread(CURRENT_PROCESS_HANDLE, NULL, bCreateSuspended, 0, 0, 0, lpStartAddress, Parameter, lphThread, NULL)
+#define Proc_CreateThread(StartAddress, Parameter, CreateSuspended, ThreadHandle) RtlCreateUserThread(CURRENT_PROCESS_HANDLE, NULL, CreateSuspended, 0, 0, 0, StartAddress, Parameter, ThreadHandle, NULL)
 
  /**
   * @brief Gets handle to ntdll.dll, which the first loaded module of executable image
@@ -71,30 +71,30 @@ typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY lpstDll, LPARAM l
 
 /**
   * @brief Enumerates DLL modules of current process
-  * @param[in] lpEnumProc Callback procedure to receive information of each DLL
-  * @param[in] lParam User defined value passed to the callback
+  * @param[in] DllEnumProc Callback procedure to receive information of each DLL
+  * @param[in] Param User defined value passed to the callback
   * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of last enumerated DLL if the callback stops the enumeration, or NULL if enumeration finished successfully
   */
-NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_EnumDlls(PROC_DLLENUMPROC lpEnumProc, LPARAM lParam);
+NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_EnumDlls(PROC_DLLENUMPROC DllEnumProc, LPARAM Param);
 
 /**
   * @brief Gets DLL information with specified module name
   * @param[in] DllName Module name of DLL
   * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of specified DLL, or NULL if no DLL matched
   */
-NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByNameW(LPWSTR DllName);
+NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByName(PWSTR DllName);
 
 /**
   * @brief Gets handle to a DLL by module name
   * @param[in] DllName Module name of DLL
   * @return Returns handle to the DLL or NULL if failed
   */
-NTA_API HMODULE NTAPI Proc_GetDllHandleByNameW(LPWSTR DllName);
+NTA_API HMODULE NTAPI Proc_GetDllHandleByName(PWSTR DllName);
 
 /**
   * @brief Gets handle to a DLL by address
   * @param[in] Address within the DLL
-  * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of specified DLL, or NULL if no DLL matched
+  * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of matched DLL, or NULL if no DLL matched
   */
 NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByAddr(PVOID Address);
 
@@ -104,26 +104,27 @@ NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByAddr(PVOID Address);
   * @param[in] DontResolveRef Set to TRUE to don't resolve references
   * @return Returns handle to the DLL or NULL if failed
   */
-NTA_API HMODULE NTAPI Proc_LoadDll(PCWSTR LibName, BOOL DontResolveRef);
+NTA_API HMODULE NTAPI Proc_LoadDll(PWSTR LibName, BOOL DontResolveRef);
 
 /**
   * @see "GetProcAddress"
   */
-NTA_API PVOID NTAPI Proc_GetProcAddr(HMODULE Module, PCSTR ProcName);
+NTA_API PVOID NTAPI Proc_GetProcAddr(HMODULE Module, PSTR ProcName);
 
 /**
   * @brief Loads procedure address of specified module, module will be loaded if not yet
   * @see "LoadLibrary" and "GetProcAddress"
   */
-NTA_API PVOID NTAPI Proc_LoadProcAddr(PCWSTR LibName, PCSTR ProcName);
+NTA_API PVOID NTAPI Proc_LoadProcAddr(PWSTR LibName, PSTR ProcName);
 
 /**
   * @brief Adjusts current process privilege
   * @param[in] Privilege Privilege to adjust, specify any of PROC_LM_SE_NAMES value
-  * @param[in] bEnable Set to TRUE to enable specified privilege, or FALSE to disable
+  * @param[in] EnableState Set to TRUE to enable specified privilege, or FALSE to disable
   * @return Returns NTSTATUS
+  * @see "AdjustTokenPrivileges"
   */
-#define Proc_AdjustPrivilege(Privilege, bEnable) RProc_AdjustPrivilege(CURRENT_PROCESS_HANDLE, Privilege, bEnable)
+#define Proc_AdjustPrivilege(Privilege, EnableState) RProc_AdjustPrivilege(CURRENT_PROCESS_HANDLE, Privilege, EnableState)
 #define Proc_EnablePrivilege(Privilege) Proc_AdjustPrivilege(Privilege, TRUE)
 #define Proc_DisablePrivilege(Privilege) Proc_AdjustPrivilege(Privilege, FALSE)
 
@@ -134,14 +135,14 @@ NTA_API PVOID NTAPI Proc_LoadProcAddr(PCWSTR LibName, PCSTR ProcName);
   * @return Returns NTSTATUS
   * @see "WaitForSingleObject"
   */
-NTA_API NTSTATUS NTAPI Proc_WaitForObject(HANDLE hObj, DWORD dwMilliseconds);
+NTA_API NTSTATUS NTAPI Proc_WaitForObject(HANDLE Object, DWORD Milliseconds);
 
 /**
   * @see "Sleep"
   */
-NTA_API NTSTATUS NTAPI Proc_DelayExec(DWORD dwMilliseconds);
+NTA_API NTSTATUS NTAPI Proc_DelayExec(DWORD Milliseconds);
 
 /**
   * @see "GetExitCodeThread"
   */
-NTA_API NTSTATUS NTAPI Proc_GetThreadExitCode(HANDLE hThread, LPDWORD lpExitCode);
+NTA_API NTSTATUS NTAPI Proc_GetThreadExitCode(HANDLE ThreadHandle, PDWORD ExitCode);

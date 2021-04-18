@@ -62,8 +62,8 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
     if (uMsg == WM_INITDIALOG) {
         HWND        hWnd, hCtl;
         LRESULT     lResult;
-        DWORD       dwStyle, dwStyleError;
-        DWORD_PTR   dwTemp;
+        DWORD       dwStyleError;
+        DWORD_PTR   dwpStyle, dwpTemp;
         RECT        rcClient;
         BOOL        bImageAvailable;
         hWnd = (HWND)lParam;
@@ -71,9 +71,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         // Initialize
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astWndPropResourceTextCtl);
-        NT_LastErrorClear();
-        dwStyle = (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE);
-        dwStyleError = NT_LastErrorGet();
+        dwStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
         // Client Area Image
         if (hWnd == GetDesktopWindow()) {
             rcClient.right = GetSystemMetrics(SM_CXVIRTUALSCREEN);
@@ -84,26 +82,25 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_IMAGE_EDIT, bImageAvailable, TEXT("%ldx%ld"), rcClient.right, rcClient.bottom);
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_IMAGE_BTN, bImageAvailable);
         // hInstance
-        NT_LastErrorClear();
-        dwTemp = GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HINSTANCE_EDIT, dwTemp || NT_LastErrorSucceed(), TEXT("%p"), (HINSTANCE)dwTemp);
+        UI_GetWindowLong(hWnd, FALSE, GWLP_HINSTANCE, &dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HINSTANCE_EDIT, dwpTemp || NT_LastErrorSucceed(), TEXT("%p"), (HINSTANCE)dwpTemp);
         // hFont
-        lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwTemp);
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwTemp != 0);
+        lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwpTemp);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwpTemp != 0);
         // hMenu
-        if (dwStyleError != ERROR_SUCCESS || dwStyle & WS_CHILD)
+        if (dwStyleError != ERROR_SUCCESS || dwpStyle & WS_CHILD)
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, FALSE);
         else
             AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, TRUE, TEXT("%p"), GetMenu(hWnd));
         // hIcon
-        lResult = AW_SendMsgTO(hWnd, WM_GETICON, 0, 0, &dwTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_ICON_EDIT, lResult != 0, TEXT("%p"), (HICON)dwTemp);
+        lResult = AW_SendMsgTO(hWnd, WM_GETICON, 0, 0, &dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_ICON_EDIT, lResult != 0, TEXT("%p"), (HICON)dwpTemp);
         // Hot Key
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HOTKEY_EDIT);
-        lResult = AW_SendMsgTO(hWnd, WM_GETHOTKEY, 0, 0, &dwTemp);
+        lResult = AW_SendMsgTO(hWnd, WM_GETHOTKEY, 0, 0, &dwpTemp);
         if (lResult)
-            SendMessage(hCtl, HKM_SETHOTKEY, LOWORD(dwTemp), 0);
+            SendMessage(hCtl, HKM_SETHOTKEY, LOWORD(dwpTemp), 0);
         else
             EnableWindow(hCtl, FALSE);
         // Property List
@@ -186,7 +183,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             DeleteDC(hMemDC);
             DeleteObject(hMemBmp);
             ReleaseDC(hWnd, hDC);
-        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HOTKEY_EDIT, EN_CHANGE) && !UI_IsSetNoChangeNotify((HWND)lParam)) {
+        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HOTKEY_EDIT, EN_CHANGE) && !UI_GetNoNotifyFlag((HWND)lParam)) {
             HWND        hWnd;
             WORD        wHotkey;
             DWORD_PTR   dwpTemp;
@@ -194,9 +191,9 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             wHotkey = LOWORD(SendMessage((HWND)lParam, HKM_GETHOTKEY, 0, 0));
             if (!AW_SendMsgTO(hWnd, WM_SETHOTKEY, wHotkey, 0, &dwpTemp) || dwpTemp <= 0) {
                 if (AW_SendMsgTO(hWnd, WM_GETHOTKEY, 0, 0, &dwpTemp)) {
-                    UI_SetNoChangeNotify(hWnd, TRUE);
+                    UI_SetNoNotifyFlag(hWnd, TRUE);
                     SendMessage((HWND)lParam, HKM_SETHOTKEY, LOWORD(dwpTemp), 0);
-                    UI_SetNoChangeNotify(hWnd, FALSE);
+                    UI_SetNoNotifyFlag(hWnd, FALSE);
                 } else
                     EnableWindow((HWND)lParam, FALSE);
             }

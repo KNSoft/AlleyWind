@@ -66,7 +66,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         HBRUSH          hbrBlack;
         UI_BeginPaint(hWnd, &stPaint);
         // Copy screen mirror
-        BitBlt(stPaint.hDC,
+        BitBlt(stPaint.DC,
             0,
             0,
             stWndPropOperationPickColorScreenSnapshot.iScreenCX,
@@ -84,7 +84,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         rcInfoBox.bottom = rcInfoBox.top + AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT * AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
         // Draw zoomed image
         hbrBlack = GetStockBrush(BLACK_BRUSH);
-        SelectBrush(stPaint.hDC, hbrBlack);
+        SelectBrush(stPaint.DC, hbrBlack);
         rcPixel.top = rcInfoBox.top;
         rcPixel.bottom = rcInfoBox.top + AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
         for (uRow = 0; uRow < AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT; uRow++) {
@@ -92,7 +92,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             rcPixel.right = rcPixel.left + AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
             for (uCol = 0; uCol < AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT; uCol++) {
                 GDI_FillSolidRect(
-                    stPaint.hDC,
+                    stPaint.DC,
                     &rcPixel,
                     GetPixel(
                         stWndPropOperationPickColorScreenSnapshot.hdcMirror,
@@ -102,11 +102,11 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 );
                 // Draw center cross
                 if (uRow == AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT / 2 && uCol == uRow)
-                    GDI_FrameRect(stPaint.hDC, &rcPixel, -AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
+                    GDI_FrameRect(stPaint.DC, &rcPixel, -AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
                 else if (uRow == AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT / 2 && (uCol == uRow - 1 || uCol == uRow + 1))
-                    PatBlt(stPaint.hDC, rcPixel.left, (rcPixel.bottom + rcPixel.top) / 2, rcPixel.right - rcPixel.left, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
+                    PatBlt(stPaint.DC, rcPixel.left, (rcPixel.bottom + rcPixel.top) / 2, rcPixel.right - rcPixel.left, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
                 else if (uCol == AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT / 2 && (uRow == uCol - 1 || uRow == uCol + 1))
-                    PatBlt(stPaint.hDC, (rcPixel.right + rcPixel.left) / 2, rcPixel.top, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, rcPixel.bottom - rcPixel.top, DSTINVERT);
+                    PatBlt(stPaint.DC, (rcPixel.right + rcPixel.left) / 2, rcPixel.top, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, rcPixel.bottom - rcPixel.top, DSTINVERT);
                 rcPixel.left += AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
                 rcPixel.right += AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
             }
@@ -114,7 +114,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             rcPixel.bottom += AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
         }
         // Draw border
-        GDI_FrameRect(stPaint.hDC, &rcInfoBox, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
+        GDI_FrameRect(stPaint.DC, &rcInfoBox, AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER, DSTINVERT);
         UI_EndPaint(hWnd, &stPaint);
         return 0;
     } else if (uMsg == WM_MOUSEMOVE) {
@@ -160,12 +160,15 @@ BOOL WndPropOperationOpenPickColorWindow(LPCOLORREF lpcrPicked) {
 VOID WndPropOperationSetCheckByStyle(HWND hDlg, UINT uCheckID, BOOL bExStyle, LONG_PTR lStyle) {
     LONG_PTR    lTemp;
     UINT_PTR    uCheck;
-    BOOL        bSuccess;
-    NT_LastErrorClear();
-    lTemp = GetWindowLongPtr(AW_GetWndPropHWnd(hDlg), bExStyle ? GWL_EXSTYLE : GWL_STYLE);
-    bSuccess = lTemp || NT_LastErrorSucceed();
+    BOOL        bSucc;
+    bSucc = UI_GetWindowLong(
+        AW_GetWndPropHWnd(hDlg),
+        FALSE,
+        bExStyle ? GWL_EXSTYLE : GWL_STYLE,
+        &lTemp
+    ) == ERROR_SUCCESS;
     lTemp &= lStyle;
-    if (bSuccess)
+    if (bSucc)
         if (lTemp == lStyle)
             uCheck = BST_CHECKED;
         else if (lTemp == 0)
@@ -174,7 +177,7 @@ VOID WndPropOperationSetCheckByStyle(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
             uCheck = BST_INDETERMINATE;
     else
         uCheck = BST_UNCHECKED;
-    AW_SetPropCtlCheck(hDlg, uCheckID, uCheck, bSuccess);
+    AW_SetPropCtlCheck(hDlg, uCheckID, uCheck, bSucc);
 }
 
 BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LONG_PTR lStyle) {
@@ -182,13 +185,14 @@ BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
     LONG_PTR    lTemp;
     INT         iIndex;
     UINT_PTR    uCheck;
-    BOOL        bSuccess;
     hWnd = AW_GetWndPropHWnd(hDlg);
     iIndex = bExStyle ? GWL_EXSTYLE : GWL_STYLE;
-    NT_LastErrorClear();
-    lTemp = GetWindowLongPtr(hWnd, iIndex);
-    bSuccess = lTemp || NT_LastErrorSucceed();
-    if (!bSuccess)
+    if (UI_GetWindowLong(
+        AW_GetWndPropHWnd(hDlg),
+        FALSE,
+        iIndex,
+        &lTemp
+    ) != ERROR_SUCCESS)
         return FALSE;
     hCheck = GetDlgItem(hDlg, uCheckID);
     uCheck = SendMessage(hCheck, BM_GETCHECK, 0, 0);
@@ -196,7 +200,7 @@ BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
         SendMessage(hCheck, BM_SETCHECK, BST_UNCHECKED, 0);
         uCheck = BST_UNCHECKED;
     }
-    NT_LastErrorClear();
+    NT_ClearLastError();
     lStyle = SetWindowLongPtr(hWnd, iIndex, COMBINE_FLAGS(lTemp, lStyle, uCheck == BST_CHECKED));
     return lStyle || NT_LastErrorSucceed();
 }
@@ -216,18 +220,17 @@ VOID WndPropOperationLayeredGet(HWND hDlg) {
     BYTE        byteLayeredAlpha;
     BOOL        bIsLayeredWnd, bTemp;
     COLORREF    crLayeredColorKey;
-    DWORD       dwExStyle, dwExStyleError, dwLayeredFlags;
+    DWORD_PTR   dwpExStyle;
+    DWORD       dwExStyleError, dwLayeredFlags;
     hWnd = AW_GetWndPropHWnd(hDlg);
-    NT_LastErrorClear();
-    dwExStyle = (DWORD)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-    dwExStyleError = NT_LastErrorGet();
+    dwExStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpExStyle);
     hCtlLayeredCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_LAYERED_CHECK);
     hCtlOpacityCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_CHECK);
     hCtlOpacitySlider = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER);
     hCtlColorKeyCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_CHECK);
     bIsLayeredWnd = FALSE;
     if (dwExStyleError == ERROR_SUCCESS) {
-        bIsLayeredWnd = dwExStyle & WS_EX_LAYERED;
+        bIsLayeredWnd = dwpExStyle & WS_EX_LAYERED;
         SendMessage(hCtlLayeredCheck, BM_SETCHECK, bIsLayeredWnd ? BST_CHECKED : BST_UNCHECKED, 0);
         if (bIsLayeredWnd && GetLayeredWindowAttributes(hWnd, &crLayeredColorKey, &byteLayeredAlpha, &dwLayeredFlags)) {
             EnableWindow(hCtlOpacityCheck, TRUE);
@@ -368,7 +371,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             LPCWSTR lpszText;
             UINT    uType;
             szTheme[UI_GetDlgItemText(hDlg, IDC_WNDPROP_OPERATION_VISUALSTYLE_COMBOX, szTheme)] = '\0';
-            if (SUCCEEDED(SetWindowTheme(hWnd, szTheme, L""))) {
+            if (SUCCEEDED(SetWindowTheme(hWnd, szTheme, szTheme[0] ? NULL : szTheme))) {
                 SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                 UI_Redraw(hWnd);
                 lpszText = (LPCWSTR)I18NIndex_OperationSucceeded;

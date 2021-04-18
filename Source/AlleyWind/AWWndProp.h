@@ -12,13 +12,7 @@ HWND AW_RemoveWndPropHWnd(HWND hDlg);
 
 VOID AW_SetPropCtlFormat(HWND hDlg, UINT uCtlID, BOOL bSuccess, _Printf_format_string_ LPTSTR lpszFormat, ...);
 
-VOID AW_SetPropCtlStringW(HWND hDlg, UINT uCtlID, LPCWSTR lpszString, BOOL bSuccess);
-VOID AW_SetPropCtlStringA(HWND hDlg, UINT uCtlID, LPCSTR lpszString, BOOL bSuccess);
-#ifdef UNICODE
-#define AW_SetPropCtlString AW_SetPropCtlStringW
-#else
-#define AW_SetPropCtlString AW_SetPropCtlStringA
-#endif
+VOID AW_SetPropCtlString(HWND hDlg, UINT uCtlID, LPCWSTR lpszString, BOOL bSuccess);
 
 VOID AW_SetPropCtlCheck(HWND hDlg, UINT uCtlID, UINT_PTR uCheck, BOOL bSuccess);
 

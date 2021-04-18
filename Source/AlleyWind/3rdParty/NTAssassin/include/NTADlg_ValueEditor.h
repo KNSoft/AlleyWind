@@ -29,10 +29,10 @@ typedef struct _DLG_VALUEEDITOR {
   * @param[in] Owner Handle to owner window
   * @param[in] Flags Can be combined with one of DVE_TYPE_XXX and one of DVE_VALUE_XXX
   * @param[in] Strings String table to display text on the dialog, default strings is ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
-  * @param[in, out] ValuePointer Pointer to the value
+  * @param[in, out] Value Pointer to the value
   * @param[in] Consts Constant members of value
   * @param[in] ConstCount Number of constants in Consts parameter
   * @return Returns BOOL
   */
-NTA_API BOOL NTAPI Dlg_ValueEditorEx(HWND Owner, DWORD Flags, PCWSTR *Strings, PQWORD ValuePointer, PDLG_VALUEEDITOR_CONST Consts, UINT ConstCount);
+NTA_API BOOL NTAPI Dlg_ValueEditorEx(HWND Owner, DWORD Flags, PCWSTR *Strings, PQWORD Value, PDLG_VALUEEDITOR_CONST Consts, UINT ConstCount);
 #define Dlg_ValueEditor(Owner, Flags, Strings, ValuePointer, Consts) Dlg_ValueEditorEx(Owner, Flags, Strings, ValuePointer, Consts, ARRAYSIZE(Consts))

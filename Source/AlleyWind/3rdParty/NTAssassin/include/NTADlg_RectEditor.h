@@ -11,7 +11,7 @@ typedef struct _DLG_RECTEDITOR {
 /**
   * @brief Edit RECT structure
   * @param[in] Strings String table to display text on the dialog, default strings is ["Title", "Reset", "OK", "Left", "Top", "Right", "Bottom", "Width", "Height"]
-  * @param[in, out] RectPointer Pointer to the RECT structure
+  * @param[in, out] Rect Pointer to the RECT structure
   * @return Returns BOOL
   */
-NTA_API BOOL NTAPI Dlg_RectEditor(HWND Owner, PCWSTR *Strings, PRECT RectPointer);
+NTA_API BOOL NTAPI Dlg_RectEditor(HWND Owner, PCWSTR *Strings, PRECT Rect);

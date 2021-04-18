@@ -68,6 +68,3 @@ NTA_API HWND NTAPI I18N_InitCtlText(HWND Dialog, INT CtlID, UINT_PTR StrIndex);
   */
 NTA_API VOID NTAPI I18N_InitCtlTextsEx(HWND Dialog, PI18N_CTLTEXT CtlTexts, UINT CtlTextCount);
 #define I18N_InitCtlTexts(Dialog, CtlTexts) I18N_InitCtlTextsEx(Dialog, CtlTexts, ARRAYSIZE(CtlTexts))
-
-#define I18N_GetErrorInfo(dwWin32Error) Sys_GetErrorInfo(dwWin32Error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT))
-#define I18N_GetStatusInfo(lStatus) Sys_GetStatusInfo(lStatus, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT))

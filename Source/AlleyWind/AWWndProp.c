@@ -30,15 +30,9 @@ VOID AW_SetPropCtlFormat(HWND hDlg, UINT uCtlID, BOOL bSuccess, _Printf_format_s
     EnableWindow(hCtl, bSuccess);
 }
 
-VOID AW_SetPropCtlStringW(HWND hDlg, UINT uCtlID, LPCWSTR lpszString, BOOL bSuccess) {
+VOID AW_SetPropCtlString(HWND hDlg, UINT uCtlID, LPCWSTR lpszString, BOOL bSuccess) {
     HWND    hCtl = GetDlgItem(hDlg, uCtlID);
-    UI_SetWndTextNoNotifyW(hCtl, bSuccess ? lpszString : NULL);
-    EnableWindow(hCtl, bSuccess);
-}
-
-VOID AW_SetPropCtlStringA(HWND hDlg, UINT uCtlID, LPCSTR lpszString, BOOL bSuccess) {
-    HWND    hCtl = GetDlgItem(hDlg, uCtlID);
-    UI_SetWndTextNoNotifyA(hCtl, bSuccess ? lpszString : NULL);
+    UI_SetWndTextNoNotify(hCtl, bSuccess ? lpszString : NULL);
     EnableWindow(hCtl, bSuccess);
 }
 
@@ -92,9 +86,9 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
 BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
     NTSTATUS                lStatus;
     HANDLE                  hProc = NULL;
-    DWORD                   dwExtraSize, dwNextOffset, dwOffset;
+    DWORD_PTR               dwpExtraSize, dwpNextOffset, dwpOffset;
     LONG_PTR                lBytes;
-    UINT                    uWordSize;
+    UINT_PTR                uWordSize;
     HIJACK_CALLPROCHEADER   stCallProc;
     HIJACK_CALLPROCPARAM    stGLParams[] = {
         { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
@@ -102,13 +96,12 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
     };
     BOOL                    bUseHijack = FALSE, b32Proc;
     LPSTR                   lpszGLFunc;
-    NT_LastErrorClear();
-    dwExtraSize = (DWORD)GetClassLongPtr(hWnd, bClassExtraBytes ? GCL_CBCLSEXTRA : GCL_CBWNDEXTRA);
-    if (dwExtraSize) {
+    UI_GetWindowLong(hWnd, TRUE, bClassExtraBytes ? GCL_CBCLSEXTRA : GCL_CBWNDEXTRA, &dwpExtraSize);
+    if (dwpExtraSize) {
         if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
             DWORD       dwPID;
             GetWindowThreadProcessId(hWnd, &dwPID);
-            hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID);
+            hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID); // TODO
             if (hProc) {
                 if (IsWow64Process(hProc, &b32Proc)) {
                     lpszGLFunc = bClassExtraBytes ?
@@ -131,34 +124,26 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         uWordSize = bUseHijack ?
             (b32Proc ? sizeof(DWORD) : sizeof(QWORD)) :
             sizeof(LONG_PTR);
-        dwOffset = 0;
+        dwpOffset = 0;
         do {
             if (bUseHijack) {
-                stGLParams[1].Value = dwOffset;
+                stGLParams[1].Value = dwpOffset;
                 lStatus = Hijack_CallProc(hProc, &stCallProc, stGLParams, INFINITE);
                 if (NT_SUCCESS(lStatus) && stCallProc.LastError == ERROR_SUCCESS) {
                     lBytes = (LONG_PTR)stCallProc.RetValue;
                 } else {
                     lBytes = 0;
-                    NT_LastErrorSet(ERROR_READ_FAULT);
+                    NT_SetLastError(ERROR_READ_FAULT);
                 }
                 if (b32Proc)
                     lBytes = (DWORD)lBytes;
-            } else {
-                NT_LastErrorClear();
-                // GetXXXLongPtr may crash when have no administrator privilege
-                __try {
-                    lBytes = (LONG_PTR)(bClassExtraBytes ? GetClassLongPtr(hWnd, dwOffset) : GetWindowLongPtr(hWnd, dwOffset));
-                } __except (NT_SEH_NopHandler(NULL)) {
-                    lBytes = 0;
-                    NT_LastErrorSet(ERROR_READ_FAULT);
-                }
-            }
-            dwNextOffset = dwOffset + uWordSize;
-            if (!AW_WndPropExtraBytesEnumProc(dwOffset, lBytes, dwNextOffset > dwExtraSize ? dwExtraSize - dwOffset : uWordSize, lBytes ? ERROR_SUCCESS : NT_LastErrorGet(), lParam))
+            } else
+                NT_SetLastError(UI_GetWindowLong(hWnd, bClassExtraBytes, (INT)dwpOffset, &lBytes));
+            dwpNextOffset = dwpOffset + uWordSize;
+            if (!AW_WndPropExtraBytesEnumProc((DWORD)dwpOffset, lBytes, (UINT)(dwpNextOffset > dwpExtraSize ? dwpExtraSize - dwpOffset : uWordSize), lBytes ? ERROR_SUCCESS : NT_GetLastError(), lParam))
                 return FALSE;
-            dwOffset = dwNextOffset;
-        } while (dwOffset < dwExtraSize);
+            dwpOffset = dwpNextOffset;
+        } while (dwpOffset < dwpExtraSize);
         if (bUseHijack) {
             NtClose(hProc);
             hProc = NULL;

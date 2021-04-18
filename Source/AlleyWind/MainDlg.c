@@ -89,7 +89,6 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     AW_ENUMCHILDREN     stEnumChildren;
     TCHAR               szCaption[MAX_WNDCAPTION_CCH], szClassName[MAX_CLASSNAME_CCH];
     TCHAR               szBuffer[sizeof(DWORD) * 2 + ARRAYSIZE(szCaption) + ARRAYSIZE(szClassName) + 16];
-    DWORD_PTR           dwResult;
     PAW_SYSCLASSINFO    lpSysClsInfo;
     HICON               hIcon;
     INT                 iImageIcon, iCch;
@@ -120,9 +119,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     } else
         hParent = lpstEnumChildren->hParentNode;
     // Get window info
-    if (!AW_SendMsgTO(hWnd, WM_GETTEXT, ARRAYSIZE(szCaption), (LPARAM)szCaption, &dwResult))
-        dwResult = 0;
-    szCaption[dwResult] = '\0';
+    AW_GetWindowText(hWnd, szCaption);
     if (bFilter && (!bFindCaption || Str_CchIndex_BF(szCaption, szFindCaptionName) != -1))
         bCaptionMatched = TRUE;
     if (!GetClassName(hWnd, szClassName, ARRAYSIZE(szClassName)))
@@ -142,7 +139,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         // Append node info and icon
         hIcon = NULL;
         if (!(AW_SendMsgTO(hWnd, WM_GETICON, ICON_SMALL, 0, (PDWORD_PTR)&hIcon) && hIcon))
-            hIcon = (HICON)GetClassLongPtr(hWnd, GCLP_HICON);
+            UI_GetWindowLong(hWnd, TRUE, GCLP_HICON, (PLONG_PTR)&hIcon);
         if (hIcon)
             iImageIcon = ImageList_ReplaceIcon(himlIcons, -1, hIcon);
         stTVIInsert.item.iImage = stTVIInsert.item.iSelectedImage = (!hIcon || iImageIcon == -1) ? 0 : iImageIcon;
@@ -199,7 +196,7 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         
         KNS_SetDialogSubclass(hDlg, MainDlgResizeProc);
         hMainDlg = hDlg;
-        SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)AW_NAME);
+        SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)KNS_NAME);
 
         // Obtain basic info of window and controls
         hBanner = GetDlgItem(hDlg, IDC_MAINBANNER);
@@ -269,7 +266,7 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         } else if (wParam == MAKEWPARAM(IDM_EXIT, 0)) {
             EndDialog(hDlg, 0);
         } else if (wParam == MAKEWPARAM(IDM_HOMEPAGE, 0)) {
-            UI_ShellExecW(stKNSInfo.OnlineService.HomePage, NULL, UIShellExecOpen, SW_SHOWNORMAL, NULL);
+            KNS_OpenHomePage();
         } else if (wParam == MAKEWPARAM(IDM_ABOUT, 0)) {
             KNS_DlgAbout(hDlg);
         } else if (wParam == MAKEWPARAM(IDM_REFRESHSEARCH, 0)) {

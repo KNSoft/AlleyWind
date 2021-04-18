@@ -3,7 +3,7 @@
 
 #include "3rdParty\NTAssassin\include\NTAssassin.h"
 
-I18N_ITEM NAC_I18N_Lang_en_Items[122] = {
+I18N_ITEM NAC_I18N_Lang_en_Items[129] = {
 	{0x642A6E98, TEXT("None")},
 	{0x004F13BC, TEXT("OK")},
 	{0xD192564E, TEXT("Apply")},
@@ -18,6 +18,13 @@ I18N_ITEM NAC_I18N_Lang_en_Items[122] = {
 	{0xA820AA51, TEXT("Value")},
 	{0x942F075C, TEXT("Description")},
 	{0xC99A9897, TEXT("(Unknow)")},
+	{0x036310D1, TEXT("Rectangle Editor")},
+	{0x02283027, TEXT("Left")},
+	{0x29CC3215, TEXT("Top")},
+	{0x0A22639C, TEXT("Right")},
+	{0x7992FC6B, TEXT("Bottom")},
+	{0x5C521306, TEXT("Width")},
+	{0x5128CA67, TEXT("Height")},
 	{0xD1FFC79C, TEXT("Desktop")},
 	{0x966F8AA8, TEXT("Dialog")},
 	{0xF96EE6A4, TEXT("Animation")},
@@ -129,7 +136,7 @@ I18N_ITEM NAC_I18N_Lang_en_Items[122] = {
 };
 I18N_LANGUAGE NAC_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), NULL, FALSE, NAC_I18N_Lang_en_Items };
 
-I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[122] = {
+I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[129] = {
 	{0x642A6E98, TEXT("无")},
 	{0x004F13BC, TEXT("确定")},
 	{0xD192564E, TEXT("应用")},
@@ -144,6 +151,13 @@ I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[122] = {
 	{0xA820AA51, TEXT("值")},
 	{0x942F075C, TEXT("描述")},
 	{0xC99A9897, TEXT("（未知）")},
+	{0x036310D1, TEXT("矩形编辑器")},
+	{0x02283027, TEXT("左")},
+	{0x29CC3215, TEXT("上")},
+	{0x0A22639C, TEXT("右")},
+	{0x7992FC6B, TEXT("下")},
+	{0x5C521306, TEXT("宽")},
+	{0x5128CA67, TEXT("高")},
 	{0xD1FFC79C, TEXT("桌面")},
 	{0x966F8AA8, TEXT("对话框")},
 	{0xF96EE6A4, TEXT("动画")},

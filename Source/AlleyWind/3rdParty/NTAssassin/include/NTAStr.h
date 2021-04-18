@@ -1,6 +1,6 @@
 /**
   * @brief Native library of NTAssassin provides basic string functions.
-  * @note ***Most of functions will be rewrite in x64/x86 Assembly Language for a faster speed***
+  * @note ***WILL BE DEPRECATED, assembly language and existing function in ntdll.dll instead***
   * @details Functions are named in pattern: Str_[Cch|Ccb][Len|Cat|Copy|...][IC][Ex]
   *
   * Counter:

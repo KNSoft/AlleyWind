@@ -38,7 +38,7 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         UI_WINDBPAINT   stPaint;
         UI_BeginPaint(hWnd, &stPaint);
         GdiAlphaBlend(
-            stPaint.hDC,
+            stPaint.DC,
             0,
             0,
             stFindWndCaptureScreenSnapshot.iScreenCX,
@@ -53,7 +53,7 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             RECT    rc;
             if (UI_GetRelativeRect(hFindWndTarget, hWnd, &rc)) {
                 BitBlt(
-                    stPaint.hDC,
+                    stPaint.DC,
                     rc.left,
                     rc.top,
                     rc.right - rc.left,
@@ -62,7 +62,7 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                     rc.left,
                     rc.top,
                     SRCCOPY);
-                GDI_FrameRect(stPaint.hDC, &rc, -AW_FINDWND_CAPTUREBORDER, DSTINVERT);
+                GDI_FrameRect(stPaint.DC, &rc, -AW_FINDWND_CAPTUREBORDER, DSTINVERT);
             }
         }
         UI_EndPaint(hWnd, &stPaint);
@@ -128,7 +128,7 @@ VOID FindWndUpdateHandle(HWND hDlg) {
     TCHAR       szHandle[sizeof(DWORD) * 2 + 2];
     LONG_PTR    lResult;
     HWND        hWnd, hBtnOK;
-    lResult = UI_SendDlgItemMsg(hDlg, IDC_FINDWND_HANDLE_EDIT, WM_GETTEXT, ARRAYSIZE(szHandle), szHandle);
+    lResult = UI_GetDlgItemText(hDlg, IDC_FINDWND_HANDLE_EDIT, szHandle);
     szHandle[lResult] = '\0';
     hBtnOK = GetDlgItem(hDlg, IDC_FINDWND_OK_BTN);
     I18N_SetWndText(hBtnOK, I18NIndex_OK);
@@ -175,7 +175,6 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         if (wParam == MAKEWPARAM(IDC_FINDWND_CAPTURE_PIC, STN_CLICKED)) {
             HWND        hWnd;
             TCHAR       szBuffer[1024];
-            DWORD_PTR   dwTemp;
             INT         iTemp;
             RECT        rcTemp;
             BOOL        bTemp;
@@ -184,9 +183,7 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             if (hWnd) {
                 FindWndCheckItem(hDlg, IDC_FINDWND_HANDLE_CHECK, TRUE, TRUE);
                 AW_SetPropCtlFormat(hDlg, IDC_FINDWND_HANDLE_EDIT, TRUE, TEXT("%08X"), (DWORD)(DWORD_PTR)hWnd);
-                if (!AW_SendMsgTO(hWnd, WM_GETTEXT, ARRAYSIZE(szBuffer), (LPARAM)szBuffer, &dwTemp))
-                    dwTemp = 0;
-                szBuffer[dwTemp] = '\0';
+                AW_GetWindowText(hWnd, szBuffer);
                 AW_SetPropCtlString(hDlg, IDC_FINDWND_CAPTION_EDIT, szBuffer, TRUE);
                 iTemp = GetClassName(hWnd, szBuffer, ARRAYSIZE(szBuffer));
                 AW_SetPropCtlString(hDlg, IDC_FINDWND_CLASS_EDIT, szBuffer, iTemp != 0);
@@ -206,12 +203,12 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
                 TCHAR   szFindCaptionName[MAX_WNDCAPTION_CCH], szFindClassName[MAX_CLASSNAME_CCH];
                 LPTSTR  lpszFindCaptionName, lpszFindClassName;
                 if (UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_CAPTION_CHECK) == BST_CHECKED) {
-                    UI_SendDlgItemMsg(hDlg, IDC_FINDWND_CAPTION_EDIT, WM_GETTEXT, ARRAYSIZE(szFindCaptionName), szFindCaptionName);
+                    UI_GetDlgItemText(hDlg, IDC_FINDWND_CAPTION_EDIT, szFindCaptionName);
                     lpszFindCaptionName = szFindCaptionName;
                 } else
                     lpszFindCaptionName = NULL;
                 if (UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_CLASS_CHECK) == BST_CHECKED) {
-                    UI_SendDlgItemMsg(hDlg, IDC_FINDWND_CLASS_EDIT, WM_GETTEXT, ARRAYSIZE(szFindClassName), szFindClassName);
+                    UI_GetDlgItemText(hDlg, IDC_FINDWND_CLASS_EDIT, szFindClassName);
                     lpszFindClassName = szFindClassName;
                 } else
                     lpszFindClassName = NULL;
