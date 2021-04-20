@@ -46,6 +46,8 @@ typedef struct _CTL_COMBOBOXCTL_ITEM {
     LPARAM          Param;
 } CTL_COMBOBOXCTL_ITEM, * PCTL_COMBOBOXCTL_ITEM;
 
+typedef BOOL(CALLBACK* CTL_TREEVIEWITEMENUMPROC)(HWND TreeView, HTREEITEM TreeItem, UINT Level, LPARAM Param);
+
 /**
   * @brief Creates window menu
   * @param[in, out] Menus Pointer to an UI_MENU structures array, contains information about submenus to be created
@@ -105,3 +107,13 @@ NTA_API VOID NTAPI Ctl_InitListCtlEx(HWND List, CTL_LISTCTL_COLUME Cols[], UINT 
   */
 NTA_API VOID NTAPI Ctl_InitComboBoxEx(HWND ComboBox, PCTL_COMBOBOXCTL_ITEM Items, UINT ItemCount, BOOL SetParam);
 #define Ctl_InitComboBox(ComboBox, Items, SetParam) Ctl_InitComboBoxEx(ComboBox, Items, ARRAYSIZE(Items), SetParam)
+
+/**
+  * @brief Enumerates item in given tree-view control
+  * @param[in] TreeView Handle to the tree-view  control
+  * @param[in] BFS Use Breadth-First-Search algorithm instead of DFS (Depth-First-Search), BFS is no supported yet, must be FALSE
+  * @param[in] TreeItemEnumProc Callback procedure to receive information of each item
+  * @param[in] Param User defined value passed to the callback
+  * @return Returns handle to the last enumerated item if the callback stops the enumeration, or NULL if enumeration finished successfully
+  */
+HTREEITEM NTAPI Ctl_EnumTreeViewItems(HWND TreeView, BOOL BFS, CTL_TREEVIEWITEMENUMPROC TreeItemEnumProc, LPARAM Param);

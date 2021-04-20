@@ -65,5 +65,6 @@ INT_PTR WINAPI WndPropDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 DWORD WINAPI OpenWndPropDlgThread(PVOID lParam);
 
 BOOL AW_LoadWindowTreeAsync(BOOL bUpdateFilter, LPTSTR lpszCaption, LPTSTR lpszClassName);
+BOOL AW_LocateWindowInTree(HWND hWnd);
 VOID AW_OpenWndPropDlg(HWND hWnd);
 VOID AW_OpenFindWndDlg(HWND hDlg);

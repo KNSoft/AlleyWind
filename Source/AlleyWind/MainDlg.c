@@ -60,29 +60,31 @@ TCHAR       szFindClassName[MAX_CLASSNAME_CCH];
 BOOL        bFilter, bFindCaption, bFindClassName;
 HTREEITEM   hFilterNode;
 
-HANDLE      hExpTreeFile;
 LPTSTR      lpszExpTreeFileExt = TEXT("txt");
 
-VOID ExpTreeItemText(HTREEITEM hTreeItem, UINT uDepth) {
-    TVITEMW     stTVIExpGetText;
-    WCHAR       szUniBuff[512];
-    CHAR        szUTF8Buff[ARRAYSIZE(szUniBuff) * 2];
-    UINT        i;
-    ULONG       ulChWritten;
-    stTVIExpGetText.mask = TVIF_HANDLE | TVIF_TEXT;
-    stTVIExpGetText.hItem = hTreeItem;
-    stTVIExpGetText.cchTextMax = ARRAYSIZE(szUniBuff) - uDepth;
-    for (i = 0; i < uDepth; i++) {
+BOOL CALLBACK ExpTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level, LPARAM Param) {
+    HANDLE  hExpFile;
+    TVITEMW stTVI;
+    WCHAR   szUniBuff[512];
+    CHAR    szUTF8Buff[ARRAYSIZE(szUniBuff) * 2];
+    UINT    i;
+    ULONG   ulChWritten;
+    hExpFile = (HANDLE)Param;
+    stTVI.mask = TVIF_TEXT;
+    stTVI.hItem = TreeItem;
+    stTVI.cchTextMax = ARRAYSIZE(szUniBuff) - Level;
+    for (i = 0; i < Level; i++) {
         szUniBuff[i] = '\t';
-        stTVIExpGetText.cchTextMax--;
+        stTVI.cchTextMax--;
     }
-    stTVIExpGetText.pszText = szUniBuff + uDepth;
-    if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&stTVIExpGetText)) {
+    stTVI.pszText = szUniBuff + Level;
+    if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI)) {
         Str_UnicodeToUTF8(szUTF8Buff, szUniBuff, &ulChWritten);
         szUTF8Buff[ulChWritten] = '\r';
         szUTF8Buff[ulChWritten + 1] = '\n';
-        IO_Write(hExpTreeFile, 0, szUTF8Buff, ulChWritten + 2);
+        IO_Write(hExpFile, 0, szUTF8Buff, ulChWritten + 2);
     }
+    return TRUE;
 }
 
 BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
@@ -145,7 +147,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         stTVIInsert.item.iImage = stTVIInsert.item.iSelectedImage = (!hIcon || iImageIcon == -1) ? 0 : iImageIcon;
         stTVIInsert.hParent = hParent;
         stTVIInsert.item.pszText = iCch > 0 ? szBuffer : NULL;
-        stTVIInsert.item.lParam = (LPARAM)hWnd;
+        stTVIInsert.item.lParam = (LPARAM)hWnd & 0xFFFFFFFF;
         // Insert node to tree and enumerate child windows
         hTreeItem = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)&stTVIInsert);
         if (uCount == 1)
@@ -186,6 +188,24 @@ HWND AW_GetMainDlg() {
     return hMainDlg;
 }
 
+BOOL CALLBACK LocateTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level, LPARAM Param) {
+    TVITEM  stTVI;
+    stTVI.mask = TVIF_PARAM;
+    stTVI.hItem = TreeItem;
+    return !(SendMessage(hTree, TVM_GETITEM, 0, (LPARAM)&stTVI) && stTVI.lParam == Param);
+}
+
+BOOL AW_LocateWindowInTree(HWND hWnd) {
+    HTREEITEM   hItem;
+    hItem = Ctl_EnumTreeViewItems(hTree, FALSE, LocateTreeItemEnumProc, (LPARAM)hWnd & 0xFFFFFFFF);
+    if (hItem) {
+        SendMessage(hTree, TVM_SELECTITEM, TVGN_FIRSTVISIBLE, (LPARAM)hItem);
+        SendMessage(hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)hItem);
+        return TRUE;
+    } else
+        return FALSE;
+}
+
 VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc) {
     SetWindowPos(hBanner, NULL, 0, 0, NewWidth, lBannerHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
     SetWindowPos(hTree, NULL, 0, lBannerHeight, NewWidth, NewHeight - lBannerHeight, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -193,7 +213,7 @@ VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL
 
 INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
-        
+
         KNS_SetDialogSubclass(hDlg, MainDlgResizeProc);
         hMainDlg = hDlg;
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)KNS_NAME);
@@ -225,38 +245,15 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         if (wParam == MAKEWPARAM(IDM_RELOAD, 0)) {
             AW_LoadWindowTreeAsync(TRUE, NULL, NULL);
         } else if (wParam == MAKEWPARAM(IDM_EXPWNDTREE, 0)) {
+            HANDLE      hExpTreeFile;
             TCHAR       szExpTreeFileName[MAX_PATH];
             CHAR        szUTF8BOM[] = "\xEF\xBB\xBF";
-            UINT        uDepth;
-            HTREEITEM   hExpTreeItem, hExpTreeItemTemp;
             szExpTreeFileName[0] = '\0';
             if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_ExportTreeFilter), szExpTreeFileName, lpszExpTreeFileExt)) {
                 if (NT_SUCCESS(File_Create(&hExpTreeFile, szExpTreeFileName, NULL, FILE_APPEND_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT | FILE_SEQUENTIAL_ONLY))) {
                     // Write UTF-8 BOM
                     IO_Write(hExpTreeFile, 0, szUTF8BOM, ARRAYSIZE(szUTF8BOM) - 1);
-                    // Enumerate and export window tree
-                    uDepth = 0;
-                    hExpTreeItemTemp = (HTREEITEM)SendMessage(hTree, TVM_GETNEXTITEM, TVGN_ROOT, 0);
-                    while (hExpTreeItemTemp) {
-                        ExpTreeItemText(hExpTreeItemTemp, uDepth);
-                        hExpTreeItem = hExpTreeItemTemp;
-                        hExpTreeItemTemp = (HTREEITEM)SendMessage(hTree, TVM_GETNEXTITEM, TVGN_CHILD, (LPARAM)hExpTreeItem);
-                        if (!hExpTreeItemTemp) {
-                            hExpTreeItemTemp = (HTREEITEM)SendMessage(hTree, TVM_GETNEXTITEM, TVGN_NEXT, (LPARAM)hExpTreeItem);
-                            if (!hExpTreeItemTemp) {
-                                while (uDepth) {
-                                    hExpTreeItem = (HTREEITEM)SendMessage(hTree, TVM_GETNEXTITEM, TVGN_PARENT, (LPARAM)hExpTreeItem);
-                                    hExpTreeItemTemp = (HTREEITEM)SendMessage(hTree, TVM_GETNEXTITEM, TVGN_NEXT, (LPARAM)hExpTreeItem);
-                                    uDepth--;
-                                    if (hExpTreeItemTemp)
-                                        break;
-                                }
-                                if (!uDepth)
-                                    break;
-                            }
-                        } else
-                            ++uDepth;
-                    }
+                    Ctl_EnumTreeViewItems(hTree, FALSE, ExpTreeItemEnumProc, (LPARAM)hExpTreeFile);
                     NtClose(hExpTreeFile);
                 } else
                     KNS_MsgBox(hDlg, I18N_GetString(I18NIndex_ExportTreeFailed), NULL, MB_ICONERROR);

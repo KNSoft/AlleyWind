@@ -198,6 +198,7 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         } else if (wParam == MAKEWPARAM(IDC_FINDWND_OK_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             if (UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_HANDLE_CHECK) == BST_CHECKED) {
+                AW_LocateWindowInTree(hWnd);
                 AW_OpenWndPropDlg(hWnd);
             } else {
                 TCHAR   szFindCaptionName[MAX_WNDCAPTION_CCH], szFindClassName[MAX_CLASSNAME_CCH];
