@@ -368,19 +368,15 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_VISUALSTYLE_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             TCHAR   szTheme[AW_WNDPROP_OPERATION_THEMT_MAX_CCH + 1];
-            LPCWSTR lpszText;
-            UINT    uType;
+            DWORD   dwError;
             szTheme[UI_GetDlgItemText(hDlg, IDC_WNDPROP_OPERATION_VISUALSTYLE_COMBOX, szTheme)] = '\0';
             if (SUCCEEDED(SetWindowTheme(hWnd, szTheme, szTheme[0] ? NULL : szTheme))) {
                 SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                 UI_Redraw(hWnd);
-                lpszText = (LPCWSTR)I18NIndex_OperationSucceeded;
-                uType = MB_OK;
-            } else {
-                lpszText = (LPCWSTR)I18NIndex_OperationFailed;
-                uType = MB_OK | MB_ICONERROR;
-            }
-            KNS_MsgBox(hDlg, lpszText, NULL, uType);
+                dwError = ERROR_SUCCESS;
+            } else
+                dwError = ERROR_FUNCTION_FAILED;
+            KNS_ErrorMsgBox(hDlg, dwError);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK, BN_CLICKED)) {
             HWND hWnd = AW_GetWndPropHWnd(hDlg);
             LRESULT lChecked;

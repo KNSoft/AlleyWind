@@ -4,12 +4,22 @@
 #define IDM_PROC_TERMINATE 2
 #define IDM_PROC_PROP 3
 
-HMENU hPropRelationshipProcMenu;
+#define IDM_WNDOP_PROPERTIES 10
+#define IDM_WNDOP_LOCATEINLIST 11
+#define IDM_WNDOP_HIGHLIGHT 12
+
+HMENU hPropRelationshipProcMenu, hPropRelationshipWndOpMenu;
 
 CTL_MENU stPropRelationshipProcMenu[] = {
     { MF_STRING, IDM_PROC_EXPLORE, I18NIndex_Explore, NULL, 0 },
     { MF_STRING, IDM_PROC_TERMINATE, I18NIndex_Terminate, NULL, 0 },
-    { MF_STRING, IDM_PROC_PROP, I18NIndex_Property, NULL, 0 }
+    { MF_STRING, IDM_PROC_PROP, I18NIndex_Properties, NULL, 0 }
+};
+
+CTL_MENU stPropRelationshipWndOpMenu[] = {
+    { MF_STRING, IDM_WNDOP_PROPERTIES, I18NIndex_Properties, NULL, 0 },
+    { MF_STRING, IDM_WNDOP_LOCATEINLIST, I18NIndex_LocateInList, NULL, 0 },
+    // { MF_STRING, IDM_WNDOP_HIGHLIGHT, I18NIndex_Highlight, NULL, 0 }
 };
 
 I18N_CTLTEXT astWndPropRelationshipTextCtl[] = {
@@ -57,10 +67,13 @@ AW_WINDOW_RELATIONSHIPITEM aRelationshipItems[] = {
 VOID WndPropRelationshipInit() {
     hPropRelationshipProcMenu = CreatePopupMenu();
     Ctl_CreateMenu(stPropRelationshipProcMenu, hPropRelationshipProcMenu);
+    hPropRelationshipWndOpMenu = CreatePopupMenu();
+    Ctl_CreateMenu(stPropRelationshipWndOpMenu, hPropRelationshipWndOpMenu);
 }
 
 VOID WndPropRelationshipUninit() {
     Ctl_DestroyMenu(stPropRelationshipProcMenu, hPropRelationshipProcMenu);
+    Ctl_DestroyMenu(stPropRelationshipWndOpMenu, hPropRelationshipWndOpMenu);
 }
 
 HWND WndPropRelationshipGetWindow(HWND hWnd, AW_WINDOW_RELATIONSHIP eRelationship) {
@@ -80,6 +93,21 @@ HWND WndPropRelationshipGetWindow(HWND hWnd, AW_WINDOW_RELATIONSHIP eRelationshi
         return GetWindow(hWnd, GW_HWNDLAST);
     else
         return NULL;
+}
+
+HWND GetSelectedRelationship(HWND hDlg) {
+    HWND    hList = GetDlgItem(hDlg, IDC_WNDPROP_RELATIONSHIP_WINDOW_LIST);
+    INT     iSelected = (INT)SendMessage(hList, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    LVITEM  stLVI;
+    if (iSelected != -1) {
+        stLVI.mask = LVIF_PARAM;
+        stLVI.iItem = iSelected;
+        stLVI.iSubItem = 0;
+        stLVI.lParam = 0;
+        if (SendMessage(hList, LVM_GETITEM, 0, (LPARAM)&stLVI) && stLVI.lParam)
+            return (HWND)stLVI.lParam;
+    }
+    return NULL;
 }
 
 INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -124,7 +152,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             stLVItem.pszText = (LPTSTR)I18N_GetString(aRelationshipItems[i].I18NIndex);
             stLVItem.iItem = MAXINT;
             stLVItem.iSubItem = 0;
-            stLVItem.lParam = (LPARAM)hWndRelated;
+            stLVItem.lParam = (LPARAM)PURGE_HWND(hWndRelated);
             stLVItem.iItem = (INT)SendMessage(hCtl, LVM_INSERTITEM, 0, (LPARAM)&stLVItem);
             if (stLVItem.iItem != -1) {
                 stLVItem.mask = LVIF_TEXT;
@@ -136,8 +164,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
                 stLVItem.pszText = szBuffer;
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
                 stLVItem.iSubItem++;
-                iTemp = GetClassName(hWndRelated, szBuffer, ARRAYSIZE(szBuffer));
-                stLVItem.pszText = iTemp == 0 ? (LPWSTR)I18N_GetString(I18NIndex_NotApplicable) : szBuffer;
+                stLVItem.pszText = hWndRelated && GetClassName(hWndRelated, szBuffer, ARRAYSIZE(szBuffer)) > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
             }
         }
@@ -160,7 +187,24 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             TCHAR   szPath[MAX_PATH];
             if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath))
                 UI_ShellExec(szPath, NULL, UIShellExecProperties, SW_SHOWDEFAULT, NULL);
+        } else if (wParam == MAKEWPARAM(IDM_WNDOP_PROPERTIES, 0)) {
+            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            if (hRelatedWnd)
+                AW_OpenWndPropDlg(hRelatedWnd);
+        } else if (wParam == MAKEWPARAM(IDM_WNDOP_LOCATEINLIST, 0)) {
+            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            if (hRelatedWnd && AW_LocateWindowInTree(hRelatedWnd))
+                BringWindowToTop(AW_GetMainDlg());
+        }
+    } else if (uMsg == WM_NOTIFY) {
+        LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
+        if (lpnmitem->hdr.idFrom == IDC_WNDPROP_RELATIONSHIP_WINDOW_LIST && lpnmitem->hdr.code == NM_RCLICK && lpnmitem->iItem != -1) {
+            POINT   pt;
+            if (!GetCursorPos(&pt))
+                pt.x = pt.y = 0;
+            Ctl_PopupMenu(hPropRelationshipWndOpMenu, pt.x, pt.y, hDlg);
         }
     }
+
     return FALSE;
 }

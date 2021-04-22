@@ -147,7 +147,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         stTVIInsert.item.iImage = stTVIInsert.item.iSelectedImage = (!hIcon || iImageIcon == -1) ? 0 : iImageIcon;
         stTVIInsert.hParent = hParent;
         stTVIInsert.item.pszText = iCch > 0 ? szBuffer : NULL;
-        stTVIInsert.item.lParam = (LPARAM)hWnd & 0xFFFFFFFF;
+        stTVIInsert.item.lParam = (LPARAM)PURGE_HWND(hWnd);
         // Insert node to tree and enumerate child windows
         hTreeItem = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)&stTVIInsert);
         if (uCount == 1)
@@ -197,9 +197,8 @@ BOOL CALLBACK LocateTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Lev
 
 BOOL AW_LocateWindowInTree(HWND hWnd) {
     HTREEITEM   hItem;
-    hItem = Ctl_EnumTreeViewItems(hTree, FALSE, LocateTreeItemEnumProc, (LPARAM)hWnd & 0xFFFFFFFF);
+    hItem = Ctl_EnumTreeViewItems(hTree, FALSE, LocateTreeItemEnumProc, (LPARAM)PURGE_HWND(hWnd));
     if (hItem) {
-        SendMessage(hTree, TVM_SELECTITEM, TVGN_FIRSTVISIBLE, (LPARAM)hItem);
         SendMessage(hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)hItem);
         return TRUE;
     } else
@@ -274,7 +273,7 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);
     } else if (uMsg == WM_NOTIFY) {
         LPNM_TREEVIEW lpnmtv = (LPNM_TREEVIEW)lParam;
-        if (lpnmtv->hdr.idFrom == IDC_MAINTREE && (lpnmtv->hdr.code == NM_RCLICK)) {
+        if (lpnmtv->hdr.idFrom == IDC_MAINTREE && lpnmtv->hdr.code == NM_RCLICK) {
             TVHITTESTINFO   stTVHTI;
             POINT           pt;
             HTREEITEM       hTreeItem;
@@ -290,8 +289,10 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 if (SendMessage(hTree, TVM_GETITEM, 0, (LPARAM)&stTVIGetLParam)) {
                     if (stTVIGetLParam.lParam == (LPARAM)INVALID_HANDLE_VALUE)
                         Ctl_PopupMenu(hSearchMenu, pt.x, pt.y, hDlg);
-                    else if (IsWindow((HWND)stTVIGetLParam.lParam))
+                    else if (IsWindow((HWND)stTVIGetLParam.lParam)) {
                         AW_OpenWndPropDlg((HWND)stTVIGetLParam.lParam);
+                        SendMessage(hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)hTreeItem);
+                    }
                 }
             }
             SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);

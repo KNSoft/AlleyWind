@@ -111,7 +111,7 @@ NTA_API VOID NTAPI Ctl_InitComboBoxEx(HWND ComboBox, PCTL_COMBOBOXCTL_ITEM Items
 /**
   * @brief Enumerates item in given tree-view control
   * @param[in] TreeView Handle to the tree-view  control
-  * @param[in] BFS Use Breadth-First-Search algorithm instead of DFS (Depth-First-Search), BFS is no supported yet, must be FALSE
+  * @param[in] BFS Use Breadth-First-Search algorithm instead of DFS (Depth-First-Search), BFS is not supported yet, must be FALSE
   * @param[in] TreeItemEnumProc Callback procedure to receive information of each item
   * @param[in] Param User defined value passed to the callback
   * @return Returns handle to the last enumerated item if the callback stops the enumeration, or NULL if enumeration finished successfully

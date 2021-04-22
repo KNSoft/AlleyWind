@@ -47,6 +47,10 @@
         "en": "Redraw",
         "zh-Hans": "重绘"
     },
+    "Highlight": {
+        "en": "Highlight",
+        "zh-Hans": "突出显示"
+    },
     "Close": {
         "en": "Close",
         "zh-Hans": "关闭"

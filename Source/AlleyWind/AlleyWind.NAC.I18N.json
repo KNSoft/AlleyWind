@@ -22,13 +22,5 @@
     "Cancel": {
         "en": "Cancel",
         "zh-Hans": "取消"
-    },
-    "OperationSucceeded": {
-        "en": "Operation succeeded",
-        "zh-Hans": "操作成功完成"
-    },
-    "OperationFailed": {
-        "en": "Operation failed",
-        "zh-Hans": "操作失败"
     }
 }
