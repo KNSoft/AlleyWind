@@ -19,7 +19,7 @@ CTL_MENU stPropRelationshipProcMenu[] = {
 CTL_MENU stPropRelationshipWndOpMenu[] = {
     { MF_STRING, IDM_WNDOP_PROPERTIES, I18NIndex_Properties, NULL, 0 },
     { MF_STRING, IDM_WNDOP_LOCATEINLIST, I18NIndex_LocateInList, NULL, 0 },
-    // { MF_STRING, IDM_WNDOP_HIGHLIGHT, I18NIndex_Highlight, NULL, 0 }
+    { MF_STRING, IDM_WNDOP_HIGHLIGHT, I18NIndex_Highlight, NULL, 0 }
 };
 
 I18N_CTLTEXT astWndPropRelationshipTextCtl[] = {
@@ -149,7 +149,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             HWND    hWndRelated;
             hWndRelated = WndPropRelationshipGetWindow(hWnd, aRelationshipItems[i].Relationship);
             stLVItem.mask = LVIF_TEXT | LVIF_PARAM;
-            stLVItem.pszText = (LPTSTR)I18N_GetString(aRelationshipItems[i].I18NIndex);
+            stLVItem.pszText = (LPWSTR)I18N_GetString(aRelationshipItems[i].I18NIndex);
             stLVItem.iItem = MAXINT;
             stLVItem.iSubItem = 0;
             stLVItem.lParam = (LPARAM)PURGE_HWND(hWndRelated);
@@ -195,16 +195,23 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
             if (hRelatedWnd && AW_LocateWindowInTree(hRelatedWnd))
                 BringWindowToTop(AW_GetMainDlg());
+        } else if (wParam == MAKEWPARAM(IDM_WNDOP_HIGHLIGHT, 0)) {
+            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            if (hRelatedWnd)
+                AW_HighlightWindow(hRelatedWnd);
         }
     } else if (uMsg == WM_NOTIFY) {
         LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
         if (lpnmitem->hdr.idFrom == IDC_WNDPROP_RELATIONSHIP_WINDOW_LIST && lpnmitem->hdr.code == NM_RCLICK && lpnmitem->iItem != -1) {
-            POINT   pt;
-            if (!GetCursorPos(&pt))
-                pt.x = pt.y = 0;
-            Ctl_PopupMenu(hPropRelationshipWndOpMenu, pt.x, pt.y, hDlg);
+            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            if (IsWindow(hRelatedWnd)) {
+                POINT   pt;
+                if (!GetCursorPos(&pt))
+                    pt.x = pt.y = 0;
+                Ctl_PopupMenu(hPropRelationshipWndOpMenu, pt.x, pt.y, hDlg);
+            }
         }
     }
-
+    
     return FALSE;
 }

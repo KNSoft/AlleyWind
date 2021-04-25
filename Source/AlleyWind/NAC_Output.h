@@ -99,7 +99,7 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Opacity,
 	I18NIndex_ColorKey,
 	I18NIndex_VisualStyle,
-	I18NIndex_Others,
+	I18NIndex_Display,
 	I18NIndex_AntiCapture,
 	I18NIndex_SwitchTo,
 	I18NIndex_Redraw,

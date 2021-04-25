@@ -11,3 +11,5 @@ LRESULT AW_SendMsgTO(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, PDWORD_
 
 UINT AW_GetWindowTextEx(HWND hWnd, PWSTR psz, UINT cCh);
 #define AW_GetWindowText(hWnd, psz) AW_GetWindowTextEx(hWnd, psz, ARRAYSIZE(psz))
+
+VOID AW_HighlightWindow(HWND hWnd);
