@@ -69,10 +69,13 @@ NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, UINT BufferSiz
 #define Hijack_LoadProcAddr_InitParam(Buffer, LibName, ProcName, ProcAddrPointer) Hijack_LoadProcAddr_InitParamEx(Buffer, sizeof(Buffer), LibName, ProcName, (LPVOID**)(ProcAddrPointer))
 
 // Creates remote thread to execute given code
+// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
 NTA_API NTSTATUS NTAPI Hijack_CreateThread(HANDLE ProcessHandle, PHIJACK_CREATETHREAD HijackThread, DWORD Timeout);
 
 // Gets remote procedure address
-NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID *ProcAddr);
+// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
+NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID *ProcAddr, DWORD Timeout);
 
 // Calls remote procedure
+// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
 NTA_API NTSTATUS NTAPI Hijack_CallProc(HANDLE ProcessHandle, PHIJACK_CALLPROCHEADER HijackCallProc, PHIJACK_CALLPROCPARAM HijackParams, DWORD Timeout);

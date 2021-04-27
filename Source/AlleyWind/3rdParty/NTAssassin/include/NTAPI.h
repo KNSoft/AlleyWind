@@ -22,7 +22,7 @@ LdrGetProcedureAddress(
     IN PANSI_STRING Name,
     IN ULONG Ordinal,
     OUT PVOID* ProcedureAddress
-    );
+);
 
 // Rtl*
 
@@ -134,11 +134,11 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 RtlFindMessage(
-    IN PVOID 	BaseAddress,
-    IN ULONG 	Type,
-    IN ULONG 	Language,
-    IN ULONG 	MessageId,
-    OUT PMESSAGE_RESOURCE_ENTRY * 	MessageResourceEntry
+    IN PVOID    BaseAddress,
+    IN ULONG    Type,
+    IN ULONG    Language,
+    IN ULONG    MessageId,
+    OUT PMESSAGE_RESOURCE_ENTRY *   MessageResourceEntry
 );
 
 NTSYSAPI

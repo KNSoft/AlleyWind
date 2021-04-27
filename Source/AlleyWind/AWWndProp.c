@@ -101,13 +101,13 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
             DWORD       dwPID;
             GetWindowThreadProcessId(hWnd, &dwPID);
-            hProc = RProc_Open(PROCESS_ALL_ACCESS, dwPID); // TODO
+            hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
             if (hProc) {
                 if (IsWow64Process(hProc, &b32Proc)) {
                     lpszGLFunc = bClassExtraBytes ?
                         (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
                         (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
-                    lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure);
+                    lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
                     if (NT_SUCCESS(lStatus)) {
                         stCallProc.RetValue = 0;
                         stCallProc.CallConvention = 0;
@@ -128,7 +128,7 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         do {
             if (bUseHijack) {
                 stGLParams[1].Value = dwpOffset;
-                lStatus = Hijack_CallProc(hProc, &stCallProc, stGLParams, INFINITE);
+                lStatus = Hijack_CallProc(hProc, &stCallProc, stGLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
                 if (NT_SUCCESS(lStatus) && stCallProc.LastError == ERROR_SUCCESS) {
                     lBytes = (LONG_PTR)stCallProc.RetValue;
                 } else {

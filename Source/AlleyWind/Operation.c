@@ -293,10 +293,17 @@ BOOL WndPropOperationLayeredSet(HWND hDlg) {
         return TRUE;
 }
 
+VOID WndPropOperationGetDisplayAffinity(HWND hDlg, HWND hWnd) {
+    DWORD   dwTemp;
+    HWND hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK);
+    BOOL bEnable = UI_GetWindowDisplayAffinity(hWnd, &dwTemp);
+    SendMessage(hCtl, BM_SETCHECK, bEnable && dwTemp != WDA_NONE ? BST_CHECKED : BST_UNCHECKED, 0);
+    EnableWindow(hCtl, bEnable);
+}
+
 INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
         HWND    hWnd, hCtl;
-        DWORD   dwTemp;
         hWnd = (HANDLE)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
@@ -316,11 +323,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         Ctl_InitComboBox(hCtl, astVisualStyleComboBoxItem, FALSE);
         SendMessage(hCtl, CB_LIMITTEXT, AW_WNDPROP_OPERATION_THEMT_MAX_CCH, 0);
         // Anti capture
-        hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK);
-        if (UI_GetWindowDisplayAffinity(hWnd, &dwTemp))
-            SendMessage(hCtl, BM_SETCHECK, dwTemp == WDA_NONE ? BST_UNCHECKED : BST_CHECKED, 0);
-        else
-            EnableWindow(hCtl, FALSE);
+        WndPropOperationGetDisplayAffinity(hDlg, hWnd);
         // End task
         if (hWnd == GetDesktopWindow())
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_ENDTASK_BTN, FALSE);
@@ -379,11 +382,26 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
                 dwError = ERROR_FUNCTION_FAILED;
             KNS_ErrorMsgBox(hDlg, dwError);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK, BN_CLICKED)) {
-            HWND hWnd = AW_GetWndPropHWnd(hDlg);
-            LRESULT lChecked;
-            lChecked = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0);
-            if (!UI_SetWindowDisplayAffinity(hWnd, lChecked == BST_CHECKED ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE))
-                SendMessage((HWND)lParam, BM_SETCHECK, lChecked == BST_CHECKED ? BST_UNCHECKED : BST_CHECKED, 0);
+            HWND    hWnd = AW_GetWndPropHWnd(hDlg);
+            DWORD   dwAffinity;
+            dwAffinity = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE;
+            if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
+                HANDLE                  hProc;
+                HIJACK_CALLPROCHEADER   stCallProc;
+                HIJACK_CALLPROCPARAM    stSWDAParams[] = {
+                    { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                    { dwAffinity, 0, FALSE }
+                };
+                hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+                if (hProc && NT_SUCCESS(Hijack_LoadProcAddr(hProc, L"user32.dll", "SetWindowDisplayAffinity", (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
+                    stCallProc.RetValue = 0;
+                    stCallProc.CallConvention = 0;
+                    stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
+                    Hijack_CallProc(hProc, &stCallProc, stSWDAParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
+                }
+            } else
+                UI_SetWindowDisplayAffinity(hWnd, dwAffinity);
+            WndPropOperationGetDisplayAffinity(hDlg, hWnd);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_SWITCHTO_BTN, BN_CLICKED)) {
             HWND hWnd = AW_GetWndPropHWnd(hDlg);
             if (IsIconic(hWnd))

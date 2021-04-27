@@ -27,6 +27,7 @@ DWORD Main() {
     NTSTATUS    lStatus;
     HRESULT     hr;
     AWSettings_Init();
+    Proc_EnablePrivilege(LSE_DEBUG_NAME);
     hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (hr == S_OK || hr == S_FALSE || hr == RPC_E_CHANGED_MODE) {
         lStatus = (NTSTATUS)KNS_Startup(&stKNSInfo);

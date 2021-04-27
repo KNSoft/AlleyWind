@@ -9,7 +9,11 @@
 #define NTA_API DECLSPEC_IMPORT
 #endif
 #else
+#if __cplusplus
+#define NTA_API EXTERN_C
+#else
 #define NTA_API
+#endif
 #endif
 
 // NTAssassin Options
@@ -140,7 +144,7 @@
 
 // Clear high 32-bit of HWND
 #if _WIN64
-#define PURGE_HWND(hWnd) (HWND)((DWORD_PTR)(hWnd) & 0xFFFFFFFF)
+#define PURGE_HWND(hWnd) ((HWND)((DWORD_PTR)(hWnd) & 0xFFFFFFFF))
 #else
 #define PURGE_HWND(hWnd) (hWnd)
 #endif
