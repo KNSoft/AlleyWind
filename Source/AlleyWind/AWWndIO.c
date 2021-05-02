@@ -14,7 +14,7 @@ LRESULT AW_SendMsgTO(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, PDWORD_
 UINT AW_GetWindowTextEx(HWND hWnd, PWSTR psz, UINT cCh) {
     DWORD_PTR   dwCch;
     UINT        c;
-    c = AW_SendMsgTO(hWnd, WM_GETTEXT,  cCh, (LPARAM)psz, &dwCch) && (UINT)dwCch < cCh ?
+    c = AW_SendMsgTO(hWnd, WM_GETTEXT, cCh, (LPARAM)psz, &dwCch) && (UINT)dwCch < cCh ?
         (UINT)dwCch :
     0;
     psz[c] = '\0';
@@ -22,10 +22,23 @@ UINT AW_GetWindowTextEx(HWND hWnd, PWSTR psz, UINT cCh) {
 }
 
 DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
-    HWND    hWnd = lParam;
-    RECT    rcClient;
-    HDC     hDC = GetDC(hWnd);
-    UINT    uTimes = 4 * 2;
+    HWND        hWnd = lParam;
+    DWORD_PTR   dwpStyle;
+    RECT        rcClient;
+    HDC         hDC = GetDC(hWnd);
+    UINT        uTimes = 4 * 2;
+    BOOL        bFlash;
+    bFlash = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle) == ERROR_SUCCESS && (
+        dwpStyle & WS_DLGFRAME ||
+        dwpStyle & WS_THICKFRAME ||
+        dwpStyle & WS_HSCROLL ||
+        dwpStyle & WS_VSCROLL
+        );
+    if (bFlash) {
+        FLASHWINFO fwi = { sizeof(FLASHWINFO), hWnd, FLASHW_ALL, 4, 200 };
+        FlashWindowEx(&fwi);
+        return 0;
+    }
     if (!GetClientRect(hWnd, &rcClient))
         return 1;
     if (!hDC)

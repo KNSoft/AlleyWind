@@ -175,6 +175,7 @@
 #define MAX_ATOM_CCH                            255
 #define MAX_REG_VALUE_SIZE                      4096
 #define MAX_LOCALENAME_CCH                      85
+#define HEXRGB_CCH                              8   // #RRGGBB
 #define MAX_POINTER_CCH                         (sizeof(PVOID) * 2 + 1)
 #define CURRENT_PROCESS_HANDLE                  ((HANDLE)-1)
 #define CURRENT_THREAD_HANDLE                   ((HANDLE)-2)

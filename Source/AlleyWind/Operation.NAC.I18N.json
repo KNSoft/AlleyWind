@@ -51,6 +51,10 @@
         "en": "Highlight",
         "zh-Hans": "突出显示"
     },
+    "Fill": {
+        "en": "Fill",
+        "zh-Hans": "填涂"
+    },
     "Close": {
         "en": "Close",
         "zh-Hans": "关闭"

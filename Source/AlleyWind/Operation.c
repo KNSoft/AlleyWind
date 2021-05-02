@@ -1,7 +1,5 @@
 #include "AlleyWind.h"
 
-#define AW_WNDPROP_OPERATION_COLORKEY_PROP TEXT("AlleyWind.WndProp.Operation.ColorKey")
-#define AW_WNDPROP_OPERATION_COLORKEY_BORDER 2
 #define AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT 16
 #define AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE 15
 #define AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXBORDER 2
@@ -23,6 +21,7 @@ I18N_CTLTEXT astWndPropOperationTextCtl[] = {
     { IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK, I18NIndex_AntiCapture },
     { IDC_WNDPROP_OPERATION_SWITCHTO_BTN, I18NIndex_SwitchTo },
     { IDC_WNDPROP_OPERATION_HIGHLIGHT_BTN, I18NIndex_Highlight },
+    { IDC_WNDPROP_OPERATION_FILL_TEXT, I18NIndex_Fill },
     { IDC_WNDPROP_OPERATION_REDRAW_BTN, I18NIndex_Redraw },
     { IDC_WNDPROP_OPERATION_CLOSE_BTN, I18NIndex_Close },
     { IDC_WNDPROP_OPERATION_ENDTASK_BTN, I18NIndex_EndTask }
@@ -206,18 +205,8 @@ BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
     return lStyle || NT_LastErrorSucceed();
 }
 
-COLORREF WndPropOperationLayeredGetColorKeyCtl(HWND hDlg) {
-    return (COLORREF)(DWORD_PTR)UI_GetDlgItemProp(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_PIC, AW_WNDPROP_OPERATION_COLORKEY_PROP);
-}
-
-VOID WndPropOperationLayeredSetColorKeyCtl(HWND hDlg, COLORREF crColorKey) {
-    HWND    hCtlColorKey = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_PIC);
-    SetProp(hCtlColorKey, AW_WNDPROP_OPERATION_COLORKEY_PROP, (HANDLE)(DWORD_PTR)crColorKey);
-    UI_Redraw(hCtlColorKey);
-}
-
 VOID WndPropOperationLayeredGet(HWND hDlg) {
-    HANDLE      hWnd, hCtlLayeredCheck, hCtlOpacityCheck, hCtlOpacitySlider, hCtlColorKeyCheck;
+    HWND        hWnd, hCtlLayeredCheck, hCtlOpacityCheck, hCtlOpacitySlider, hCtlColorKeyCheck, hCtlColorKeyButton;
     BYTE        byteLayeredAlpha;
     BOOL        bIsLayeredWnd, bTemp;
     COLORREF    crLayeredColorKey;
@@ -229,6 +218,7 @@ VOID WndPropOperationLayeredGet(HWND hDlg) {
     hCtlOpacityCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_CHECK);
     hCtlOpacitySlider = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER);
     hCtlColorKeyCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_CHECK);
+    hCtlColorKeyButton = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN);
     bIsLayeredWnd = FALSE;
     if (dwExStyleError == ERROR_SUCCESS) {
         bIsLayeredWnd = dwpExStyle & WS_EX_LAYERED;
@@ -244,12 +234,12 @@ VOID WndPropOperationLayeredGet(HWND hDlg) {
             bTemp = dwLayeredFlags & LWA_COLORKEY;
             UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_CHECK, bTemp ? BST_CHECKED : BST_UNCHECKED);
             if (bTemp)
-                WndPropOperationLayeredSetColorKeyCtl(hDlg, crLayeredColorKey);
-            UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_PIC, bTemp != FALSE);
+                Ctl_SetColorPickerValue(hCtlColorKeyButton, crLayeredColorKey);
+            EnableWindow(hCtlColorKeyButton, bTemp != FALSE);
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_PICK_PIC, bTemp != FALSE);
         } else {
             EnableWindow(hCtlOpacitySlider, FALSE);
-            UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_PIC, FALSE);
+            EnableWindow(hCtlColorKeyButton, FALSE);
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_PICK_PIC, FALSE);
         }
     } else {
@@ -262,7 +252,7 @@ VOID WndPropOperationLayeredGet(HWND hDlg) {
         SendMessage(hCtlOpacitySlider, TBM_SETPOS, TRUE, MAXBYTE);
         SendMessage(hCtlColorKeyCheck, BM_SETCHECK, BST_UNCHECKED, 0);
         EnableWindow(hCtlColorKeyCheck, FALSE);
-        WndPropOperationLayeredSetColorKeyCtl(hDlg, 0);
+        Ctl_SetColorPickerValue(hCtlColorKeyButton, 0);
     }
 }
 
@@ -286,7 +276,7 @@ BOOL WndPropOperationLayeredSet(HWND hDlg) {
         lChecked = UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_CHECK, BM_GETCHECK, 0, 0);
         if (lChecked == BST_CHECKED) {
             dwLayeredFlags |= LWA_COLORKEY;
-            crLayeredColorKey = WndPropOperationLayeredGetColorKeyCtl(hDlg);
+            crLayeredColorKey = Ctl_GetColorPickerValue(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN));
         }
         return SetLayeredWindowAttributes(hWnd, crLayeredColorKey, byteLayeredAlpha, dwLayeredFlags);
     } else
@@ -317,7 +307,10 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         // Topmost
         WndPropOperationSetCheckByStyle(hDlg, IDC_WNDPROP_OPERATION_TOPMOST_CHECK, TRUE, WS_EX_TOPMOST);
         // Layered
+        Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN), CTL_COLORPICKER_NOCOLOR);
         WndPropOperationLayeredGet(hDlg);
+        // Fill
+        Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_FILL_BTN), CTL_COLORPICKER_NOCOLOR);
         // Visual Style
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_VISUALSTYLE_COMBOX);
         Ctl_InitComboBox(hCtl, astVisualStyleComboBoxItem, FALSE);
@@ -348,27 +341,31 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
                 WndPropOperationLayeredGet(hDlg);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_COLORKEY_CHECK, BN_CLICKED)) {
             BOOL    bEnable = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED;
-            UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_PIC, bEnable);
+            UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN, bEnable);
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_OPERATION_PICK_PIC, bEnable);
             if (!WndPropOperationLayeredSet(hDlg))
                 WndPropOperationLayeredGet(hDlg);
-        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_COLORKEY_PIC, STN_CLICKED)) {
-            COLORREF    crLayeredColorKey;
-            crLayeredColorKey = WndPropOperationLayeredGetColorKeyCtl(hDlg);
-            if (Dlg_ChooseColor(hDlg, &crLayeredColorKey)) {
-                WndPropOperationLayeredSetColorKeyCtl(hDlg, crLayeredColorKey);
-                if (!WndPropOperationLayeredSet(hDlg))
-                    WndPropOperationLayeredGet(hDlg);
-            }
+        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_COLORKEY_BTN, BN_CLICKED)) {
+            if (!WndPropOperationLayeredSet(hDlg))
+                WndPropOperationLayeredGet(hDlg);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_PICK_PIC, STN_CLICKED)) {
             COLORREF crLayeredKey;
             SetWindowPos(hDlg, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
             if (WndPropOperationOpenPickColorWindow(&crLayeredKey)) {
-                WndPropOperationLayeredSetColorKeyCtl(hDlg, crLayeredKey);
+                Ctl_SetColorPickerValue(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN), crLayeredKey);
                 if (!WndPropOperationLayeredSet(hDlg))
                     WndPropOperationLayeredGet(hDlg);
             }
             BringWindowToTop(hDlg);
+        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_FILL_BTN, BN_CLICKED)) {
+            HWND    hWnd = AW_GetWndPropHWnd(hDlg);
+            HDC     hDC = GetDC(hWnd);
+            RECT    rcClient;
+            if (GetClientRect(hWnd, &rcClient)) {
+                COLORREF    cr = Ctl_GetColorPickerValue((HWND)lParam);
+                if (cr != CTL_COLORPICKER_NOCOLOR)
+                    GDI_FillSolidRect(hDC, &rcClient, cr);
+            }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_VISUALSTYLE_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             TCHAR   szTheme[AW_WNDPROP_OPERATION_THEMT_MAX_CCH + 1];
@@ -422,17 +419,6 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         if (lParam == (LPARAM)GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER))
             if (!WndPropOperationLayeredSet(hDlg))
                 WndPropOperationLayeredGet(hDlg);
-    } else if (uMsg == WM_DRAWITEM) {
-        if (wParam == IDC_WNDPROP_OPERATION_COLORKEY_PIC) {
-            PDRAWITEMSTRUCT lpstDrawItem = (PDRAWITEMSTRUCT)lParam;
-            RECT            rcInner;
-            GDI_FillSolidRect(lpstDrawItem->hDC, &lpstDrawItem->rcItem, RGB(0, 0, 0));
-            rcInner.left = lpstDrawItem->rcItem.left + AW_WNDPROP_OPERATION_COLORKEY_BORDER;
-            rcInner.top = lpstDrawItem->rcItem.top + AW_WNDPROP_OPERATION_COLORKEY_BORDER;
-            rcInner.right = lpstDrawItem->rcItem.right - AW_WNDPROP_OPERATION_COLORKEY_BORDER;
-            rcInner.bottom = lpstDrawItem->rcItem.bottom - AW_WNDPROP_OPERATION_COLORKEY_BORDER;
-            GDI_FillSolidRect(lpstDrawItem->hDC, &rcInner, (COLORREF)(DWORD_PTR)GetProp(lpstDrawItem->hwndItem, AW_WNDPROP_OPERATION_COLORKEY_PROP));
-        }
     } else
         return FALSE;
     return TRUE;

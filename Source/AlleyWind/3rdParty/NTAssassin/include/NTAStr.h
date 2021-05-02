@@ -189,6 +189,16 @@ NTA_API BOOL NTAPI Str_16ToUDecExW(USHORT uNum, LPWSTR lpszOutput, UINT cchMax);
 #define Str_16ToUDec Str_16ToUDecA
 #endif
 
+NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR HexRGB, UINT MaxCh);
+#define Str_RGBToHexW(Color, HexRGB) Str_RGBToHexExW(Color, HexRGB, ARRAYSIZE(HexRGB))
+#ifdef UNICODE
+#define Str_RGBToHexEx Str_RGBToHexExW
+#define Str_RGBToHex Str_RGBToHexW
+#else
+#define Str_RGBToHexEx Str_RGBToHexExA
+#define Str_RGBToHex Str_RGBToHexA
+#endif
+
 NTA_API NTSTATUS NTAPI Str_UnicodeToUTF8Ex(LPSTR pszDest, UINT cchDest, LPCWSTR pszSrc, PULONG pulChWritten);
 #define Str_UnicodeToUTF8(pszDest, pszSrc, pulChWritten) Str_UnicodeToUTF8Ex(pszDest, ARRAYSIZE(pszDest), pszSrc, pulChWritten)
 

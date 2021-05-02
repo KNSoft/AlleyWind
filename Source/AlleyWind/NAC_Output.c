@@ -3,7 +3,7 @@
 
 #include "3rdParty\NTAssassin\include\NTAssassin.h"
 
-I18N_ITEM NAC_I18N_Lang_en_Items[129] = {
+I18N_ITEM NAC_I18N_Lang_en_Items[130] = {
 	{0x642A6E98, TEXT("None")},
 	{0x004F13BC, TEXT("OK")},
 	{0xD192564E, TEXT("Apply")},
@@ -100,6 +100,7 @@ I18N_ITEM NAC_I18N_Lang_en_Items[129] = {
 	{0x7DAD898F, TEXT("Switch To")},
 	{0x4BA62BF7, TEXT("Redraw")},
 	{0x5EF0D8D4, TEXT("Highlight")},
+	{0xECFD8B23, TEXT("Fill")},
 	{0x9ED8C378, TEXT("Close")},
 	{0x3D6CA980, TEXT("End Task")},
 	{0x70FCFC4F, TEXT("Process")},
@@ -136,7 +137,7 @@ I18N_ITEM NAC_I18N_Lang_en_Items[129] = {
 };
 I18N_LANGUAGE NAC_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), NULL, FALSE, NAC_I18N_Lang_en_Items };
 
-I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[129] = {
+I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[130] = {
 	{0x642A6E98, TEXT("无")},
 	{0x004F13BC, TEXT("确定")},
 	{0xD192564E, TEXT("应用")},
@@ -233,6 +234,7 @@ I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[129] = {
 	{0x7DAD898F, TEXT("切换到")},
 	{0x4BA62BF7, TEXT("重绘")},
 	{0x5EF0D8D4, TEXT("突出显示")},
+	{0xECFD8B23, TEXT("填涂")},
 	{0x9ED8C378, TEXT("关闭")},
 	{0x3D6CA980, TEXT("结束任务")},
 	{0x70FCFC4F, TEXT("进程")},

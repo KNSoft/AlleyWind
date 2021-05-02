@@ -9,7 +9,7 @@ typedef struct _DLG_RECTEDITOR {
 } DLG_RECTEDITOR, * PDLG_RECTEDITOR;
 
 /**
-  * @brief Edit RECT structure
+  * @brief Edits RECT structure
   * @param[in] Strings String table to display text on the dialog, default strings is ["Title", "Reset", "OK", "Left", "Top", "Right", "Bottom", "Width", "Height"]
   * @param[in, out] Rect Pointer to the RECT structure
   * @return Returns BOOL

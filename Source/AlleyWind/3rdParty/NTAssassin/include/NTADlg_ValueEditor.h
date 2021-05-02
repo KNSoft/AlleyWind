@@ -25,7 +25,7 @@ typedef struct _DLG_VALUEEDITOR {
 } DLG_VALUEEDITOR, * PDLG_VALUEEDITOR;
 
 /**
-  * @brief Edit value as combination or enumeration
+  * @brief Edits value as combination or enumeration
   * @param[in] Owner Handle to owner window
   * @param[in] Flags Can be combined with one of DVE_TYPE_XXX and one of DVE_VALUE_XXX
   * @param[in] Strings String table to display text on the dialog, default strings is ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
