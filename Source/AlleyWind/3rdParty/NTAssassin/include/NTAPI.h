@@ -191,6 +191,13 @@ RtlIntegerToUnicodeString(
     PUNICODE_STRING String
 );
 
+NTSYSAPI
+ULONG
+NTAPI
+RtlRandomEx(
+    PULONG Seed
+);
+
 // Nt*/Zw*
 
 NTSYSAPI

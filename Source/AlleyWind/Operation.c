@@ -381,6 +381,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             DWORD   dwAffinity;
+            BOOL    bSucc;
             dwAffinity = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE;
             if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
                 HANDLE                  hProc;
@@ -389,15 +390,24 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
                     { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
                     { dwAffinity, 0, FALSE }
                 };
+                bSucc = FALSE;
                 hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
                 if (hProc && NT_SUCCESS(Hijack_LoadProcAddr(hProc, L"user32.dll", "SetWindowDisplayAffinity", (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
-                    stCallProc.RetValue = 0;
                     stCallProc.CallConvention = 0;
                     stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
-                    Hijack_CallProc(hProc, &stCallProc, stSWDAParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
+                    if (NT_SUCCESS(
+                        Hijack_CallProc(
+                            hProc,
+                            &stCallProc,
+                            stSWDAParams,
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                        )) && stCallProc.RetValue)
+                        bSucc = TRUE;
                 }
             } else
-                UI_SetWindowDisplayAffinity(hWnd, dwAffinity);
+                bSucc = UI_SetWindowDisplayAffinity(hWnd, dwAffinity);
+            if (!bSucc)
+                KNS_ErrorMsgBox(hDlg, ERROR_FUNCTION_FAILED);
             WndPropOperationGetDisplayAffinity(hDlg, hWnd);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_SWITCHTO_BTN, BN_CLICKED)) {
             HWND hWnd = AW_GetWndPropHWnd(hDlg);

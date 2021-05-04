@@ -13,6 +13,24 @@ typedef struct _RPROC_MAP {
 } RPROC_MAP, * PRPROC_MAP;
 
 /**
+  * @brief Callback procedure to enumerate DLL modules loaded on remote process
+  * @param[in] ProcessHandle Handle to the remote process
+  * @param[in] DllLdrEntry Pointer to LDR_DATA_TABLE_ENTRY of each DLL modules
+  * @param[in] Param User defined value passed to the callback
+  * @return Returns FALSE to stop the enumeration, or TRUE to continue
+  */
+typedef BOOL(CALLBACK* RPROC_DLLENUMPROC)(HANDLE ProcessHandle, PLDR_DATA_TABLE_ENTRY DllLdrEntry, LPARAM Param);
+
+/**
+  * @brief Enumerates DLL modules of remote process
+  * @param[in] ProcessHandle Handle to the remote process
+  * @param[in] DllEnumProc Callback procedure to receive information of each DLL
+  * @param[in] Param User defined value passed to the callback
+  * @return Returns NTSTATUS
+  */
+NTA_API NTSTATUS NTAPI RProc_EnumDlls(HANDLE ProcessHandle, RPROC_DLLENUMPROC DllEnumProc, LPARAM Param);
+
+/**
   * @see "ReadProcessMemory"
   */
 #define RProc_MemReadEx(ProcessHandle, BaseAddress, Buffer, Size) NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, Size, NULL)

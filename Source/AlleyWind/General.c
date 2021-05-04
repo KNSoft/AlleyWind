@@ -42,7 +42,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         TCHAR               szBuffer[1024], szTempPath[MAX_PATH];
         LPCTSTR             lpszTemp;
         DWORD_PTR           dwpStyle, dwpTemp;
-        DWORD               dwStyleError;
+        DWORD               dwStyleError, dwError;
         PAW_SYSCLASSINFO    lpSysClsInfo;
         INT                 iTemp;
         UINT                uTemp;
@@ -52,15 +52,16 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astWndPropGeneralTextCtl);
         UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK, TRUE);
-        dwStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
+        dwError = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
+        dwStyleError = dwError;
         // Handle
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_HANDLE_EDIT, TRUE, TEXT("%08X"), (DWORD)(DWORD_PTR)hWnd);
         // Style and extra style
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_STYLE_BTN, dwStyleError == ERROR_SUCCESS);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_STYLE_EDIT, dwStyleError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpStyle);;
-        dwStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpTemp);
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_BTN, dwStyleError == ERROR_SUCCESS);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_EDIT, dwStyleError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpTemp);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_STYLE_BTN, dwError == ERROR_SUCCESS);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_STYLE_EDIT, dwError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpStyle);;
+        dwError = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpTemp);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_BTN, dwError == ERROR_SUCCESS);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_EDIT, dwError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpTemp);
         // Caption
         AW_GetWindowText(hWnd, szBuffer);
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_CAPTION_EDIT, szBuffer, TRUE);
@@ -69,6 +70,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         DWORD       dwPID;
         GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
+        dwpTemp = 0;
         if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
             NTSTATUS    lStatus;
             BOOL        b32Proc;
@@ -90,9 +92,9 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
                     if (b32Proc)
                         dwpTemp = (DWORD)dwpTemp;
                 }
-            } else
-                dwpTemp = 0;
-        } else
+            }
+        }
+        if (!dwpTemp)
             UI_GetWindowLong(hWnd, FALSE, GWLP_WNDPROC, &dwpTemp);
         uTemp = hProc && dwpTemp ? RProc_TranslateAddress(hProc, (PVOID)dwpTemp, szTempPath) : 0;
         iTemp = Str_CchPrintf(szBuffer, TEXT("%s (%s)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), IsWindowUnicode(hWnd) ? TEXT("Unicode") : TEXT("ANSI"));
@@ -101,9 +103,8 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             NtClose(hProc);
         // Control ID
         if (dwStyleError == ERROR_SUCCESS && dwpStyle & WS_CHILD) {
-            NT_ClearLastError();
-            iTemp = GetDlgCtrlID(hWnd);
-            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, iTemp || NT_LastErrorSucceed(), TEXT("%d"), iTemp);
+            dwError = UI_GetWindowLong(hWnd, FALSE, GWLP_ID, &dwpTemp);
+            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, dwError == ERROR_SUCCESS, TEXT("%d"), (INT)dwpTemp);
         } else {
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, FALSE);
         }

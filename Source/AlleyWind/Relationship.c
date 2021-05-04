@@ -126,11 +126,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         I18N_InitCtlTexts(hDlg, astWndPropRelationshipTextCtl);
         // Process and Thread
         dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
-        hProc = RProc_Open(
-            (NT_GetKUSD()->NtMajorVersion >= 6 ?
-                PROCESS_QUERY_LIMITED_INFORMATION :
-                PROCESS_QUERY_INFORMATION | PROCESS_VM_READ),
-            dwPID);
+        hProc = RProc_Open(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, dwPID);
         uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath) : 0;
         iTemp = Str_CchPrintf(szBuffer, TEXT("(%ld) %s"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_EDIT, szBuffer, iTemp > 0);

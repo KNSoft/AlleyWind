@@ -58,6 +58,13 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     return TRUE;
 }
 
+VOID WndPropResourceGetFont(HWND hDlg, HWND hWnd) {
+    DWORD_PTR   dwpTemp;
+    LRESULT     lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwpTemp);
+    AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwpTemp);
+    UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwpTemp != 0);
+}
+
 INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
         HWND        hWnd, hCtl;
@@ -85,9 +92,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         UI_GetWindowLong(hWnd, FALSE, GWLP_HINSTANCE, &dwpTemp);
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HINSTANCE_EDIT, dwpTemp || NT_LastErrorSucceed(), TEXT("%p"), (HINSTANCE)dwpTemp);
         // hFont
-        lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwpTemp);
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwpTemp != 0);
+        WndPropResourceGetFont(hDlg, hWnd);
         // hMenu
         if (dwStyleError != ERROR_SUCCESS || dwpStyle & WS_CHILD)
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, FALSE);
@@ -109,31 +114,82 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         EnumPropsEx(hWnd, WndPropResourcePropEnumProc, (LPARAM)hCtl);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HFONT_BTN, BN_CLICKED)) {
-            HWND    hWnd;
-            LRESULT lResult;
-            HFONT   hFont;
-            LOGFONT stLogFont;
-            DWORD   dwProcessId;
+            HWND        hWnd;
+            LRESULT     lResult;
+            HFONT       hFont;
+            LOGFONTW    stLogFont;
+            DWORD       dwProcessId;
+            BOOL        bChosen;
             hWnd = AW_GetWndPropHWnd(hDlg);
             lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, (PDWORD_PTR)&hFont);
             if (!lResult || GetObject((HFONT)hFont, sizeof(stLogFont), &stLogFont) == 0)
                 RtlZeroMemory(&stLogFont, sizeof(stLogFont));
-            Dlg_ChooseFont(hDlg, &stLogFont, NULL);
+            bChosen = Dlg_ChooseFont(hDlg, &stLogFont, NULL);
             if (hFont) {
                 GetWindowThreadProcessId(hWnd, &dwProcessId);
                 if (dwProcessId != NT_GetTEBMember(ClientId.UniqueProcess))
                     DeleteObject(hFont);
             }
-            /*if (UI_GetFont(hDlg, &stLogFont, NULL)) {
-                hFont = CreateFontIndirect(&stLogFont);
-                if (hFont) {
-                    lResult = AW_SendMsgTO(hWnd, WM_SETFONT, (WPARAM)hFont, TRUE, (PDWORD_PTR)&hFont);
-                    if (lResult) {
-                        lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, (PDWORD_PTR)&hFont);
-                        AW_SetPropCtlValue(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, TEXT("%08X"), (LONG_PTR)hFont, lResult != 0);
+            if (bChosen) {
+                if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
+                    HANDLE                  hProc;
+                    hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+                    if (hProc) {
+                        // Create new font
+                        HIJACK_CALLPROCHEADER   stCFICallProc;
+                        if (!NT_SUCCESS(
+                            Hijack_LoadProcAddr(
+                                hProc,
+                                L"gdi32.dll",
+                                "CreateFontIndirectW",
+                                (PVOID*)&stCFICallProc.Procedure,
+                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                            )
+                            goto Label_0;
+                        HIJACK_CALLPROCPARAM    stCFIParams[] = {
+                            { (DWORD_PTR)&stLogFont, sizeof(stLogFont), FALSE }
+                        };
+                        stCFICallProc.CallConvention = 0;
+                        stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
+                        if (!NT_SUCCESS(
+                            Hijack_CallProc(
+                                hProc,
+                                &stCFICallProc,
+                                stCFIParams,
+                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                            )) || !stCFICallProc.RetValue)
+                            goto Label_0;
+                        // Apply new font created
+                        HIJACK_CALLPROCHEADER   stSMWCallProc;
+                        if (!NT_SUCCESS(
+                            Hijack_LoadProcAddr(
+                                hProc,
+                                L"user32.dll",
+                                "SendMessageW",
+                                (PVOID*)&stSMWCallProc.Procedure,
+                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                            )
+                            goto Label_0;
+                        HIJACK_CALLPROCPARAM    stSMWParams[] = {
+                            { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                            { WM_SETFONT, 0, FALSE },
+                            { stCFICallProc.RetValue, 0, FALSE },
+                            { TRUE, 0, FALSE }
+                        };
+                        stSMWCallProc.CallConvention = 0;
+                        stSMWCallProc.ParamCount = ARRAYSIZE(stSMWParams);
+                        Hijack_CallProc(
+                            hProc,
+                            &stSMWCallProc,
+                            stSMWParams,
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                        );
                     }
+                Label_0:
+                    NtClose(hProc);
+                    WndPropResourceGetFont(hDlg, hWnd);
                 }
-            }*/
+            }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_IMAGE_BTN, BN_CLICKED)) {
             RECT rcBtn;
             if (GetWindowRect((HWND)lParam, &rcBtn)) {

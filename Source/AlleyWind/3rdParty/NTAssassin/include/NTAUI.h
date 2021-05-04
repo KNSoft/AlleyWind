@@ -118,6 +118,11 @@ NTA_API BOOL NTAPI UI_ShellExec(PCWSTR File, PCWSTR Param, UI_SHELLEXEC_VERB Ver
 #define UI_SetWindowRect(Window, Rect) SetWindowPos(Window, NULL, (Rect)->left, (Rect)->top, (Rect)->right - (Rect)->left, (Rect)->bottom - (Rect)->top, SWP_NOZORDER | SWP_NOACTIVATE);
 
 /**
+  * @see "PtInRect"
+  */
+#define UI_PtInRect(Rect, Point) (((Point).x >= (Rect)->left) && ((Point).x < (Rect)->right) && ((Point).y >= (Rect)->top) && ((Point).y < (Rect)->bottom))
+
+/**
   * @brief Inverses a RGB color
   * @param[in] rgb The RGB color to be inversed
   * @return Returns a RGB color being inversed
