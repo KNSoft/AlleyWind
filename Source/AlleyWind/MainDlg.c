@@ -46,8 +46,6 @@ CTL_MENU stSearchMenu[] = {
     { MF_STRING, IDM_EXITSEARCH, I18NIndex_Cancel, NULL, 0 }
 };
 
-LONG        lBannerHeight;
-RECT        rcTemp;
 HWND        hMainDlg, hBanner, hTree, hDesktop;
 HANDLE      hthrLoadWindowTree = NULL;
 HMENU       hSearchMenu;
@@ -206,8 +204,11 @@ BOOL AW_LocateWindowInTree(HWND hWnd) {
 }
 
 VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc) {
-    SetWindowPos(hBanner, NULL, 0, 0, NewWidth, lBannerHeight, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-    SetWindowPos(hTree, NULL, 0, lBannerHeight, NewWidth, NewHeight - lBannerHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+    RECT    rcClient;
+    if (GetClientRect(hBanner, &rcClient)) {
+        SetWindowPos(hBanner, NULL, 0, 0, NewWidth, rcClient.bottom, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+        SetWindowPos(hTree, NULL, 0, 0, NewWidth, NewHeight - rcClient.bottom, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+    }
 }
 
 INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -221,8 +222,6 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         hBanner = GetDlgItem(hDlg, IDC_MAINBANNER);
         hTree = GetDlgItem(hDlg, IDC_MAINTREE);
         UI_SetTheme(hTree);
-        GetWindowRect(hBanner, &rcTemp);
-        lBannerHeight = rcTemp.bottom - rcTemp.top;
         // Prepare controls and resources
         Ctl_SetMenu(hDlg, stDlgMenu);
         hSearchMenu = CreatePopupMenu();

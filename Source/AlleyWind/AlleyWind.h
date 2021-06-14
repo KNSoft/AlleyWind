@@ -1,7 +1,7 @@
 #pragma once
 
 #define NTA_CUSTOMENTRY "Main"
-#include "3rdParty\NTAssassin\include\NTAssassin.h"
+#include "NTAssassin\NTAssassin.h"
 #include "NAC_Output.h"
 
 #include "AWDatabase.h"
@@ -11,24 +11,16 @@
 #include "resource.h"
 
 #if _DEBUG
-#if _WIN64
-#pragma comment(lib, "3rdParty\\NTAssassin\\lib\\x64\\Debug\\NTAssassin.lib")
+#pragma comment(lib, "Debug\\NTAssassin.lib")
 #else
-#pragma comment(lib, "3rdParty\\NTAssassin\\lib\\x86\\Debug\\NTAssassin.lib")
-#endif
-#else
-#if _WIN64
-#pragma comment(lib, "3rdParty\\NTAssassin\\lib\\x64\\Release\\NTAssassin.lib")
-#else
-#pragma comment(lib, "3rdParty\\NTAssassin\\lib\\x86\\Release\\NTAssassin.lib")
-#endif
+#pragma comment(lib, "Release\\NTAssassin.lib")
 #endif
 
 #define KNS_NAME TEXT("AlleyWind")
 
 #define AW_VER_MAJOR 1
 #define AW_VER_MINOR 0
-#define AW_VER_REVISION 1
+#define AW_VER_REVISION 2
 #define AW_VER_BUILD 0
 #define AW_VER_TYPE KNS_VERSION_BETA
 

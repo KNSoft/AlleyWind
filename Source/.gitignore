@@ -5,3 +5,4 @@
 /AlleyWind/x64
 *.vcxproj.user
 *.aps
+/AlleyWind/Resource/*.fla

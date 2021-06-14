@@ -68,23 +68,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)3rdParty\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(ProjectDir)3rdParty\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)3rdParty\include;$(IncludePath)</IncludePath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <LibraryPath>$(ProjectDir)3rdParty\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)3rdParty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)3rdParty\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)3rdParty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)3rdParty\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,7 +109,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,7 +137,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -155,7 +159,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,7 +187,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -207,7 +211,6 @@
     <ClCompile Include="WndProp.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="3rdParty\NTAssassin\include\NTAssassin.h" />
     <ClInclude Include="AlleyWind.h" />
     <ClInclude Include="AWDatabase.h" />
     <ClInclude Include="AWWndIO.h" />

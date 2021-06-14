@@ -30,7 +30,7 @@ VOID WndPropGeneralUpdateRectCtl(HWND hDlg) {
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK, FALSE);
     } else {
         bRelative = UI_GetDlgButtonCheck(hDlg, IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK) == BST_CHECKED;
-        bSucc = bRelative ? UI_GetRelativeRect(hWnd, NULL, &rc) : GetWindowRect(hWnd, &rc);
+        bSucc = bRelative ? UI_GetRelativeRect(hWnd, NULL, &rc) : UI_GetWindowRect(hWnd, &rc);
     }
     AW_SetPropCtlRect(hDlg, IDC_WNDPROP_GENERAL_RECT_EDIT, &rc, bSucc);
     UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_RECT_BTN, bSucc && bRelative);

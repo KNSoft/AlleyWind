@@ -1,6 +1,6 @@
 {
     "Input": {
-        "NTAHeader": "3rdParty\\NTAssassin\\include\\NTAssassin.h"
+        "NTAHeader": "3rdParty\\include\\NTAssassin\\NTAssassin.h"
     },
     "Loaders": {
         "I18N": {

@@ -2,7 +2,7 @@
 AlleyWind is an advanced Win32-based and open-sourced utility that helps you to manage system's windows. AlleyWind could:
 + Displays a graphical tree of relationships among windows, and search what you want
 + Shows the properties of selected window(s), and some of them could be modified:
-    + Text, Style, Extended Style and Class Style
+    + Text, Font, Position, Size, Style, Extended Style and Class Style
     + Visibility, Availability, and Topmost property
     + Hot Key, Visual Style, Display Affinity and Layered properties
 + Obtains private properties (e.g., address of window or dialog callback procedure) by using code injection technology
@@ -15,9 +15,9 @@ AlleyWind is an advanced Win32-based and open-sourced utility that helps you to 
 [看雪论坛](https://bbs.pediy.com/)：[[原创]AlleyWind - 专业窗口管理工具](https://bbs.pediy.com/thread-266706.htm)
 
 ## Latest Version
-AlleyWind V1.0.0.0 Alpha
+AlleyWind V1.0.2.0 Beta [2021-06-14]
 
-<font color=red>*This is Alpha version for early testing only, which is not stable! SHOULD NOT BE USED IN IMPORTANT ENVIRONMENT!</font>
+<font color=red>*This is Beta version for testing only, which is not stable! SHOULD NOT BE USED IN IMPORTANT ENVIRONMENT!</font>
 
 ## Snapshots
 ![avatar](Asset/Screenshots/1.png)

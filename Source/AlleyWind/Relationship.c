@@ -171,7 +171,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_WNDPROP_RELATIONSHIP_PROCESS_BTN, BN_CLICKED)) {
             RECT rcBtn;
-            if (GetWindowRect((HWND)lParam, &rcBtn))
+            if (UI_GetWindowRect((HWND)lParam, &rcBtn))
                 Ctl_PopupMenu(hPropRelationshipProcMenu, rcBtn.right, rcBtn.top, hDlg);
         } else if (wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0)) {
             TCHAR   szPath[MAX_PATH];

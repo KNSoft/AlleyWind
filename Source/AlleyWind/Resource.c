@@ -192,53 +192,38 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_IMAGE_BTN, BN_CLICKED)) {
             RECT rcBtn;
-            if (GetWindowRect((HWND)lParam, &rcBtn)) {
+            if (UI_GetWindowRect((HWND)lParam, &rcBtn)) {
                 Ctl_PopupMenu(hWndPropResourceImage, rcBtn.right, rcBtn.top, hDlg);
             }
         } else if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0) || wParam == MAKEWPARAM(IDM_IMAGE_COPY, 0)) {
-            TCHAR       szExpImageFileName[MAX_PATH];
-            HWND        hWnd;
-            HDC         hDC, hMemDC;
-            HBITMAP     hMemBmp;
-            HGDIOBJ     hPrevBmp;
-            SIZE_T      uSize;
-            FILE_MAP    stFileMap;
-            RECT        rcWnd; // right and bottom are corresponding to CX and CY
+            TCHAR           szExpImageFileName[MAX_PATH];
+            HWND            hWnd;
+            SIZE_T          uSize;
+            FILE_MAP        stFileMap;
+            GDI_SNAPSHOT    stSnapshot;
             hWnd = AW_GetWndPropHWnd(hDlg);
-            if (hWnd == GetDesktopWindow()) {
-                hWnd = NULL;
-                rcWnd.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
-                rcWnd.top = GetSystemMetrics(SM_YVIRTUALSCREEN);
-                rcWnd.right = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-                rcWnd.bottom = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-            } else
-                GetClientRect(hWnd, &rcWnd);
-            hDC = GetDC(hWnd);
-            hMemDC = CreateCompatibleDC(hDC);
-            hMemBmp = CreateCompatibleBitmap(hDC, rcWnd.right - rcWnd.left, rcWnd.bottom - rcWnd.top);
-            hPrevBmp = SelectObject(hMemDC, hMemBmp);
-            BitBlt(hMemDC, 0, 0, rcWnd.right, rcWnd.bottom, hDC, rcWnd.left, rcWnd.top, SRCCOPY);
-            SelectObject(hMemDC, hPrevBmp);
-            if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0)) {
-                if (NT_SUCCESS(GDI_WriteBitmap(hMemDC, hMemBmp, NULL, 0, &uSize)) && uSize) {
-                    szExpImageFileName[0] = '\0';
-                    if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, lpszExpImageFileExt)) {
-                        if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap))) {
-                            GDI_WriteBitmap(hMemDC, hMemBmp, stFileMap.Mem.VirtualAddress, uSize, &uSize);
-                            stFileMap.Mem.NumberOfBytes = uSize;
-                            File_Unmap(&stFileMap);
+            if (GDI_CreateSnapshot(hWnd == GetDesktopWindow() ? NULL : hWnd, &stSnapshot)) {
+                SelectObject(stSnapshot.DC, stSnapshot.OriginalBitmap);
+                if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0)) {
+                    uSize = GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, NULL);
+                    if (uSize) {
+                        szExpImageFileName[0] = '\0';
+                        if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, lpszExpImageFileExt)) {
+                            if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap))) {
+                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Mem.VirtualAddress))
+                                    File_Dispose(stFileMap.FileHandle, TRUE);
+                                File_Unmap(&stFileMap);
+                            }
                         }
                     }
+                } else {
+                    OpenClipboard(hDlg);
+                    EmptyClipboard();
+                    SetClipboardData(CF_BITMAP, stSnapshot.Bitmap);
+                    CloseClipboard();
                 }
-            } else {
-                OpenClipboard(hDlg);
-                EmptyClipboard();
-                SetClipboardData(CF_BITMAP, hMemBmp);
-                CloseClipboard();
+                GDI_DeleteSnapshot(&stSnapshot);
             }
-            DeleteDC(hMemDC);
-            DeleteObject(hMemBmp);
-            ReleaseDC(hWnd, hDC);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HOTKEY_EDIT, EN_CHANGE) && !UI_GetNoNotifyFlag((HWND)lParam)) {
             HWND        hWnd;
             WORD        wHotkey;

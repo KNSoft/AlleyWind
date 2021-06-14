@@ -13,10 +13,10 @@ I18N_CTLTEXT astFindWndTextCtl[] = {
 };
 
 CRITICAL_SECTION    csFindWndCapture;
-DLG_SCREENSNAPSHOT  stFindWndCaptureScreenSnapshot = { CaptureWndProc, NULL, NULL, 0, WS_POPUP | WS_VISIBLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT };
+DLG_SCREENSNAPSHOT  stFindWndCaptureScreenSnapshot = { CaptureWndProc, NULL, NULL, 0, WS_POPUP | WS_VISIBLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW };
 HWND                hFindWndTarget;
 BOOL                bFindWndThoroughSearch;
-
+LRESULT             lFindWndThoroughSearchState = BST_UNCHECKED;
 BLENDFUNCTION       stFindWndCaptureBlendFunc = { AC_SRC_OVER, 0, 128, 0 };
 
 VOID AW_OpenFindWndDlg(HWND hDlg) {
@@ -33,6 +33,27 @@ VOID FindWndUninit() {
     DestroyCursor(stFindWndCaptureScreenSnapshot.hCursor);
 }
 
+typedef struct _AW_CAPTUREWNDREF {
+    HWND    hCaptureWnd;
+    HWND    hDstWnd;
+    POINT   pt;
+} AW_CAPTUREWNDREF, * PAW_CAPTUREWNDREF;
+
+BOOL CALLBACK CaptureWndEnumProc(HWND hWnd, LPARAM lParam) {
+    RECT                rc;
+    PAW_CAPTUREWNDREF   pstRef = (PAW_CAPTUREWNDREF)lParam;
+    if (hWnd != pstRef->hCaptureWnd &&
+        IsWindowVisible(hWnd) &&
+        !IsIconic(hWnd) &&
+        !UI_GetWindowCloackedState(hWnd) &&
+        UI_GetWindowRect(hWnd, &rc) &&
+        UI_PtInRect(&rc, pstRef->pt)) {
+        pstRef->hDstWnd = hWnd;
+        return FALSE;
+    } else
+        return TRUE;
+}
+
 LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_PAINT) {
         UI_WINDBPAINT   stPaint;
@@ -41,13 +62,13 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             stPaint.DC,
             0,
             0,
-            stFindWndCaptureScreenSnapshot.iScreenCX,
-            stFindWndCaptureScreenSnapshot.iScreenCY,
-            stFindWndCaptureScreenSnapshot.hdcMirror,
+            stFindWndCaptureScreenSnapshot.Snapshot.Size.cx,
+            stFindWndCaptureScreenSnapshot.Snapshot.Size.cy,
+            stFindWndCaptureScreenSnapshot.Snapshot.DC,
             0,
             0,
-            stFindWndCaptureScreenSnapshot.iScreenCX,
-            stFindWndCaptureScreenSnapshot.iScreenCY,
+            stFindWndCaptureScreenSnapshot.Snapshot.Size.cx,
+            stFindWndCaptureScreenSnapshot.Snapshot.Size.cy,
             stFindWndCaptureBlendFunc);
         if (hFindWndTarget) {
             RECT    rc;
@@ -58,7 +79,7 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                     rc.top,
                     rc.right - rc.left,
                     rc.bottom - rc.top,
-                    stFindWndCaptureScreenSnapshot.hdcMirror,
+                    stFindWndCaptureScreenSnapshot.Snapshot.DC,
                     rc.left,
                     rc.top,
                     SRCCOPY);
@@ -68,36 +89,38 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         UI_EndPaint(hWnd, &stPaint);
         return 0;
     } else if (uMsg == WM_MOUSEMOVE) {
-        POINT   ptScreen, pt;
-        HWND    hWndHover, hWndParent;
+        AW_CAPTUREWNDREF    stRef;
+        HWND                hWndParent;
         // Obtain screen point
         hWndParent = GetDesktopWindow();
-        ptScreen.x = GET_X_LPARAM(lParam);
-        ptScreen.y = GET_Y_LPARAM(lParam);
-        ClientToScreen(hWnd, &ptScreen);
+        stRef.pt.x = GET_X_LPARAM(lParam);
+        stRef.pt.y = GET_Y_LPARAM(lParam);
+        ClientToScreen(hWnd, &stRef.pt);
         // Search child window
-        hWndHover = NULL;
+        stRef.hCaptureWnd = hWnd;
         if (bFindWndThoroughSearch) {
             while (TRUE) {
-                pt.x = ptScreen.x;
-                pt.y = ptScreen.y;
+                POINT pt;
+                pt.x = stRef.pt.x;
+                pt.y = stRef.pt.y;
                 ScreenToClient(hWndParent, &pt);
-                hWndHover = ChildWindowFromPointEx(hWndParent, pt, CWP_SKIPINVISIBLE | CWP_SKIPTRANSPARENT);
-                if (!hWndHover) {
-                    hWndHover = hWndParent;
+                stRef.hDstWnd = NULL;
+                UI_EnumChildWindows(hWndParent, CaptureWndEnumProc, (LPARAM)&stRef);
+                if (!stRef.hDstWnd) {
+                    stRef.hDstWnd = hWndParent;
                     break;
-                } else if (hWndHover == hWndParent) {
+                } else if (stRef.hDstWnd == hWndParent) {
                     break;
                 } else
-                    hWndParent = hWndHover;
+                    hWndParent = stRef.hDstWnd;
             }
         } else {
-            ScreenToClient(hWndParent, &ptScreen);
-            hWndHover = ChildWindowFromPointEx(hWndParent, ptScreen, CWP_SKIPINVISIBLE | CWP_SKIPTRANSPARENT);
+            stRef.hDstWnd = NULL;
+            UI_EnumChildWindows(hWndParent, CaptureWndEnumProc, (LPARAM)&stRef);
         }
         // Update window
-        if (hWndHover != hFindWndTarget) {
-            hFindWndTarget = hWndHover;
+        if (stRef.hDstWnd != hFindWndTarget) {
+            hFindWndTarget = stRef.hDstWnd;
             UI_Redraw(hWnd);
         }
         return 0;
@@ -170,7 +193,7 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         I18N_InitCtlTexts(hDlg, astFindWndTextCtl);
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)I18N_GetString(I18NIndex_FindWindow));
         UI_SetWindowIcon(hDlg, KNS_GetIcon());
-        UI_SendDlgItemMsg(hDlg, IDC_FINDWND_CAPTURE_PIC, STM_SETIMAGE, IMAGE_CURSOR, (LPARAM)stFindWndCaptureScreenSnapshot.hCursor);
+        UI_SetDlgButtonCheck(hDlg, IDC_FINDWND_THOROUGHSEARCH_CHECK, lFindWndThoroughSearchState);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_FINDWND_CAPTURE_PIC, STN_CLICKED)) {
             HWND        hWnd;
@@ -195,6 +218,8 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             wParam == MAKEWPARAM(IDC_FINDWND_CLASS_CHECK, BN_CLICKED) ||
             wParam == MAKEWPARAM(IDC_FINDWND_HANDLE_CHECK, BN_CLICKED)) {
             FindWndCheckItem(hDlg, LOWORD(wParam), FALSE, SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED);
+        } else if (wParam == MAKEWPARAM(IDC_FINDWND_THOROUGHSEARCH_CHECK, BN_CLICKED)) {
+            lFindWndThoroughSearchState = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0);
         } else if (wParam == MAKEWPARAM(IDC_FINDWND_OK_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             if (UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_HANDLE_CHECK) == BST_CHECKED) {
@@ -220,6 +245,27 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             FindWndUpdateHandle(hDlg);
         }
         SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);
+    } else if (uMsg == WM_DRAWITEM) {
+        if (wParam == IDC_FINDWND_CAPTURE_PIC) {
+            PDRAWITEMSTRUCT pdi = (PDRAWITEMSTRUCT)lParam;
+            INT             iCX, iCY;
+            UINT            uDPIX, uDPIY;
+            iCX = GetSystemMetrics(SM_CXCURSOR);
+            iCY = GetSystemMetrics(SM_CYCURSOR);
+            DPI_FromWindow(hDlg, &uDPIX, &uDPIY);
+            if (uDPIX != USER_DEFAULT_SCREEN_DPI)
+                DPI_Scale(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
+            if (uDPIY != USER_DEFAULT_SCREEN_DPI)
+                DPI_Scale(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
+            GDI_DrawIcon(
+                pdi->hDC,
+                stFindWndCaptureScreenSnapshot.hCursor,
+                (pdi->rcItem.right - pdi->rcItem.left - iCX) / 2,
+                (pdi->rcItem.bottom - pdi->rcItem.top - iCY) / 2,
+                iCX,
+                iCY);
+            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
+        }
     } else if (uMsg == WM_CLOSE) {
         EndDialog(hDlg, 0);
         SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);

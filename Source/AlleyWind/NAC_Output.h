@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "3rdParty\NTAssassin\include\NTAssassin.h"
+#include "3rdParty\include\NTAssassin\NTAssassin.h"
 
 #define NAC_I18N_ITEM_COUNT 130
 

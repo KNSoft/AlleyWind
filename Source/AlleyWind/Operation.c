@@ -69,9 +69,9 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         BitBlt(stPaint.DC,
             0,
             0,
-            stWndPropOperationPickColorScreenSnapshot.iScreenCX,
-            stWndPropOperationPickColorScreenSnapshot.iScreenCY,
-            stWndPropOperationPickColorScreenSnapshot.hdcMirror,
+            stWndPropOperationPickColorScreenSnapshot.Snapshot.Size.cx,
+            stWndPropOperationPickColorScreenSnapshot.Snapshot.Size.cy,
+            stWndPropOperationPickColorScreenSnapshot.Snapshot.DC,
             0,
             0,
             SRCCOPY);
@@ -79,7 +79,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         GetCursorPos(&pt);
         ScreenToClient(hWnd, &pt);
         rcInfoBox.left = pt.x - stPickColorCursorInfo.xHotspot + bmPickColorCursor.bmWidth;
-        rcInfoBox.top = pt.y - stPickColorCursorInfo.yHotspot + bmPickColorCursor.bmHeight / 2;
+        rcInfoBox.top = pt.y - stPickColorCursorInfo.yHotspot + (stPickColorCursorInfo.hbmColor ? bmPickColorCursor.bmHeight : bmPickColorCursor.bmHeight / 2);
         rcInfoBox.right = rcInfoBox.left + AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT * AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
         rcInfoBox.bottom = rcInfoBox.top + AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT * AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXSCALE;
         // Draw zoomed image
@@ -95,7 +95,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
                     stPaint.DC,
                     &rcPixel,
                     GetPixel(
-                        stWndPropOperationPickColorScreenSnapshot.hdcMirror,
+                        stWndPropOperationPickColorScreenSnapshot.Snapshot.DC,
                         pt.x - AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT / 2 + uCol,
                         pt.y - AW_WNDPROP_OPERATION_PICKCOLOR_INFOBOXUNIT / 2 + uRow
                     )
@@ -118,7 +118,7 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         UI_EndPaint(hWnd, &stPaint);
         return 0;
     } else if (uMsg == WM_MOUSEMOVE) {
-        crPicked = GetPixel(stWndPropOperationPickColorScreenSnapshot.hdcMirror, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        crPicked = GetPixel(stWndPropOperationPickColorScreenSnapshot.Snapshot.DC, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         UI_Redraw(hWnd);
         return 0;
     } else if (uMsg == WM_LBUTTONUP) {
@@ -300,7 +300,6 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astWndPropOperationTextCtl);
         UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER, TBM_SETRANGE, FALSE, MAKELPARAM(0, MAXBYTE));
-        UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_OPERATION_PICK_PIC, STM_SETIMAGE, IMAGE_CURSOR, (LPARAM)stWndPropOperationPickColorScreenSnapshot.hCursor);
         // Visible and Enable
         UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_OPERATION_VISIBLE_CHECK, IsWindowVisible(hWnd) ? BST_CHECKED : BST_UNCHECKED);
         UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_OPERATION_ENABLED_CHECK, IsWindowEnabled(hWnd) ? BST_CHECKED : BST_UNCHECKED);
@@ -424,6 +423,27 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             AW_SendMsgTO(AW_GetWndPropHWnd(hDlg), WM_CLOSE, 0, 0, &dwResult);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_ENDTASK_BTN, BN_CLICKED)) {
             EndTask(AW_GetWndPropHWnd(hDlg), FALSE, TRUE);
+        }
+    } else if (uMsg == WM_DRAWITEM) {
+        if (wParam == IDC_WNDPROP_OPERATION_PICK_PIC) {
+            PDRAWITEMSTRUCT pdi = (PDRAWITEMSTRUCT)lParam;
+            INT             iCX, iCY;
+            UINT            uDPIX, uDPIY;
+            iCX = GetSystemMetrics(SM_CXCURSOR);
+            iCY = GetSystemMetrics(SM_CYCURSOR);
+            DPI_FromWindow(hDlg, &uDPIX, &uDPIY);
+            if (uDPIX != USER_DEFAULT_SCREEN_DPI)
+                DPI_Scale(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
+            if (uDPIY != USER_DEFAULT_SCREEN_DPI)
+                DPI_Scale(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
+            GDI_DrawIcon(
+                pdi->hDC,
+                stWndPropOperationPickColorScreenSnapshot.hCursor,
+                (pdi->rcItem.right - pdi->rcItem.left - iCX) / 2,
+                (pdi->rcItem.bottom - pdi->rcItem.top - iCY) / 2,
+                iCX,
+                iCY);
+            SetWindowLongPtr(hDlg, DWLP_MSGRESULT, TRUE);
         }
     } else if (uMsg == WM_HSCROLL) {
         if (lParam == (LPARAM)GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER))
