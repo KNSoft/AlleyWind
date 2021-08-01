@@ -195,10 +195,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlleyWind.c" />
-    <ClCompile Include="AWDatabase.c" />
     <ClCompile Include="AWWndIO.c" />
     <ClCompile Include="AWWndProp.c" />
     <ClCompile Include="Class.c" />
+    <ClCompile Include="DB_Message.c" />
+    <ClCompile Include="DB_StyleEditor.c" />
     <ClCompile Include="FindWnd.c" />
     <ClCompile Include="General.c" />
     <ClCompile Include="MainDlg.c" />
@@ -212,9 +213,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.h" />
-    <ClInclude Include="AWDatabase.h" />
     <ClInclude Include="AWWndIO.h" />
     <ClInclude Include="AWWndProp.h" />
+    <ClInclude Include="DB_Message.h" />
+    <ClInclude Include="DB_StyleEditor.h" />
     <ClInclude Include="NAC_Output.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="AWSettings.h" />

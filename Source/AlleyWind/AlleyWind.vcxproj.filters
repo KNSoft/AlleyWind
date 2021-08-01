@@ -51,9 +51,6 @@
     <ClCompile Include="AWSettings.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DB_StyleEditor.c">
-      <Filter>Source Files\Database</Filter>
-    </ClCompile>
     <ClCompile Include="General.c">
       <Filter>Source Files\WndProp</Filter>
     </ClCompile>
@@ -78,6 +75,9 @@
     <ClCompile Include="DB_Message.c">
       <Filter>Source Files\Database</Filter>
     </ClCompile>
+    <ClCompile Include="DB_StyleEditor.c">
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.h">
@@ -98,11 +98,11 @@
     <ClInclude Include="AWSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DB_StyleEditor.h">
-      <Filter>Source Files\Database</Filter>
-    </ClInclude>
     <ClInclude Include="DB_Message.h">
-      <Filter>Source Files\Database</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DB_StyleEditor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,9 +145,6 @@
       <Filter>NAC I18N Files</Filter>
     </None>
     <None Include="Relationship.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="Message.NAC.I18N.json">
       <Filter>NAC I18N Files</Filter>
     </None>
   </ItemGroup>
