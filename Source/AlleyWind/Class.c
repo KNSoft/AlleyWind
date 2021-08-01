@@ -41,7 +41,7 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
         bSucc = UI_GetWindowLong(hWnd, TRUE, GCLP_WNDPROC, &dwpTemp);
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_WNDPROC_EDIT, bSucc, TEXT("%p"), (WNDPROC)dwpTemp);
         // Style
-        bSucc = UI_GetWindowLong(hWnd, TRUE, GCL_STYLE, &dwpTemp) == ERROR_SUCCESS;
+        bSucc = UI_GetWindowLong(hWnd, TRUE, GCL_STYLE, &dwpTemp);
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_CLASS_STYLE_BTN, bSucc);
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_STYLE_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // hMenu

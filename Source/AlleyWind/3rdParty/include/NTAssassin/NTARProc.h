@@ -34,7 +34,7 @@ NTA_API NTSTATUS NTAPI RProc_EnumDlls(HANDLE ProcessHandle, RPROC_DLLENUMPROC Dl
   * @see "ReadProcessMemory"
   */
 #define RProc_MemReadEx(ProcessHandle, BaseAddress, Buffer, Size) NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, Size, NULL)
-#define RProc_MemRead(ProcessHandle, BaseAddress, Buffer) NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, sizeof(*(BaseAddress)), NULL)
+#define RProc_MemRead(ProcessHandle, BaseAddress, Buffer) NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, sizeof(*(Buffer)), NULL)
 
 /**
   * @see "WriteProcessMemory"

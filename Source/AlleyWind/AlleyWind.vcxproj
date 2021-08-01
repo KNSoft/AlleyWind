@@ -231,6 +231,7 @@
     <None Include="FindWnd.NAC.I18N.json" />
     <None Include="General.NAC.I18N.json" />
     <None Include="MainDlg.NAC.I18N.json" />
+    <None Include="Message.NAC.I18N.json" />
     <None Include="Operation.NAC.I18N.json" />
     <None Include="Relationship.NAC.I18N.json" />
     <None Include="Resource.NAC.I18N.json" />

@@ -495,15 +495,16 @@ AW_SYSCLASSINFO aAWSysCtlLib[] = {
 
 PAW_SYSCLASSINFO AW_DBFindSysClassInfoByName(PTSTR pszClassName) {
     UINT    i;
-    TCHAR   szClassOrdName[MAX_WORD_IN_DEC_CCH + 2] = { '#' };
-    PTSTR  lpszName;
+    TCHAR   szClassOrdName[MAX_WORD_IN_DEC_CCH + 2];
+    PTSTR   pszName;
     for (i = 0; i < ARRAYSIZE(aAWSysCtlLib); i++) {
         if (IS_INTRESOURCE(aAWSysCtlLib[i].ClassName)) {
-            Str_16ToUDecEx(LOWORD(aAWSysCtlLib[i].ClassName), szClassOrdName + 1, ARRAYSIZE(szClassOrdName) - 1);
-            lpszName = szClassOrdName;
+            if (Str_CchPrintf(szClassOrdName, TEXT("#%hu"), LOWORD(aAWSysCtlLib[i].ClassName)) <= 0)
+                szClassOrdName[0] = '\0';
+            pszName = szClassOrdName;
         } else
-            lpszName = aAWSysCtlLib[i].ClassName;
-        if (Str_Equal(pszClassName, lpszName))
+            pszName = aAWSysCtlLib[i].ClassName;
+        if (Str_Equal(pszClassName, pszName))
             return &aAWSysCtlLib[i];
     }
     return NULL;

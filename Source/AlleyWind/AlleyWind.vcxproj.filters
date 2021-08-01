@@ -147,5 +147,8 @@
     <None Include="Relationship.NAC.I18N.json">
       <Filter>NAC I18N Files</Filter>
     </None>
+    <None Include="Message.NAC.I18N.json">
+      <Filter>NAC I18N Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

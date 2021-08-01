@@ -135,6 +135,14 @@ NTA_API ULONG NTAPI Str_CcbA2UEx(_Out_writes_bytes_(DestCcbSize) PWSTR Dest, _In
 NTA_API NTSTATUS NTAPI Str_UnicodeToUTF8Ex(PSTR Dest, SIZE_T DestCchSize, PCWSTR Src, PSIZE_T CharsWritten);
 #define Str_UnicodeToUTF8(pszDest, pszSrc, pulChWritten) Str_UnicodeToUTF8Ex(pszDest, ARRAYSIZE(pszDest), pszSrc, pulChWritten)
 
+NTA_API VOID NTAPI Str_UpperW(PWSTR String);
+NTA_API VOID NTAPI Str_UpperA(PSTR String);
+#ifdef UNICODE
+#define Str_Upper Str_UpperW
+#else
+#define Str_Upper Str_UpperA
+#endif
+
 // String Initialize
 
 NTA_API VOID NTAPI Str_CchInitW(PUNICODE_STRING NTString, PWSTR String);
@@ -146,41 +154,6 @@ NTA_API VOID NTAPI Str_CchInitA(PSTRING NTString, PSTR String);
 #endif
 
 // String Convert
-
-NTA_API BOOL NTAPI Str_16ToUDecExW(USHORT uNum, LPWSTR lpszOutput, UINT cchMax);
-#define Str_16ToUDecW(uNum, lpszOutput) Str_16ToUDecExW(uNum, lpszOutput, ARRAYSIZE(lpszOutput))
-#ifdef UNICODE
-#define Str_16ToUDecEx Str_16ToUDecExW
-#define Str_16ToUDec Str_16ToUDecW
-#else
-#define Str_16ToUDecEx Str_16ToUDecExA
-#define Str_16ToUDec Str_16ToUDecA
-#endif
-
-NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR HexRGB, UINT MaxCh);
-#define Str_RGBToHexW(Color, HexRGB) Str_RGBToHexExW(Color, HexRGB, ARRAYSIZE(HexRGB))
-#ifdef UNICODE
-#define Str_RGBToHexEx Str_RGBToHexExW
-#define Str_RGBToHex Str_RGBToHexW
-#else
-#define Str_RGBToHexEx Str_RGBToHexExA
-#define Str_RGBToHex Str_RGBToHexA
-#endif
-
-NTA_API DWORD NTAPI Str_HashW(LPCWSTR psz, STR_HASH_ALGORITHM HashAlgorithm);
-NTA_API DWORD NTAPI Str_HashA(LPCSTR psz, STR_HASH_ALGORITHM HashAlgorithm);
-#ifdef UNICODE
-#define Str_Hash Str_HashW
-#else
-#define Str_Hash Str_HashA
-#endif
-
-NTA_API VOID NTAPI Str_UpperW(PWSTR psz);
-#ifdef UNICODE
-#define Str_Upper Str_UpperW
-#else
-#define Str_Upper Str_UpperA
-#endif
 
 NTA_API BOOL NTAPI Str_ToIntExW(PCWSTR StrValue, BOOL Unsigned, UINT Base, PVOID Value, SIZE_T ValueSize);
 NTA_API BOOL NTAPI Str_ToIntExA(PCSTR StrValue, BOOL Unsigned, UINT Base, PVOID Value, SIZE_T ValueSize);
@@ -228,4 +201,24 @@ NTA_API BOOL NTAPI Str_ToIntExA(PCSTR StrValue, BOOL Unsigned, UINT Base, PVOID 
 #define Str_BinToInt Str_BinToIntA
 #define Str_BinToUIntA(StrValue, Value) Str_ToIntExA(StrValue, TRUE, 2, Value, sizeof(*(Value)))
 #define Str_BinToUInt Str_BinToUIntA
+#endif
+
+NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR Dest, SIZE_T DestCchSize);
+#define Str_RGBToHexW(Color, Dest) Str_RGBToHexExW(Color, Dest, ARRAYSIZE(Dest))
+#ifdef UNICODE
+#define Str_RGBToHexEx Str_RGBToHexExW
+#define Str_RGBToHex Str_RGBToHexW
+#else
+#define Str_RGBToHexEx Str_RGBToHexExA
+#define Str_RGBToHex Str_RGBToHexA
+#endif
+
+// String Hash
+
+NTA_API DWORD NTAPI Str_HashW(PCWSTR String, STR_HASH_ALGORITHM HashAlgorithm);
+NTA_API DWORD NTAPI Str_HashA(PCSTR String, STR_HASH_ALGORITHM HashAlgorithm);
+#ifdef UNICODE
+#define Str_Hash Str_HashW
+#else
+#define Str_Hash Str_HashA
 #endif
