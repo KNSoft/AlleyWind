@@ -15,7 +15,7 @@ AlleyWind is an advanced Win32-based and open-sourced utility that helps you to 
 [看雪论坛](https://bbs.pediy.com/)：[[原创]AlleyWind - 专业窗口管理工具](https://bbs.pediy.com/thread-266706.htm)
 
 ## Latest Version
-AlleyWind V1.0.2.0 Beta [2021-06-14]
+AlleyWind V1.0.2.10801 Beta [2021-08-01]
 
 <font color=red>*This is Beta version for testing only, which is not stable! SHOULD NOT BE USED IN IMPORTANT ENVIRONMENT!</font>
 
