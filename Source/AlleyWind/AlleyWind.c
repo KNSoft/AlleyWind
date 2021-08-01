@@ -16,8 +16,8 @@ KNS_INFO stKNSInfo = {
     },
     { NAC_I18N_Lang_Table, ARRAYSIZE(NAC_I18N_Lang_Table), NAC_I18N_ITEM_COUNT },
     {
-        TEXT("https://knsoft.org"),
-        TEXT("https://knsoft.org"),
+        TEXT("https://knsoft.org/Products/AlleyWind/"),
+        TEXT("https://knsoft.org/Products/AlleyWind/"),
         TEXT("https://knsoft.org/Products/AlleyWind/Download/Update.xml"),
         NULL
     }
