@@ -66,7 +66,7 @@ BOOL CALLBACK ExpTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level,
     WCHAR   szUniBuff[512];
     CHAR    szUTF8Buff[ARRAYSIZE(szUniBuff) * 2];
     UINT    i;
-    ULONG   ulChWritten;
+    SIZE_T  uChWritten;
     hExpFile = (HANDLE)Param;
     stTVI.mask = TVIF_TEXT;
     stTVI.hItem = TreeItem;
@@ -77,10 +77,10 @@ BOOL CALLBACK ExpTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level,
     }
     stTVI.pszText = szUniBuff + Level;
     if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI)) {
-        Str_UnicodeToUTF8(szUTF8Buff, szUniBuff, &ulChWritten);
-        szUTF8Buff[ulChWritten] = '\r';
-        szUTF8Buff[ulChWritten + 1] = '\n';
-        IO_Write(hExpFile, 0, szUTF8Buff, ulChWritten + 2);
+        Str_UnicodeToUTF8(szUTF8Buff, szUniBuff, &uChWritten);
+        szUTF8Buff[uChWritten] = '\r';
+        szUTF8Buff[uChWritten + 1] = '\n';
+        IO_Write(hExpFile, 0, szUTF8Buff, (ULONG)(uChWritten + 2));
     }
     return TRUE;
 }
@@ -89,7 +89,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     AW_ENUMCHILDREN     stEnumChildren;
     TCHAR               szCaption[MAX_WNDCAPTION_CCH], szClassName[MAX_CLASSNAME_CCH];
     TCHAR               szBuffer[sizeof(DWORD) * 2 + ARRAYSIZE(szCaption) + ARRAYSIZE(szClassName) + 16];
-    PAW_SYSCLASSINFO    lpSysClsInfo;
+    PAW_SYSCLASSINFO    pSysClsInfo;
     HICON               hIcon;
     INT                 iImageIcon, iCch;
     HTREEITEM           hTreeItem = NULL, hParent;
@@ -120,20 +120,24 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         hParent = lpstEnumChildren->hParentNode;
     // Get window info
     AW_GetWindowText(hWnd, szCaption);
-    if (bFilter && (!bFindCaption || Str_CchIndex_BF(szCaption, szFindCaptionName) != -1))
+    if (bFilter && (!bFindCaption || Str_Index_BF(szCaption, szFindCaptionName) != -1))
         bCaptionMatched = TRUE;
     if (!GetClassName(hWnd, szClassName, ARRAYSIZE(szClassName)))
         szClassName[0] = '\0';
-    if (bFilter && (!bFindClassName || Str_CchIndex_BF(szClassName, szFindClassName) != -1))
+    if (bFilter && (!bFindClassName || Str_Index_BF(szClassName, szFindClassName) != -1))
         bClassMatched = TRUE;
     if (!bFilter || (bCaptionMatched && bClassMatched)) {
         // Format display string
         if (szClassName[0] != '\0') {
-            lpSysClsInfo = AW_DBFindSysClassInfoByName(szClassName);
-            if (lpSysClsInfo)
-                iCch = Str_CchPrintf(szBuffer, TEXT("%08X \"%s\" %s (%s)"), (DWORD)(DWORD_PTR)hWnd, szCaption, szClassName, IS_INTRESOURCE(lpSysClsInfo->DisplayName) ? I18N_GetString((UINT_PTR)lpSysClsInfo->DisplayName) : lpSysClsInfo->DisplayName);
-            else
-                iCch = Str_CchPrintf(szBuffer, TEXT("%08X \"%s\" %s"), (DWORD)(DWORD_PTR)hWnd, szCaption, szClassName);
+            pSysClsInfo = AW_DBFindSysClassInfoByName(szClassName);
+            iCch = pSysClsInfo ?
+                Str_CchPrintf(szBuffer,
+                    TEXT("%08X \"%s\" %s (%s)"),
+                    (DWORD)(DWORD_PTR)hWnd,
+                    szCaption,
+                    szClassName,
+                    IS_INTRESOURCE(pSysClsInfo->DisplayName) ? I18N_GetString((UINT_PTR)pSysClsInfo->DisplayName) : pSysClsInfo->DisplayName) :
+                Str_CchPrintf(szBuffer, TEXT("%08X \"%s\" %s"), (DWORD)(DWORD_PTR)hWnd, szCaption, szClassName);
         } else
             iCch = Str_CchPrintf(szBuffer, TEXT("%08X \"%s\""), (DWORD)(DWORD_PTR)hWnd, szCaption);
         // Append node info and icon

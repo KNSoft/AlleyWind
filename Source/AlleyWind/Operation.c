@@ -161,12 +161,7 @@ VOID WndPropOperationSetCheckByStyle(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
     LONG_PTR    lTemp;
     UINT_PTR    uCheck;
     BOOL        bSucc;
-    bSucc = UI_GetWindowLong(
-        AW_GetWndPropHWnd(hDlg),
-        FALSE,
-        bExStyle ? GWL_EXSTYLE : GWL_STYLE,
-        &lTemp
-    ) == ERROR_SUCCESS;
+    bSucc = UI_GetWindowLong(AW_GetWndPropHWnd(hDlg), FALSE, bExStyle ? GWL_EXSTYLE : GWL_STYLE, &lTemp);
     lTemp &= lStyle;
     if (bSucc)
         if (lTemp == lStyle)
@@ -187,12 +182,7 @@ BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
     UINT_PTR    uCheck;
     hWnd = AW_GetWndPropHWnd(hDlg);
     iIndex = bExStyle ? GWL_EXSTYLE : GWL_STYLE;
-    if (UI_GetWindowLong(
-        AW_GetWndPropHWnd(hDlg),
-        FALSE,
-        iIndex,
-        &lTemp
-    ) != ERROR_SUCCESS)
+    if (!UI_GetWindowLong(AW_GetWndPropHWnd(hDlg), FALSE, iIndex, &lTemp))
         return FALSE;
     hCheck = GetDlgItem(hDlg, uCheckID);
     uCheck = SendMessage(hCheck, BM_GETCHECK, 0, 0);
@@ -211,16 +201,17 @@ VOID WndPropOperationLayeredGet(HWND hDlg) {
     BOOL        bIsLayeredWnd, bTemp;
     COLORREF    crLayeredColorKey;
     DWORD_PTR   dwpExStyle;
-    DWORD       dwExStyleError, dwLayeredFlags;
+    BOOL        bExStyleSucc;
+    DWORD       dwLayeredFlags;
     hWnd = AW_GetWndPropHWnd(hDlg);
-    dwExStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpExStyle);
+    bExStyleSucc = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpExStyle);
     hCtlLayeredCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_LAYERED_CHECK);
     hCtlOpacityCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_CHECK);
     hCtlOpacitySlider = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_OPACITY_SLIDER);
     hCtlColorKeyCheck = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_CHECK);
     hCtlColorKeyButton = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN);
     bIsLayeredWnd = FALSE;
-    if (dwExStyleError == ERROR_SUCCESS) {
+    if (bExStyleSucc) {
         bIsLayeredWnd = dwpExStyle & WS_EX_LAYERED;
         SendMessage(hCtlLayeredCheck, BM_SETCHECK, bIsLayeredWnd ? BST_CHECKED : BST_UNCHECKED, 0);
         if (bIsLayeredWnd && GetLayeredWindowAttributes(hWnd, &crLayeredColorKey, &byteLayeredAlpha, &dwLayeredFlags)) {
@@ -294,7 +285,7 @@ VOID WndPropOperationGetDisplayAffinity(HWND hDlg, HWND hWnd) {
 INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_INITDIALOG) {
         HWND    hWnd, hCtl;
-        hWnd = (HANDLE)lParam;
+        hWnd = (HWND)lParam;
         AW_SetWndPropHWnd(hDlg, hWnd);
         // Initialize
         KNS_SetDialogSubclass(hDlg, NULL);

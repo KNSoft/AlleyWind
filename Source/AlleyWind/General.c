@@ -42,7 +42,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         TCHAR               szBuffer[1024], szTempPath[MAX_PATH];
         LPCTSTR             lpszTemp;
         DWORD_PTR           dwpStyle, dwpTemp;
-        DWORD               dwStyleError, dwError;
+        BOOL                bSucc, bStyleSucc;
         PAW_SYSCLASSINFO    lpSysClsInfo;
         INT                 iTemp;
         UINT                uTemp;
@@ -52,16 +52,16 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astWndPropGeneralTextCtl);
         UI_SetDlgButtonCheck(hDlg, IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK, TRUE);
-        dwError = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
-        dwStyleError = dwError;
+        bSucc = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
+        bStyleSucc = bSucc;
         // Handle
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_HANDLE_EDIT, TRUE, TEXT("%08X"), (DWORD)(DWORD_PTR)hWnd);
         // Style and extra style
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_STYLE_BTN, dwError == ERROR_SUCCESS);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_STYLE_EDIT, dwError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpStyle);;
-        dwError = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpTemp);
-        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_BTN, dwError == ERROR_SUCCESS);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_EDIT, dwError == ERROR_SUCCESS, TEXT("%08X"), (DWORD)dwpTemp);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_STYLE_BTN, bSucc);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_STYLE_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpStyle);;
+        bSucc = UI_GetWindowLong(hWnd, FALSE, GWL_EXSTYLE, &dwpTemp);
+        UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_BTN, bSucc);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_EXSTYLE_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // Caption
         AW_GetWindowText(hWnd, szBuffer);
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_CAPTION_EDIT, szBuffer, TRUE);
@@ -102,9 +102,9 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         if (hProc)
             NtClose(hProc);
         // Control ID
-        if (dwStyleError == ERROR_SUCCESS && dwpStyle & WS_CHILD) {
-            dwError = UI_GetWindowLong(hWnd, FALSE, GWLP_ID, &dwpTemp);
-            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, dwError == ERROR_SUCCESS, TEXT("%d"), (INT)dwpTemp);
+        if (bStyleSucc && dwpStyle & WS_CHILD) {
+            bSucc = UI_GetWindowLong(hWnd, FALSE, GWLP_ID, &dwpTemp);
+            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, bSucc, TEXT("%d"), (INT)dwpTemp);
         } else {
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_CTRLID_EDIT, FALSE);
         }
@@ -115,8 +115,8 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             lpszTemp = IS_INTRESOURCE(lpSysClsInfo->DisplayName) ? I18N_GetString((UINT_PTR)lpSysClsInfo->DisplayName) : lpSysClsInfo->DisplayName;
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_SYSCLS_EDIT, lpszTemp, lpszTemp != NULL);
         // User Data
-        UI_GetWindowLong(hWnd, FALSE, GWLP_USERDATA, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_USERDATA_EDIT, dwpTemp || NT_LastErrorSucceed(), TEXT("%p"), (LPVOID)dwpTemp);
+        bSucc = UI_GetWindowLong(hWnd, FALSE, GWLP_USERDATA, &dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_USERDATA_EDIT, bSucc, TEXT("%p"), (LPVOID)dwpTemp);
         // Rectangles
         WndPropGeneralUpdateRectCtl(hDlg);
         // Extra Bytes
@@ -143,7 +143,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             HWND        hWnd = AW_GetWndPropHWnd(hDlg);
             BOOL        bSucc, bStyle = wParam == MAKEWPARAM(IDC_WNDPROP_GENERAL_STYLE_BTN, BN_CLICKED);
             DWORD_PTR   dwpStyle;
-            if (UI_GetWindowLong(hWnd, FALSE, bStyle ? GWL_STYLE : GWL_EXSTYLE, &dwpStyle) != ERROR_SUCCESS)
+            if (!UI_GetWindowLong(hWnd, FALSE, bStyle ? GWL_STYLE : GWL_EXSTYLE, &dwpStyle))
                 return FALSE;
             if (AW_DBEditValue(hDlg, hWnd, bStyle ? AWValueStyle : AWValueExStyle, (PDWORD)&dwpStyle)) {
                 NT_ClearLastError();
@@ -152,7 +152,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
                     SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                     UI_Redraw(hWnd);
                 }
-                bSucc = UI_GetWindowLong(hWnd, FALSE, bStyle ? GWL_STYLE : GWL_EXSTYLE, &dwpStyle) == ERROR_SUCCESS;
+                bSucc = UI_GetWindowLong(hWnd, FALSE, bStyle ? GWL_STYLE : GWL_EXSTYLE, &dwpStyle);
                 UI_EnableDlgItem(hDlg, bStyle ? IDC_WNDPROP_GENERAL_STYLE_BTN : IDC_WNDPROP_GENERAL_EXSTYLE_BTN, bSucc);
                 AW_SetPropCtlFormat(hDlg, bStyle ? IDC_WNDPROP_GENERAL_STYLE_EDIT : IDC_WNDPROP_GENERAL_EXSTYLE_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpStyle);
             }
@@ -161,7 +161,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_GENERAL_RECT_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             RECT    rc;
-            if (UI_GetRelativeRect(hWnd, NULL, &rc) && Dlg_RectEditor(hDlg, lpszDRE, &rc)) {
+            if (UI_GetRelativeRect(hWnd, NULL, &rc) && Dlg_RectEditor(hDlg, DB_lpszDRE, &rc)) {
                 UI_SetWindowRect(hWnd, &rc);
                 WndPropGeneralUpdateRectCtl(hDlg);
             }

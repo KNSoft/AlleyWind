@@ -205,10 +205,23 @@ NTA_API LRESULT NTAPI UI_SetWndTextNoNotify(HWND Window, PCWSTR Text);
   * @see "GetWindowTextW"
   * @note Sometimes "WM_GETTEXT" works incorrectly, this function may safer
   */
-NTA_API UINT NTAPI UI_GetWindowTextEx(HWND Window, PWSTR Text, UINT TextCch);
-#define UI_GetWindowText(Window, Text) UI_GetWindowTextEx(Window, Text, ARRAYSIZE(Text))
-#define UI_GetDlgItemTextEx(Dialog, ItemID, Text, TextCch) UI_GetWindowTextEx(GetDlgItem(Dialog, ItemID), Text, TextCch)
-#define UI_GetDlgItemText(Dialog, ItemID, Text) UI_GetDlgItemTextEx(Dialog, ItemID, Text, ARRAYSIZE(Text))
+NTA_API UINT NTAPI UI_GetWindowTextExW(HWND Window, PWSTR Text, UINT TextCch);
+NTA_API UINT NTAPI UI_GetWindowTextExA(HWND Window, PSTR Text, UINT TextCch);
+#define UI_GetWindowTextW(Window, Text) UI_GetWindowTextExW(Window, Text, ARRAYSIZE(Text))
+#define UI_GetDlgItemTextExW(Dialog, ItemID, Text, TextCch) UI_GetWindowTextExW(GetDlgItem(Dialog, ItemID), Text, TextCch)
+#define UI_GetDlgItemTextW(Dialog, ItemID, Text) UI_GetDlgItemTextExW(Dialog, ItemID, Text, ARRAYSIZE(Text))
+#define UI_GetWindowTextA(Window, Text) UI_GetWindowTextExA(Window, Text, ARRAYSIZE(Text))
+#define UI_GetDlgItemTextExA(Dialog, ItemID, Text, TextCch) UI_GetWindowTextExA(GetDlgItem(Dialog, ItemID), Text, TextCch)
+#define UI_GetDlgItemTextA(Dialog, ItemID, Text) UI_GetDlgItemTextExA(Dialog, ItemID, Text, ARRAYSIZE(Text))
+#ifdef UNICODE
+#define UI_GetWindowText UI_GetWindowTextW
+#define UI_GetDlgItemTextEx UI_GetDlgItemTextExW
+#define UI_GetDlgItemText UI_GetDlgItemTextW
+#else
+#define UI_GetWindowText UI_GetWindowTextA
+#define UI_GetDlgItemTextEx UI_GetDlgItemTextExA
+#define UI_GetDlgItemText UI_GetDlgItemTextA
+#endif
 
 /**
   * @see "GetWindowLongPtrW" and "GetClassLongPtrW"
@@ -217,9 +230,9 @@ NTA_API UINT NTAPI UI_GetWindowTextEx(HWND Window, PWSTR Text, UINT TextCch);
   * @param[in] ClassLong Set to TRUE to invoke "GetClassLongPtrW", or FALSE to invoke "GetWindowLongPtrW"
   * @param[in] Index The zero-based offset to the value to be retrieved
   * @param[out] Result Pointer to the variable receives the result
-  * @return Returns Win32 error code, ERROR_SUCCESS means succeeded
+  * @return Returns TRUE if succeeded, or FALSE if failed
   */
-NTA_API DWORD NTAPI UI_GetWindowLong(HWND Window, BOOL ClassLong, INT Index, PLONG_PTR Result);
+NTA_API BOOL NTAPI UI_GetWindowLong(HWND Window, BOOL ClassLong, INT Index, PLONG_PTR Result);
 
 /**
   * @brief Enters message loop for specified window

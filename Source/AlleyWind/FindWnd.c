@@ -155,7 +155,7 @@ VOID FindWndUpdateHandle(HWND hDlg) {
     szHandle[lResult] = '\0';
     hBtnOK = GetDlgItem(hDlg, IDC_FINDWND_OK_BTN);
     I18N_SetWndText(hBtnOK, I18NIndex_OK);
-    if (Str_HexToHWnd(szHandle, &hWnd) && IsWindow(hWnd)) {
+    if (Str_HexToInt(szHandle, &hWnd) && IsWindow(hWnd)) {
         EnableWindow(hBtnOK, TRUE);
         AW_SetWndPropHWnd(hDlg, hWnd);
     } else {

@@ -4,7 +4,8 @@
 #include "NTAssassin\NTAssassin.h"
 #include "NAC_Output.h"
 
-#include "AWDatabase.h"
+#include "DB_StyleEditor.h"
+#include "DB_Message.h"
 #include "AWSettings.h"
 #include "AWWndIO.h"
 #include "AWWndProp.h"

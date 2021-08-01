@@ -65,7 +65,7 @@ typedef struct _HIJACK_CALLPROCPARAM {
 //  LPVOID  lpProc;         // OUT OPTIONAL, Receive address of the procedure
 
 // Initializes parameter structure of Hijack_LoadProcAddr
-NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, UINT BufferSize, PWSTR LibName, PSTR ProcName, PVOID** ProcAddrPointer);
+NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, SIZE_T BufferSize, PWSTR LibName, PSTR ProcName, PVOID** ProcAddrPointer);
 #define Hijack_LoadProcAddr_InitParam(Buffer, LibName, ProcName, ProcAddrPointer) Hijack_LoadProcAddr_InitParamEx(Buffer, sizeof(Buffer), LibName, ProcName, (LPVOID**)(ProcAddrPointer))
 
 // Creates remote thread to execute given code

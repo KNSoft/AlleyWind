@@ -26,12 +26,12 @@ typedef struct _I18N_CTLTEXT {
     UINT_PTR    StrIndex;
 } I18N_CTLTEXT, * PI18N_CTLTEXT;
 
-NTA_API PI18N_LANGUAGE NTAPI I18N_InitEx(PI18N_LANGUAGE *Langs, UINT LangCount, USHORT ItemCount, LPCWSTR LangName);
+NTA_API PI18N_LANGUAGE NTAPI I18N_InitEx(PI18N_LANGUAGE *Langs, UINT LangCount, USHORT ItemCount, PCWSTR LangName);
 #define I18N_Init(LangName) I18N_InitEx(NAC_I18N_Lang_Table, ARRAYSIZE(NAC_I18N_Lang_Table), NAC_I18N_ITEM_COUNT, LangName)
 
 VOID NTAPI I18N_SetLocale(PI18N_LANGUAGE Lang);
 
-PI18N_LANGUAGE I18N_FindLangEx(PI18N_LANGUAGE *lpLangs, UINT uCount, LPCWSTR lpszName);
+PI18N_LANGUAGE I18N_FindLangEx(PI18N_LANGUAGE *lpLangs, UINT uCount, PCWSTR lpszName);
 #define I18N_FindLang(lpszName) I18N_FindLangExW(NAC_I18N_Lang_Table, ARRAYSIZE(NAC_I18N_Lang_Table), lpszName)
 
 /**
@@ -39,7 +39,7 @@ PI18N_LANGUAGE I18N_FindLangEx(PI18N_LANGUAGE *lpLangs, UINT uCount, LPCWSTR lps
   * @param[in] Index Index or hash value of the string in string table
   * @return Returns pointer to the string
   */
-NTA_API LPCWSTR NTAPI I18N_GetString(UINT_PTR StrIndex);
+NTA_API PCWSTR NTAPI I18N_GetString(UINT_PTR StrIndex);
 
 /**
   * @brief Creates a logical font with I18N prefered name and specified size and weight, see also "CreateFont"

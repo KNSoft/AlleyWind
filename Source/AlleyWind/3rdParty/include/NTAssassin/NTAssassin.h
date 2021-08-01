@@ -96,6 +96,7 @@ extern "C" {
 #include <Shlobj.h>
 #include <shellscalingapi.h>
 #include <dwmapi.h>
+#include <Tpcshrd.h>
 
 // NTAssassin dependencies
 #pragma comment(lib, "ntdll.lib")
@@ -161,8 +162,8 @@ extern "C" {
 // Gets is the value is within the valid range of an atom
 #define IS_ATOM(val) (((ULONG_PTR)(val) & 0xFFFF) > 0 && ((ULONG_PTR)(val) & 0xFFFF) < MAXINTATOM)
 
-// Adds offset to address
-#define ADD_OFFSET(address, offset, type) ((type *)((PBYTE)(address) + (LONG_PTR)(offset)))
+// Moves pointer
+#define MOVE_PTR(address, offset, type) ((type *)((PBYTE)(address) + (LONG_PTR)(offset)))
 
 // Memory alignment
 #define PAGE_SIZE 0x1000

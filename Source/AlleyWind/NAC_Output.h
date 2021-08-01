@@ -5,7 +5,7 @@
 
 #include "3rdParty\include\NTAssassin\NTAssassin.h"
 
-#define NAC_I18N_ITEM_COUNT 130
+#define NAC_I18N_ITEM_COUNT 151
 
 typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_None,
@@ -91,6 +91,27 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_ExportTreeFilter,
 	I18NIndex_ExportTreeFailed,
 	I18NIndex_SearchResult,
+	I18NIndex_SendMethod,
+	I18NIndex_MsgComboxCue,
+	I18NIndex_Timeout,
+	I18NIndex_AsyncTimeout,
+	I18NIndex_SendMethod_LMS,
+	I18NIndex_SendMethod_RMS,
+	I18NIndex_SendMethod_RWPC,
+	I18NIndex_SendMethod_RWPE,
+	I18NIndex_AttachThreadInput,
+	I18NIndex_ParamTypeNotUsed,
+	I18NIndex_ParamValueNotUsed,
+	I18NIndex_ParamTypeNum,
+	I18NIndex_ParamTypeBoolean,
+	I18NIndex_ParamTypeString,
+	I18NIndex_ParamTypeRaw,
+	I18NIndex_Send,
+	I18NIndex_Result,
+	I18NIndex_Msg_uMsgErr,
+	I18NIndex_Msg_ParamTypeErr,
+	I18NIndex_Msg_ParamValueErr,
+	I18NIndex_Msg_TimeoutErr,
 	I18NIndex_QuickStyle,
 	I18NIndex_Visible,
 	I18NIndex_Enable,
@@ -140,9 +161,9 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Window
 } I18N_ITEM_INDEX, * PI18N_ITEM_INDEX;
 
-EXTERN_C I18N_ITEM NAC_I18N_Lang_en_Items[130];
+EXTERN_C I18N_ITEM NAC_I18N_Lang_en_Items[151];
 EXTERN_C I18N_LANGUAGE NAC_I18N_Lang_en;
-EXTERN_C I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[130];
+EXTERN_C I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[151];
 EXTERN_C I18N_LANGUAGE NAC_I18N_Lang_zh_Hans;
 EXTERN_C PI18N_LANGUAGE NAC_I18N_Lang_Table[2];
 

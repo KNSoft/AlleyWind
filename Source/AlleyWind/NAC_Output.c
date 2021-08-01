@@ -3,7 +3,7 @@
 
 #include "3rdParty\include\NTAssassin\NTAssassin.h"
 
-I18N_ITEM NAC_I18N_Lang_en_Items[130] = {
+I18N_ITEM NAC_I18N_Lang_en_Items[151] = {
 	{0x642A6E98, TEXT("None")},
 	{0x004F13BC, TEXT("OK")},
 	{0xD192564E, TEXT("Apply")},
@@ -87,6 +87,27 @@ I18N_ITEM NAC_I18N_Lang_en_Items[130] = {
 	{0xF2D7D6CA, TEXT("Text Files(*.txt)\0*.txt\0")},
 	{0x43EFF06F, TEXT("Export window tree failed")},
 	{0x05EA17C5, TEXT("Search Result")},
+	{0x42FF3549, TEXT("Send Method")},
+	{0x67A765C8, TEXT("Message code or name")},
+	{0xDC3CCA21, TEXT("Timeout (ms)")},
+	{0xDDCA8EA5, TEXT("0 (Asynchronous)")},
+	{0x9BD270BC, TEXT("Local Message Sending")},
+	{0x9EC6CDC2, TEXT("Remote Message Sending (Code Injection)")},
+	{0xE5983D4E, TEXT("Remote Window Procedure Call (Code Injection)")},
+	{0xE5983D50, TEXT("Remote Window Procedure Execution (Code Injection)")},
+	{0x24D8685B, TEXT("Attach thread input")},
+	{0x6F0773E9, TEXT("Not Used")},
+	{0x17CC768C, TEXT("Not Used (0/NULL)")},
+	{0x56F7E1BF, TEXT("Numerical")},
+	{0x389A5201, TEXT("Boolean")},
+	{0x0E0CAFD8, TEXT("String")},
+	{0x58DC1AE1, TEXT("Raw Buffer")},
+	{0x47DFE748, TEXT("Send")},
+	{0x0711985D, TEXT("Result")},
+	{0xE3ACAFDB, TEXT("Unrecognized message specified\r\nSelect an item or enter name or numerical code of a message")},
+	{0x2EC0959C, TEXT("Select a type of message parameter")},
+	{0xE9E3A283, TEXT("Invalid value of message parameter")},
+	{0x3DC3D802, TEXT("Invalid value of timeout")},
 	{0xE75AE7C4, TEXT("Quick Style")},
 	{0xD3C85852, TEXT("Visible")},
 	{0xFB4A2B23, TEXT("Enable")},
@@ -137,7 +158,7 @@ I18N_ITEM NAC_I18N_Lang_en_Items[130] = {
 };
 I18N_LANGUAGE NAC_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), NULL, FALSE, NAC_I18N_Lang_en_Items };
 
-I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[130] = {
+I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[151] = {
 	{0x642A6E98, TEXT("无")},
 	{0x004F13BC, TEXT("确定")},
 	{0xD192564E, TEXT("应用")},
@@ -221,6 +242,27 @@ I18N_ITEM NAC_I18N_Lang_zh_Hans_Items[130] = {
 	{0xF2D7D6CA, TEXT("文本文档(*.txt)\0*.txt\0")},
 	{0x43EFF06F, TEXT("导出窗口树失败")},
 	{0x05EA17C5, TEXT("搜索结果")},
+	{0x42FF3549, TEXT("发送方式")},
+	{0x67A765C8, TEXT("消息码或名称")},
+	{0xDC3CCA21, TEXT("超时（毫秒）")},
+	{0xDDCA8EA5, TEXT("0（异步）")},
+	{0x9BD270BC, TEXT("本地发送消息")},
+	{0x9EC6CDC2, TEXT("远程发送消息（代码注入）")},
+	{0xE5983D4E, TEXT("远程窗口过程调用（代码注入）")},
+	{0xE5983D50, TEXT("远程窗口过程执行（代码注入）")},
+	{0x24D8685B, TEXT("附加线程输入")},
+	{0x6F0773E9, TEXT("未使用")},
+	{0x17CC768C, TEXT("未使用（0/NULL）")},
+	{0x56F7E1BF, TEXT("数值")},
+	{0x389A5201, TEXT("布尔值")},
+	{0x0E0CAFD8, TEXT("字符串")},
+	{0x58DC1AE1, TEXT("原始缓冲区")},
+	{0x47DFE748, TEXT("发送")},
+	{0x0711985D, TEXT("结果")},
+	{0xE3ACAFDB, TEXT("无法识别指定的消息\r\n选择一项或输入消息名或数值码。")},
+	{0x2EC0959C, TEXT("为消息参数选择一个类型")},
+	{0xE9E3A283, TEXT("参数值非法")},
+	{0x3DC3D802, TEXT("超时值非法")},
 	{0xE75AE7C4, TEXT("快速样式")},
 	{0xD3C85852, TEXT("可见")},
 	{0xFB4A2B23, TEXT("启用")},

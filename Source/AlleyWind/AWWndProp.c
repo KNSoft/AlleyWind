@@ -138,7 +138,7 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
                 if (b32Proc)
                     lBytes = (DWORD)lBytes;
             } else
-                NT_SetLastError(UI_GetWindowLong(hWnd, bClassExtraBytes, (INT)dwpOffset, &lBytes));
+                UI_GetWindowLong(hWnd, bClassExtraBytes, (INT)dwpOffset, &lBytes);
             dwpNextOffset = dwpOffset + uWordSize;
             if (!AW_WndPropExtraBytesEnumProc((DWORD)dwpOffset, lBytes, (UINT)(dwpNextOffset > dwpExtraSize ? dwpExtraSize - dwpOffset : uWordSize), lBytes ? ERROR_SUCCESS : NT_GetLastError(), lParam))
                 return FALSE;

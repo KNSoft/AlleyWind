@@ -1,0 +1,86 @@
+{
+    "SendMethod": {
+        "en": "Send Method",
+        "zh-Hans": "发送方式"
+    },
+    "MsgComboxCue": {
+        "en": "Message code or name",
+        "zh-Hans": "消息码或名称"
+    },
+    "Timeout": {
+        "en": "Timeout (ms)",
+        "zh-Hans": "超时（毫秒）"
+    },
+    "AsyncTimeout": {
+        "en": "0 (Asynchronous)",
+        "zh-Hans": "0（异步）"
+    },
+    "SendMethod_LMS": {
+        "en": "Local Message Sending",
+        "zh-Hans": "本地发送消息"
+    },
+    "SendMethod_RMS": {
+        "en": "Remote Message Sending (Code Injection)",
+        "zh-Hans": "远程发送消息（代码注入）"
+    },
+    "SendMethod_RWPC": {
+        "en": "Remote Window Procedure Call (Code Injection)",
+        "zh-Hans": "远程窗口过程调用（代码注入）"
+    },
+    "SendMethod_RWPE": {
+        "en": "Remote Window Procedure Execution (Code Injection)",
+        "zh-Hans": "远程窗口过程执行（代码注入）"
+    },
+    "AttachThreadInput": {
+        "en": "Attach thread input",
+        "zh-Hans": "附加线程输入"
+    },
+    "ParamTypeNotUsed": {
+        "en": "Not Used",
+        "zh-Hans": "未使用"
+    },
+    "ParamValueNotUsed": {
+        "en": "Not Used (0/NULL)",
+        "zh-Hans": "未使用（0/NULL）"
+    },
+    "ParamTypeNum": {
+        "en": "Numerical",
+        "zh-Hans": "数值"
+    },
+    "ParamTypeBoolean": {
+        "en": "Boolean",
+        "zh-Hans": "布尔值"
+    },
+    "ParamTypeString": {
+        "en": "String",
+        "zh-Hans": "字符串"
+    },
+    "ParamTypeRaw": {
+        "en": "Raw Buffer",
+        "zh-Hans": "原始缓冲区"
+    },
+    "Send": {
+        "en": "Send",
+        "zh-Hans": "发送"
+    },
+    "Result": {
+        "en": "Result",
+        "zh-Hans": "结果"
+    },
+    "Msg_uMsgErr": {
+        "en": "Unrecognized message specified\\r\\nSelect an item or enter name or numerical code of a message",
+        "zh-Hans": "无法识别指定的消息\\r\\n选择一项或输入消息名或数值码。"
+    },
+    "Msg_ParamTypeErr": {
+        "en": "Select a type of message parameter",
+        "zh-Hans": "为消息参数选择一个类型"
+    },
+    "Msg_ParamValueErr": {
+        "en": "Invalid value of message parameter",
+        "zh-Hans": "参数值非法"
+    },
+    "Msg_TimeoutErr": {
+        "en": "Invalid value of timeout",
+        "zh-Hans": "超时值非法"
+    }
+}

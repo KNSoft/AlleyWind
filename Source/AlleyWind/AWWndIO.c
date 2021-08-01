@@ -14,9 +14,7 @@ LRESULT AW_SendMsgTO(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, PDWORD_
 UINT AW_GetWindowTextEx(HWND hWnd, PWSTR psz, UINT cCh) {
     DWORD_PTR   dwCch;
     UINT        c;
-    c = AW_SendMsgTO(hWnd, WM_GETTEXT, cCh, (LPARAM)psz, &dwCch) && (UINT)dwCch < cCh ?
-        (UINT)dwCch :
-    0;
+    c = AW_SendMsgTO(hWnd, WM_GETTEXT, cCh, (LPARAM)psz, &dwCch) && (UINT)dwCch < cCh ? (UINT)dwCch : 0;
     psz[c] = '\0';
     return c;
 }
@@ -28,7 +26,7 @@ DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
     HDC         hDC = GetDC(hWnd);
     UINT        uTimes = 4 * 2;
     BOOL        bFlash;
-    bFlash = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle) == ERROR_SUCCESS && (
+    bFlash = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle) && (
         dwpStyle & WS_DLGFRAME ||
         dwpStyle & WS_THICKFRAME ||
         dwpStyle & WS_HSCROLL ||

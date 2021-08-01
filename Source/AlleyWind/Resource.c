@@ -69,7 +69,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
     if (uMsg == WM_INITDIALOG) {
         HWND        hWnd, hCtl;
         LRESULT     lResult;
-        DWORD       dwStyleError;
+        BOOL        bSucc, bStyleSucc;
         DWORD_PTR   dwpStyle, dwpTemp;
         RECT        rcClient;
         BOOL        bImageAvailable;
@@ -78,7 +78,8 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         // Initialize
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astWndPropResourceTextCtl);
-        dwStyleError = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
+        bSucc = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
+        bStyleSucc = bSucc;
         // Client Area Image
         if (hWnd == GetDesktopWindow()) {
             rcClient.right = GetSystemMetrics(SM_CXVIRTUALSCREEN);
@@ -89,12 +90,12 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_IMAGE_EDIT, bImageAvailable, TEXT("%ldx%ld"), rcClient.right, rcClient.bottom);
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_IMAGE_BTN, bImageAvailable);
         // hInstance
-        UI_GetWindowLong(hWnd, FALSE, GWLP_HINSTANCE, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HINSTANCE_EDIT, dwpTemp || NT_LastErrorSucceed(), TEXT("%p"), (HINSTANCE)dwpTemp);
+        bSucc = UI_GetWindowLong(hWnd, FALSE, GWLP_HINSTANCE, &dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HINSTANCE_EDIT, bSucc, TEXT("%p"), (HINSTANCE)dwpTemp);
         // hFont
         WndPropResourceGetFont(hDlg, hWnd);
         // hMenu
-        if (dwStyleError != ERROR_SUCCESS || dwpStyle & WS_CHILD)
+        if (!bStyleSucc || dwpStyle & WS_CHILD)
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, FALSE);
         else
             AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, TRUE, TEXT("%p"), GetMenu(hWnd));
