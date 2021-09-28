@@ -98,27 +98,25 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
     LPSTR                   lpszGLFunc;
     UI_GetWindowLong(hWnd, TRUE, bClassExtraBytes ? GCL_CBCLSEXTRA : GCL_CBWNDEXTRA, &dwpExtraSize);
     if (dwpExtraSize) {
-        if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
-            DWORD       dwPID;
-            GetWindowThreadProcessId(hWnd, &dwPID);
-            hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
-            if (hProc) {
-                if (IsWow64Process(hProc, &b32Proc)) {
-                    lpszGLFunc = bClassExtraBytes ?
-                        (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
-                        (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
-                    lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                    if (NT_SUCCESS(lStatus)) {
-                        stCallProc.RetValue = 0;
-                        stCallProc.CallConvention = 0;
-                        stCallProc.ParamCount = ARRAYSIZE(stGLParams);
-                        bUseHijack = TRUE;
-                    }
+        DWORD       dwPID;
+        GetWindowThreadProcessId(hWnd, &dwPID);
+        hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
+        if (hProc) {
+            if (IsWow64Process(hProc, &b32Proc)) {
+                lpszGLFunc = bClassExtraBytes ?
+                    (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
+                    (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
+                lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
+                if (NT_SUCCESS(lStatus)) {
+                    stCallProc.RetValue = 0;
+                    stCallProc.CallConvention = 0;
+                    stCallProc.ParamCount = ARRAYSIZE(stGLParams);
+                    bUseHijack = TRUE;
                 }
-                if (!bUseHijack) {
-                    NtClose(hProc);
-                    hProc = NULL;
-                }
+            }
+            if (!bUseHijack) {
+                NtClose(hProc);
+                hProc = NULL;
             }
         }
         uWordSize = bUseHijack ?

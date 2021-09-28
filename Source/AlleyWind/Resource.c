@@ -132,64 +132,62 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     DeleteObject(hFont);
             }
             if (bChosen) {
-                if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
-                    HANDLE                  hProc;
-                    hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
-                    if (hProc) {
-                        // Create new font
-                        HIJACK_CALLPROCHEADER   stCFICallProc;
-                        if (!NT_SUCCESS(
-                            Hijack_LoadProcAddr(
-                                hProc,
-                                L"gdi32.dll",
-                                "CreateFontIndirectW",
-                                (PVOID*)&stCFICallProc.Procedure,
-                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
-                            )
-                            goto Label_0;
-                        HIJACK_CALLPROCPARAM    stCFIParams[] = {
-                            { (DWORD_PTR)&stLogFont, sizeof(stLogFont), FALSE }
-                        };
-                        stCFICallProc.CallConvention = 0;
-                        stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
-                        if (!NT_SUCCESS(
-                            Hijack_CallProc(
-                                hProc,
-                                &stCFICallProc,
-                                stCFIParams,
-                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                            )) || !stCFICallProc.RetValue)
-                            goto Label_0;
-                        // Apply new font created
-                        HIJACK_CALLPROCHEADER   stSMWCallProc;
-                        if (!NT_SUCCESS(
-                            Hijack_LoadProcAddr(
-                                hProc,
-                                L"user32.dll",
-                                "SendMessageW",
-                                (PVOID*)&stSMWCallProc.Procedure,
-                                AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
-                            )
-                            goto Label_0;
-                        HIJACK_CALLPROCPARAM    stSMWParams[] = {
-                            { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
-                            { WM_SETFONT, 0, FALSE },
-                            { stCFICallProc.RetValue, 0, FALSE },
-                            { TRUE, 0, FALSE }
-                        };
-                        stSMWCallProc.CallConvention = 0;
-                        stSMWCallProc.ParamCount = ARRAYSIZE(stSMWParams);
+                HANDLE  hProc;
+                hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+                if (hProc) {
+                    // Create new font
+                    HIJACK_CALLPROCHEADER   stCFICallProc;
+                    if (!NT_SUCCESS(
+                        Hijack_LoadProcAddr(
+                            hProc,
+                            L"gdi32.dll",
+                            "CreateFontIndirectW",
+                            (PVOID*)&stCFICallProc.Procedure,
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                        )
+                        goto Label_0;
+                    HIJACK_CALLPROCPARAM    stCFIParams[] = {
+                        { (DWORD_PTR)&stLogFont, sizeof(stLogFont), FALSE }
+                    };
+                    stCFICallProc.CallConvention = 0;
+                    stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
+                    if (!NT_SUCCESS(
                         Hijack_CallProc(
                             hProc,
-                            &stSMWCallProc,
-                            stSMWParams,
+                            &stCFICallProc,
+                            stCFIParams,
                             AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                        );
-                    }
-                Label_0:
-                    NtClose(hProc);
-                    WndPropResourceGetFont(hDlg, hWnd);
+                        )) || !stCFICallProc.RetValue)
+                        goto Label_0;
+                    // Apply new font created
+                    HIJACK_CALLPROCHEADER   stSMWCallProc;
+                    if (!NT_SUCCESS(
+                        Hijack_LoadProcAddr(
+                            hProc,
+                            L"user32.dll",
+                            "SendMessageW",
+                            (PVOID*)&stSMWCallProc.Procedure,
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                        )
+                        goto Label_0;
+                    HIJACK_CALLPROCPARAM    stSMWParams[] = {
+                        { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                        { WM_SETFONT, 0, FALSE },
+                        { stCFICallProc.RetValue, 0, FALSE },
+                        { TRUE, 0, FALSE }
+                    };
+                    stSMWCallProc.CallConvention = 0;
+                    stSMWCallProc.ParamCount = ARRAYSIZE(stSMWParams);
+                    Hijack_CallProc(
+                        hProc,
+                        &stSMWCallProc,
+                        stSMWParams,
+                        AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                    );
                 }
+            Label_0:
+                NtClose(hProc);
+                WndPropResourceGetFont(hDlg, hWnd);
             }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_IMAGE_BTN, BN_CLICKED)) {
             RECT rcBtn;

@@ -1,6 +1,5 @@
 typedef enum _AW_SETTING_INDEX {
-    AWSetting_ResponseTimeout,
-    AWSetting_EnableRemoteHijack
+    AWSetting_ResponseTimeout
 } AW_SETTING_INDEX, * PAW_SETTING_INDEX;
 
 VOID AWSettings_Init();

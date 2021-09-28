@@ -373,29 +373,33 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             DWORD   dwAffinity;
             BOOL    bSucc;
             dwAffinity = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE;
-            if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
-                HANDLE                  hProc;
-                HIJACK_CALLPROCHEADER   stCallProc;
-                HIJACK_CALLPROCPARAM    stSWDAParams[] = {
-                    { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
-                    { dwAffinity, 0, FALSE }
-                };
-                bSucc = FALSE;
-                hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
-                if (hProc && NT_SUCCESS(Hijack_LoadProcAddr(hProc, L"user32.dll", "SetWindowDisplayAffinity", (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
-                    stCallProc.CallConvention = 0;
-                    stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
-                    if (NT_SUCCESS(
-                        Hijack_CallProc(
-                            hProc,
-                            &stCallProc,
-                            stSWDAParams,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                        )) && stCallProc.RetValue)
-                        bSucc = TRUE;
-                }
-            } else
-                bSucc = UI_SetWindowDisplayAffinity(hWnd, dwAffinity);
+
+            HANDLE                  hProc;
+            HIJACK_CALLPROCHEADER   stCallProc;
+            HIJACK_CALLPROCPARAM    stSWDAParams[] = {
+                { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                { dwAffinity, 0, FALSE }
+            };
+            bSucc = FALSE;
+            hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+            if (hProc &&
+                NT_SUCCESS(Hijack_LoadProcAddr(
+                    hProc,
+                    L"user32.dll",
+                    "SetWindowDisplayAffinity",
+                    (PVOID*)&stCallProc.Procedure,
+                    AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
+                stCallProc.CallConvention = 0;
+                stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
+                if (NT_SUCCESS(
+                    Hijack_CallProc(
+                        hProc,
+                        &stCallProc,
+                        stSWDAParams,
+                        AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                    )) && stCallProc.RetValue)
+                    bSucc = TRUE;
+            }
             if (!bSucc)
                 KNS_ErrorMsgBox(hDlg, ERROR_FUNCTION_FAILED);
             WndPropOperationGetDisplayAffinity(hDlg, hWnd);

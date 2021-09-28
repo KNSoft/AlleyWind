@@ -71,27 +71,25 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
         dwpTemp = 0;
-        if (AWSettings_GetItemValueEx(AWSetting_EnableRemoteHijack)) {
-            NTSTATUS    lStatus;
-            BOOL        b32Proc;
-            LPSTR       lpszGWLFunc;
-            HIJACK_CALLPROCHEADER   stCallProc;
-            HIJACK_CALLPROCPARAM    stGWLParams[] = {
-                { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
-                { GWLP_WNDPROC, 0, FALSE }
-            };
-            if (hProc && IsWow64Process(hProc, &b32Proc)) {
-                lpszGWLFunc = b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW";
-                lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGWLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                if (NT_SUCCESS(lStatus)) {
-                    stCallProc.RetValue = 0;
-                    stCallProc.CallConvention = 0;
-                    stCallProc.ParamCount = ARRAYSIZE(stGWLParams);
-                    lStatus = Hijack_CallProc(hProc, &stCallProc, stGWLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                    dwpTemp = NT_SUCCESS(lStatus) ? (DWORD_PTR)stCallProc.RetValue : 0;
-                    if (b32Proc)
-                        dwpTemp = (DWORD)dwpTemp;
-                }
+        NTSTATUS    lStatus;
+        BOOL        b32Proc;
+        LPSTR       lpszGWLFunc;
+        HIJACK_CALLPROCHEADER   stCallProc;
+        HIJACK_CALLPROCPARAM    stGWLParams[] = {
+            { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+            { GWLP_WNDPROC, 0, FALSE }
+        };
+        if (hProc && IsWow64Process(hProc, &b32Proc)) {
+            lpszGWLFunc = b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW";
+            lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGWLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
+            if (NT_SUCCESS(lStatus)) {
+                stCallProc.RetValue = 0;
+                stCallProc.CallConvention = 0;
+                stCallProc.ParamCount = ARRAYSIZE(stGWLParams);
+                lStatus = Hijack_CallProc(hProc, &stCallProc, stGWLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
+                dwpTemp = NT_SUCCESS(lStatus) ? (DWORD_PTR)stCallProc.RetValue : 0;
+                if (b32Proc)
+                    dwpTemp = (DWORD)dwpTemp;
             }
         }
         if (!dwpTemp)

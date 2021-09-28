@@ -4,6 +4,8 @@
 #include "NTAssassin\NTAssassin.h"
 #include "NAC_Output.h"
 
+#include <Uxtheme.h>
+
 #include "DB_StyleEditor.h"
 #include "DB_Message.h"
 #include "AWSettings.h"
@@ -12,10 +14,20 @@
 #include "resource.h"
 
 #if _DEBUG
-#pragma comment(lib, "Debug\\NTAssassin.lib")
+#if _WIN64
+#pragma comment(lib, "\\x64\\Debug\\NTAssassin.lib")
 #else
-#pragma comment(lib, "Release\\NTAssassin.lib")
+#pragma comment(lib, "\\x86\\Debug\\NTAssassin.lib")
 #endif
+#else
+#if _WIN64
+#pragma comment(lib, "\\x64\\Release\\NTAssassin.lib")
+#else
+#pragma comment(lib, "\\x86\\Release\\NTAssassin.lib")
+#endif
+#endif
+
+#pragma comment(lib, "UxTheme.lib")
 
 #define KNS_NAME TEXT("AlleyWind")
 
