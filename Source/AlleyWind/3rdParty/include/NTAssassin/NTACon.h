@@ -1,3 +1,3 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 // No color specified in color picker yet
 #define CTL_COLORPICKER_NOCOLOR 0xFF000000

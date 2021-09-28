@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 NTA_API PVOID WINAPIV Data_StructCombineEx(UINT GroupCount, UINT Size, ...);
 

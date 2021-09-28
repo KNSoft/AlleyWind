@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef enum _PROC_LM_SE_NAMES {
     LSE_CREATE_TOKEN_NAME = 2,

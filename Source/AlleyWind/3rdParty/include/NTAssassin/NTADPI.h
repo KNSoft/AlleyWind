@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 /**
   * @brief Gets DPI of window

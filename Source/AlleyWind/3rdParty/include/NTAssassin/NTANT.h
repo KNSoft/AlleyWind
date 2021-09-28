@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 /**
   * @brief Gets any member of current TEB
@@ -52,7 +52,7 @@
   * @brief Gets the pointer to current KUSER_SHARED_DATA
   * @return Returns pointer to KUSER_SHARED_DATA
   */
-#define NT_GetKUSD() ((PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
+#define NT_GetKUSD() ((CONST PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
 
 // Last Win32 Error value
 #define NT_ClearLastError() NT_SetTEBMember(LastErrorValue, ERROR_SUCCESS)
@@ -83,9 +83,3 @@ NTA_API VOID NTAPI NT_InitObject(POBJECT_ATTRIBUTES Object, HANDLE RootDirectory
   * @param[out] ObjectName ObjectName member of OBJECT_ATTRIBUTES
   */
 NTA_API NTSTATUS NTAPI NT_InitPathObject(PCWSTR Path, HANDLE RootDirectory, POBJECT_ATTRIBUTES Object, PUNICODE_STRING ObjectName);
-
-/**
-  * @brief A SEH handler do nothing just returns EXCEPTION_EXECUTE_HANDLER
-  * @details __try {...} __except (NT_SEH_NopHandler(NULL)) {...}
-  */
-NTA_API int NT_SEH_NopHandler(LPEXCEPTION_POINTERS ExceptionInfo);

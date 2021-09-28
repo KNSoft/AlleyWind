@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef enum _IMAGE_DATA_FORMAT {
     ImageDataFormatRGB32,       // 0xFFRRGGBB

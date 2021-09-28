@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef enum _STR_HASH_ALGORITHM {
     StrHashAlgorithmSDBM,
@@ -201,6 +201,54 @@ NTA_API BOOL NTAPI Str_ToIntExA(PCSTR StrValue, BOOL Unsigned, UINT Base, PVOID 
 #define Str_BinToInt Str_BinToIntA
 #define Str_BinToUIntA(StrValue, Value) Str_ToIntExA(StrValue, TRUE, 2, Value, sizeof(*(Value)))
 #define Str_BinToUInt Str_BinToUIntA
+#endif
+
+BOOL NTAPI Str_FromIntExW(INT64 Value, BOOL Unsigned, UINT Base, PWSTR StrValue, ULONG DestCchSize);
+BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, PSTR StrValue, ULONG DestCchSize);
+#ifdef UNICODE
+#define Str_FromIntEx Str_FromIntExW
+#define Str_FromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 0, StrValue, ARRAYSIZE(StrValue))
+#define Str_FromInt Str_FromIntW
+#define Str_FromUIntW(Value, StrValue) Str_FromIntExW(Value, TRUE, 0, StrValue, ARRAYSIZE(StrValue))
+#define Str_FromUInt Str_FromUIntW
+#define Str_HexFromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 16, StrValue, ARRAYSIZE(StrValue))
+#define Str_HexFromInt Str_HexFromIntW
+#define Str_HexFromUIntW(Value, StrValue) Str_FromIntExW(Value, TRUE, 16, StrValue, ARRAYSIZE(StrValue))
+#define Str_HexFromUInt Str_HexFromUIntW
+#define Str_DecFromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 10, StrValue, ARRAYSIZE(StrValue))
+#define Str_DecFromInt Str_DecFromIntW
+#define Str_DecFromUIntW(Value, StrValue) Str_FromIntExW(Value, TRUE, 10, StrValue, ARRAYSIZE(StrValue))
+#define Str_DecFromUInt Str_DecFromUIntW
+#define Str_OctFromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 8, StrValue, ARRAYSIZE(StrValue))
+#define Str_OctFromInt Str_OctFromIntW
+#define Str_OctFromUIntW(Value, StrValue) Str_FromIntExW(Value, TRUE, 8, StrValue, ARRAYSIZE(StrValue))
+#define Str_OctFromUInt Str_OctFromUIntW
+#define Str_BinFromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 2, StrValue, ARRAYSIZE(StrValue))
+#define Str_BinFromInt Str_BinFromIntW
+#define Str_BinFromUIntW(Value, StrValue) Str_FromIntExW(Value, TRUE, 2, StrValue, ARRAYSIZE(StrValue))
+#define Str_BinFromUInt Str_BinFromUIntW
+#else
+#define Str_FromIntEx Str_FromIntExA
+#define Str_FromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 0, StrValue, ARRAYSIZE(StrValue))
+#define Str_FromInt Str_FromIntA
+#define Str_FromUIntA(Value, StrValue) Str_FromIntExA(Value, TRUE, 0, StrValue, ARRAYSIZE(StrValue))
+#define Str_FromUInt Str_FromUIntA
+#define Str_HexFromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 16, StrValue, ARRAYSIZE(StrValue))
+#define Str_HexFromInt Str_HexFromIntA
+#define Str_HexFromUIntA(Value, StrValue) Str_FromIntExA(Value, TRUE, 16, StrValue, ARRAYSIZE(StrValue))
+#define Str_HexFromUInt Str_HexFromUIntA
+#define Str_DecFromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 10, StrValue, ARRAYSIZE(StrValue))
+#define Str_DecFromInt Str_DecFromIntA
+#define Str_DecFromUIntA(Value, StrValue) Str_FromIntExA(Value, TRUE, 10, StrValue, ARRAYSIZE(StrValue))
+#define Str_DecFromUInt Str_DecFromUIntA
+#define Str_OctFromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 8, StrValue, ARRAYSIZE(StrValue))
+#define Str_OctFromInt Str_OctFromIntA
+#define Str_OctFromUIntA(Value, StrValue) Str_FromIntExA(Value, TRUE, 8, StrValue, ARRAYSIZE(StrValue))
+#define Str_OctFromUInt Str_OctFromUIntA
+#define Str_BinFromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 2, StrValue, ARRAYSIZE(StrValue))
+#define Str_BinFromInt Str_BinFromIntA
+#define Str_BinFromUIntA(Value, StrValue) Str_FromIntExA(Value, TRUE, 2, StrValue, ARRAYSIZE(StrValue))
+#define Str_BinFromUInt Str_BinFromUIntA
 #endif
 
 NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR Dest, SIZE_T DestCchSize);

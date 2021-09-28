@@ -5,7 +5,7 @@
 #define DLG_CONTROL_H   28
 #define DLG_BUTTON_W    124
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef struct _DLG_TEMPLATE {
     DLGTEMPLATE Template;

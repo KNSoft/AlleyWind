@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 #define DVE_TYPE_COMBINATION    0x1
 #define DVE_TYPE_ENUMERATION    0x2

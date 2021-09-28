@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // NTAssassin Exports, both of static and dynamic library targets are supported
 // Static library target is recommended
 #ifdef _WINDLL
@@ -13,11 +9,7 @@ extern "C" {
 #define NTA_API DECLSPEC_IMPORT
 #endif
 #else
-#if __cplusplus
-#define NTA_API EXTERN_C
-#else
 #define NTA_API
-#endif
 #endif
 
 // NTAssassin Options
@@ -90,7 +82,6 @@ extern "C" {
 #include <Windows.h>
 #include <Winternl.h>
 #include <WindowsX.h>
-#include <Uxtheme.h>
 #include <CommCtrl.h>
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -98,9 +89,12 @@ extern "C" {
 #include <dwmapi.h>
 #include <Tpcshrd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // NTAssassin dependencies
 #pragma comment(lib, "ntdll.lib")
-#pragma comment(lib, "UxTheme.lib")
 #pragma comment(lib, "ComCtl32.Lib")
 #pragma comment(lib, "ShLwApi.Lib")
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef enum _SYS_LOADDLL_NAME {
     SysLoadDllNTDll = 0,

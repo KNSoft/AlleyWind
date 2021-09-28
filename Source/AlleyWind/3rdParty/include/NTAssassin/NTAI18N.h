@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef struct _I18N_ITEM {
     DWORD   KeyHash;

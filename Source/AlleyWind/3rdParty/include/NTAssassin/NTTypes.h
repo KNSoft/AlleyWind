@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef DWORD64 QWORD, *PQWORD, *LPQWORD;
 
@@ -21,6 +21,13 @@ typedef HRESULT(STDAPICALLTYPE* PFNDwmGetWindowAttribute)(
     HWND hwnd,
     DWORD dwAttribute,
     _Out_writes_bytes_(cbAttribute) PVOID pvAttribute,
+    DWORD cbAttribute
+    );
+
+typedef HRESULT(STDAPICALLTYPE* PFNDwmSetWindowAttribute)(
+    HWND hwnd,
+    DWORD dwAttribute,
+    _In_reads_bytes_(cbAttribute) LPCVOID pvAttribute,
     DWORD cbAttribute
     );
 

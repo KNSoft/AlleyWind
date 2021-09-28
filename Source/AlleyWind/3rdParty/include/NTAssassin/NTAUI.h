@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 #define UI_NONOTIFYPROP TEXT("NTAssassin.UI.NoNotify")
 
@@ -126,7 +126,7 @@ NTA_API BOOL NTAPI UI_ShellExec(PCWSTR File, PCWSTR Param, UI_SHELLEXEC_VERB Ver
 /**
   * @see "SetWindowPos"
   */
-#define UI_SetWindowRect(Window, Rect) SetWindowPos(Window, NULL, (Rect)->left, (Rect)->top, (Rect)->right - (Rect)->left, (Rect)->bottom - (Rect)->top, SWP_NOZORDER | SWP_NOACTIVATE);
+NTA_API BOOL NTAPI UI_SetWindowRect(HWND Window, PRECT Rect);
 
 /**
   * @see "PtInRect"

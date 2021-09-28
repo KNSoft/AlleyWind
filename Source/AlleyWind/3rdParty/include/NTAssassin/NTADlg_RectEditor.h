@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 typedef struct _DLG_RECTEDITOR {
     HWND    hwndOwner;

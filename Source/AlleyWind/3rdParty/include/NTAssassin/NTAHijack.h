@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 #define HIJACK_LOADPROCADDR_MAXPARAMBUFFERSIZE (STRING_ALIGNMENT + sizeof(UINT) + MAX_PATH * sizeof(WCHAR) + sizeof(WORD) + STRING_ALIGNMENT + MAX_CIDENTIFIERNAME_CCH + sizeof(LPVOID))
 

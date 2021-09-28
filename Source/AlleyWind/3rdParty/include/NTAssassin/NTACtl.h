@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 #include "NTACtl_ColorPicker.h"
 
 typedef struct _CTL_MENU CTL_MENU, * PCTL_MENU;

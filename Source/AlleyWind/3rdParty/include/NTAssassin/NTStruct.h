@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NTAssassin\NTAssassin.h"
+#include "NTAssassin.h"
 
 #undef _LDR_DATA_TABLE_ENTRY
 #undef LDR_DATA_TABLE_ENTRY
