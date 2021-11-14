@@ -79,3 +79,8 @@ NTA_API VOID NTAPI Sys_StatusMsgBox(HWND Owner, PCWSTR Title, NTSTATUS Status);
   * @see "Sys_StatusMsgBox"
   */
 #define Sys_LastStatusMsgBox(Owner, Title) Sys_StatusMsgBox(Owner, Title, NT_GetLastStatus())
+
+/**
+  * @see "IsProcessorFeaturePresent"
+  */
+#define Sys_TestCPUFeature(Feature) ((Feature) < PROCESSOR_FEATURE_MAX ? (BOOL)NT_GetKUSD()->ProcessorFeatures[(Feature)] : FALSE)

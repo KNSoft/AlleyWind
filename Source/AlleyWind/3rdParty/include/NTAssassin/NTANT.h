@@ -81,5 +81,6 @@ NTA_API VOID NTAPI NT_InitObject(POBJECT_ATTRIBUTES Object, HANDLE RootDirectory
   * @param[in] RootDirectory RootDirectory member of OBJECT_ATTRIBUTES
   * @param[out] Object Pointer to OBJECT_ATTRIBUTES to be filled
   * @param[out] ObjectName ObjectName member of OBJECT_ATTRIBUTES
+  * @warning ObjectName.Buffer should be freed by "Mem_HeapFree" when you no longer need
   */
 NTA_API NTSTATUS NTAPI NT_InitPathObject(PCWSTR Path, HANDLE RootDirectory, POBJECT_ATTRIBUTES Object, PUNICODE_STRING ObjectName);
