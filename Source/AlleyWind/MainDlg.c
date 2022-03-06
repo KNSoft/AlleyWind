@@ -77,7 +77,7 @@ BOOL CALLBACK ExpTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level,
     }
     stTVI.pszText = szUniBuff + Level;
     if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI)) {
-        Str_UnicodeToUTF8(szUTF8Buff, szUniBuff, &uChWritten);
+        uChWritten = Str_UnicodeToUTF8(szUTF8Buff, szUniBuff);
         szUTF8Buff[uChWritten] = '\r';
         szUTF8Buff[uChWritten + 1] = '\n';
         IO_Write(hExpFile, 0, szUTF8Buff, (ULONG)(uChWritten + 2));
@@ -102,11 +102,11 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     if (bFilter) {
         if (uCount == 0) {
             if (bFindCaption && !bFindClassName)
-                iCch = Str_CchPrintf(szBuffer, TEXT("%s - \"%s\""), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName);
+                iCch = Str_Printf(szBuffer, TEXT("%s - \"%s\""), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName);
             else if (!bFindCaption && bFindClassName)
-                iCch = Str_CchPrintf(szBuffer, TEXT("%s - %s"), I18N_GetString(I18NIndex_SearchResult), szFindClassName);
+                iCch = Str_Printf(szBuffer, TEXT("%s - %s"), I18N_GetString(I18NIndex_SearchResult), szFindClassName);
             else
-                iCch = Str_CchPrintf(szBuffer, TEXT("%s - \"%s\" %s"), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName, szFindClassName);
+                iCch = Str_Printf(szBuffer, TEXT("%s - \"%s\" %s"), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName, szFindClassName);
             stTVIInsert.item.iImage = 0;
             stTVIInsert.hParent = lpstEnumChildren->hParentNode;
             stTVIInsert.item.pszText = iCch > 0 ? szBuffer : NULL;
@@ -131,15 +131,15 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         if (szClassName[0] != '\0') {
             pSysClsInfo = AW_DBFindSysClassInfoByName(szClassName);
             iCch = pSysClsInfo ?
-                Str_CchPrintf(szBuffer,
+                Str_Printf(szBuffer,
                     TEXT("%08X \"%s\" %s (%s)"),
                     (DWORD)(DWORD_PTR)hWnd,
                     szCaption,
                     szClassName,
                     IS_INTRESOURCE(pSysClsInfo->DisplayName) ? I18N_GetString((UINT_PTR)pSysClsInfo->DisplayName) : pSysClsInfo->DisplayName) :
-                Str_CchPrintf(szBuffer, TEXT("%08X \"%s\" %s"), (DWORD)(DWORD_PTR)hWnd, szCaption, szClassName);
+                Str_Printf(szBuffer, TEXT("%08X \"%s\" %s"), (DWORD)(DWORD_PTR)hWnd, szCaption, szClassName);
         } else
-            iCch = Str_CchPrintf(szBuffer, TEXT("%08X \"%s\""), (DWORD)(DWORD_PTR)hWnd, szCaption);
+            iCch = Str_Printf(szBuffer, TEXT("%08X \"%s\""), (DWORD)(DWORD_PTR)hWnd, szCaption);
         // Append node info and icon
         hIcon = NULL;
         if (!(AW_SendMsgTO(hWnd, WM_GETICON, ICON_SMALL, 0, (PDWORD_PTR)&hIcon) && hIcon))
@@ -179,8 +179,8 @@ DWORD WINAPI LoadWindowTreeThread(LPVOID lParam) {
 
 BOOL AW_LoadWindowTreeAsync(BOOL bUpdateFilter, LPTSTR lpszCaption, LPTSTR lpszClassName) {
     if (bUpdateFilter) {
-        bFindCaption = lpszCaption ? Str_CchCopy(szFindCaptionName, lpszCaption), TRUE : FALSE;
-        bFindClassName = lpszClassName ? Str_CchCopy(szFindClassName, lpszClassName), TRUE : FALSE;
+        bFindCaption = lpszCaption ? Str_Copy(szFindCaptionName, lpszCaption), TRUE : FALSE;
+        bFindClassName = lpszClassName ? Str_Copy(szFindClassName, lpszClassName), TRUE : FALSE;
         bFilter = bFindCaption || bFindClassName;
     }
     return hthrLoadWindowTree ? FALSE : NT_SUCCESS(Proc_CreateThread(LoadWindowTreeThread, NULL, FALSE, &hthrLoadWindowTree));

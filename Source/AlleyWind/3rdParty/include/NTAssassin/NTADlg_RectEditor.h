@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 
 typedef struct _DLG_RECTEDITOR {
     HWND    hwndOwner;
-    PCWSTR *lpstr;     // ["Title", "Reset", "OK", "Left", "Top", "Right", "Bottom", "Width", "Height"]
+    PCWSTR* lpstr;     // ["Title", "Reset", "OK", "Left", "Top", "Right", "Bottom", "Width", "Height"]
     LPRECT  lprc;
 } DLG_RECTEDITOR, * PDLG_RECTEDITOR;
 
@@ -14,4 +14,4 @@ typedef struct _DLG_RECTEDITOR {
   * @param[in, out] Rect Pointer to the RECT structure
   * @return Returns BOOL
   */
-NTA_API BOOL NTAPI Dlg_RectEditor(HWND Owner, PCWSTR *Strings, PRECT Rect);
+NTA_API BOOL NTAPI Dlg_RectEditor(HWND Owner, PCWSTR* Strings, PRECT Rect);

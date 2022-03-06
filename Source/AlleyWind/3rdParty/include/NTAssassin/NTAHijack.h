@@ -1,4 +1,4 @@
-// Still in testing, no more information available
+﻿// Still in testing, no more information available
 
 #pragma once
 
@@ -65,17 +65,17 @@ typedef struct _HIJACK_CALLPROCPARAM {
 //  LPVOID  lpProc;         // OUT OPTIONAL, Receive address of the procedure
 
 // Initializes parameter structure of Hijack_LoadProcAddr
-NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, SIZE_T BufferSize, PWSTR LibName, PSTR ProcName, PVOID** ProcAddrPointer);
+NTA_API PVOID NTAPI Hijack_LoadProcAddr_InitParamEx(PVOID Buffer, SIZE_T BufferSize, PCWSTR LibName, PCSTR ProcName, PVOID** ProcAddrPointer);
 #define Hijack_LoadProcAddr_InitParam(Buffer, LibName, ProcName, ProcAddrPointer) Hijack_LoadProcAddr_InitParamEx(Buffer, sizeof(Buffer), LibName, ProcName, (LPVOID**)(ProcAddrPointer))
 
 // Creates remote thread to execute given code
-// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
+// PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
 NTA_API NTSTATUS NTAPI Hijack_CreateThread(HANDLE ProcessHandle, PHIJACK_CREATETHREAD HijackThread, DWORD Timeout);
 
 // Gets remote procedure address
-// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
-NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID *ProcAddr, DWORD Timeout);
+// PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
+NTA_API NTSTATUS NTAPI Hijack_LoadProcAddr(HANDLE ProcessHandle, PWSTR LibName, PSTR ProcName, PVOID* ProcAddr, DWORD Timeout);
 
 // Calls remote procedure
-// PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
+// PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE accesses are required
 NTA_API NTSTATUS NTAPI Hijack_CallProc(HANDLE ProcessHandle, PHIJACK_CALLPROCHEADER HijackCallProc, PHIJACK_CALLPROCPARAM HijackParams, DWORD Timeout);

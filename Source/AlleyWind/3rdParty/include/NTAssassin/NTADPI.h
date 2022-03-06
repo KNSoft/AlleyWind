@@ -1,4 +1,4 @@
-// High-DPI support
+﻿// High-DPI support
 
 #pragma once
 

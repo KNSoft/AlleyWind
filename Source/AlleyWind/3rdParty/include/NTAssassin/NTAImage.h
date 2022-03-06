@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 
 typedef enum _IMAGE_DATA_FORMAT {
+    ImageDataFormatUnknow,       // 0xFFRRGGBB
     ImageDataFormatRGB32,       // 0xFFRRGGBB
     ImageDataFormatARGB32,      // 0xAARRGGBB
     ImageDataFormatBGR32,       // 0xFFBBGGRR
@@ -18,3 +19,18 @@ typedef struct _IMAGE_DATA {
     IMAGE_DATA_FORMAT   Format;
     PVOID               lpData;
 } IMAGE_DATA, * PIMAGE_DATA;
+
+typedef enum _IMAGE_FILE_FORMAT {
+    ImageFileFormatUnknow,
+    ImageFileFormatBMP,
+    ImageFileFormatEMF,
+    ImageFileFormatWMF,
+    ImageFileFormatJPEG,
+    ImageFileFormatPNG,
+    ImageFileFormatGIF,
+    ImageFileFormatTIFF,
+    ImageFileFormatEXIF,
+    ImageFileFormatICON,
+    ImageFileFormatHEIF,
+    ImageFileFormatWEBP
+} IMAGE_FILE_FORMAT, * PIMAGE_FILE_FORMAT;

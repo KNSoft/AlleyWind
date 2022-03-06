@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 
@@ -46,6 +46,9 @@
 #undef SystemLookasideInformation
 #undef SystemCodeIntegrityInformation
 #undef SystemPolicyInformation
+#undef OBJECT_INFORMATION_CLASS
+#undef ObjectBasicInformation
+#undef ObjectTypeInformation
 
 typedef struct _MEMORY_RANGE_ENTRY {
     PVOID VirtualAddress;
@@ -282,9 +285,9 @@ typedef struct _PEB {
             UCHAR IsLongPathAwareProcess : 1;
         };
     };
-    #if _WIN64
+#if _WIN64
     UCHAR Padding0[4];
-    #endif
+#endif
     HANDLE Mutant;
     HINSTANCE ImageBaseAddress;
     PPEB_LDR_DATA Ldr;
@@ -308,9 +311,9 @@ typedef struct _PEB {
             DWORD ReservedBits0 : 24;
         };
     };
-    #if _WIN64
+#if _WIN64
     UCHAR Padding1[4];
-    #endif
+#endif
     union {
         PVOID KernelCallbackTable;
         PVOID UserSharedInfoPtr;
@@ -319,9 +322,9 @@ typedef struct _PEB {
     DWORD AtlThunkSListPtr32;
     PVOID ApiSetMap;
     DWORD TlsExpansionCounter;
-    #if _WIN64
+#if _WIN64
     UCHAR Padding2[4];
-    #endif
+#endif
     PVOID TlsBitmap;
     DWORD TlsBitmapBits[2];
     PVOID ReadOnlySharedMemoryBase;
@@ -343,9 +346,9 @@ typedef struct _PEB {
     PVOID GdiSharedHandleTable;
     PVOID ProcessStarterHelper;
     DWORD GdiDCAttributeList;
-    #if _WIN64
+#if _WIN64
     UCHAR Padding3[4];
-    #endif
+#endif
     PRTL_CRITICAL_SECTION LoaderLock;
     DWORD OSMajorVersion;
     DWORD OSMinorVersion;
@@ -355,18 +358,18 @@ typedef struct _PEB {
     DWORD ImageSubsystem;
     DWORD ImageSubsystemMajorVersion;
     DWORD ImageSubsystemMinorVersion;
-    #if _WIN64
+#if _WIN64
     UCHAR Padding4[4];
-    #endif
+#endif
     UINT ActiveProcessAffinityMask;
     DWORD GdiHandleBuffer[60];
     PVOID PostProcessInitRoutine;
     PVOID TlsExpansionBitmap;
     DWORD TlsExpansionBitmapBits[32];
     DWORD SessionId;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding5[4];
-    #endif
+#endif
     ULARGE_INTEGER AppCompatFlags;
     ULARGE_INTEGER AppCompatFlagsUser;
     PVOID pShimData;
@@ -392,9 +395,9 @@ typedef struct _PEB {
             DWORD SpareTracingBits : 29;
         };
     };
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding6[4];
-    #endif
+#endif
     INT_PTR CsrServerReadOnlySharedMemoryBase;
     INT_PTR TppWorkerpListLock;
     LIST_ENTRY TppWorkerpList;
@@ -480,23 +483,23 @@ typedef struct _TEB {
     ACTIVATION_CONTEXT_STACK ActivationStack;
     UCHAR WorkingOnBehalfTicket[8];
     DWORD ExceptionCode;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding0[4];
-    #endif
+#endif
     PACTIVATION_CONTEXT_STACK ActivationContextStackPointer;
     PVOID InstrumentationCallbackSp;
     PVOID InstrumentationCallbackPreviousPc;
     PVOID InstrumentationCallbackPreviousSp;
-    #ifdef _WIN64
+#ifdef _WIN64
     DWORD TxFsContext;
     BOOLEAN InstrumentationCallbackDisabled;
     UCHAR UnalignedLoadStoreExceptions;
     UCHAR Padding1[2];
-    #else
+#else
     UCHAR InstrumentationCallbackDisabled;
     UCHAR SpareBytes[23];
     DWORD TxFsContext;
-    #endif
+#endif
     GDI_TEB_BATCH GdiTebBatch;
     CLIENT_ID RealClientId;
     PVOID GdiCachedProcessHandle;
@@ -513,14 +516,14 @@ typedef struct _TEB {
     PVOID glCurrentRC;
     PVOID glContext;
     DWORD LastStatusValue;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding2[4];
-    #endif
+#endif
     UNICODE_STRING StaticUnicodeString;
     WCHAR StaticUnicodeBuffer[261];
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding3[6];
-    #endif
+#endif
     PVOID DeallocationStack;
     PVOID TlsSlots[64];
     LIST_ENTRY TlsLinks;
@@ -528,12 +531,12 @@ typedef struct _TEB {
     PVOID ReservedForNtRpc;
     PVOID DbgSsReserved[2];
     DWORD HardErrorMode;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding4[4];
     PVOID Instrumentation[11];
-    #else
+#else
     PVOID Instrumentation[9];
-    #endif
+#endif
     GUID ActivityId;
     PVOID SubProcessTag;
     PVOID PerflibData;
@@ -553,31 +556,31 @@ typedef struct _TEB {
         };
     };
     DWORD GuaranteedStackBytes;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding5[4];
-    #endif
+#endif
     PVOID ReservedForPerf;
     PVOID ReservedForOle;
     DWORD WaitingOnLoaderLock;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding6[4];
-    #endif
+#endif
     PVOID SavedPriorityState;
     INT_PTR ReservedForCodeCoverage;
     PVOID ThreadPoolData;
     PVOID TlsExpansionSlots;
-    #ifdef _WIN64
+#ifdef _WIN64
     PVOID DeallocationBStore;
     PVOID BStoreLimit;
-    #endif
+#endif
     DWORD MuiGeneration;
     DWORD IsImpersonating;
     PVOID NlsCache;
     PVOID pShimData;
     DWORD HeapData;
-    #ifdef _WIN64
+#ifdef _WIN64
     UCHAR Padding7[4];
-    #endif
+#endif
     PVOID CurrentTransactionHandle;
     PTEB_ACTIVE_FRAME ActiveFrame;
     PVOID FlsData;
@@ -810,7 +813,7 @@ typedef struct _FILE_NETWORK_OPEN_INFORMATION {
 
 typedef struct _FILE_DISPOSITION_INFORMATION {
     BOOLEAN DeleteFile;
-} FILE_DISPOSITION_INFORMATION, *PFILE_DISPOSITION_INFORMATION;
+} FILE_DISPOSITION_INFORMATION, * PFILE_DISPOSITION_INFORMATION;
 
 typedef struct _FILE_DISPOSITION_INFORMATION_EX {
     ULONG Flags;
@@ -1270,7 +1273,7 @@ typedef enum _SYSTEM_INFORMATION_CLASS {
     SystemCodeIntegrityClearDynamicStores = 225,
     SystemPoolZeroingInformation = 227,
     MaxSystemInfoClass = 228
-} SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
+} SYSTEM_INFORMATION_CLASS, * PSYSTEM_INFORMATION_CLASS;
 
 typedef struct _SYSTEM_MODULE_ENTRY {
     ULONG_PTR  Unused;
@@ -1287,4 +1290,12 @@ typedef struct _SYSTEM_MODULE_ENTRY {
 typedef struct _SYSTEM_MODULE_INFORMATION {
     ULONG               Count;
     SYSTEM_MODULE_ENTRY Module[1];
-} SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
+} SYSTEM_MODULE_INFORMATION, * PSYSTEM_MODULE_INFORMATION;
+
+typedef enum _OBJECT_INFO_CLASS {
+    ObjectBasicInformation,
+    ObjectNameInformation,
+    ObjectTypeInformation,
+    ObjectAllTypesInformation,
+    ObjectHandleInformation
+} OBJECT_INFO_CLASS, * POBJECT_INFO_CLASS;

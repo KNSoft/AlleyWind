@@ -1,4 +1,4 @@
-// Remote Process accessibility
+﻿// Remote Process accessibility
 
 #pragma once
 

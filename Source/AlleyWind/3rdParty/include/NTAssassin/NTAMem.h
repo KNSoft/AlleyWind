@@ -1,4 +1,4 @@
-// Memory management
+﻿// Memory management
 
 #pragma once
 

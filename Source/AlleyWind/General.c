@@ -95,7 +95,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         if (!dwpTemp)
             UI_GetWindowLong(hWnd, FALSE, GWLP_WNDPROC, &dwpTemp);
         uTemp = hProc && dwpTemp ? RProc_TranslateAddress(hProc, (PVOID)dwpTemp, szTempPath) : 0;
-        iTemp = Str_CchPrintf(szBuffer, TEXT("%s (%s)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), IsWindowUnicode(hWnd) ? TEXT("Unicode") : TEXT("ANSI"));
+        iTemp = Str_Printf(szBuffer, TEXT("%s (%s)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), IsWindowUnicode(hWnd) ? TEXT("Unicode") : TEXT("ANSI"));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_WNDPROC_EDIT, szBuffer, iTemp > 0);
         if (hProc)
             NtClose(hProc);

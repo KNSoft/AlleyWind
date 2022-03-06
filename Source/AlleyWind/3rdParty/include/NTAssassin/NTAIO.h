@@ -1,4 +1,4 @@
-// I/O a file or device
+﻿// I/O a file or device
 
 #pragma once
 

@@ -24,7 +24,8 @@ VOID AW_SetPropCtlFormat(HWND hDlg, UINT uCtlID, BOOL bSuccess, _Printf_format_s
     hCtl = GetDlgItem(hDlg, uCtlID);
     if (bSuccess) {
         va_start(args, lpszFormat);
-        iCch = Str_CchVPrintf(szBuffer, lpszFormat, args);
+        iCch = Str_VPrintf(szBuffer, lpszFormat, args);
+        va_end(args);
     }
     UI_SetWndTextNoNotify(hCtl, iCch > 0 ? szBuffer : NULL);
     EnableWindow(hCtl, bSuccess);
@@ -42,7 +43,7 @@ VOID AW_SetPropCtlRect(HWND hDlg, UINT uCtlID, PRECT lpRect, BOOL bSuccess) {
     INT     iCch;
     hCtl = GetDlgItem(hDlg, uCtlID);
     if (bSuccess) {
-        iCch = Str_CchPrintf(szBuffer, TEXT("LT(%ld, %ld)-RB(%ld, %ld) [%ldx%ld]"), lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
+        iCch = Str_Printf(szBuffer, TEXT("LT(%ld, %ld)-RB(%ld, %ld) [%ldx%ld]"), lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
         UI_SetWndTextNoNotify(hCtl, iCch > 0 ? szBuffer : NULL);
     } else
         EnableWindow(hCtl, FALSE);
@@ -64,7 +65,7 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
     LVITEM  stLVItem;
     INT     iCch;
     stLVItem.mask = LVIF_TEXT;
-    iCch = Str_CchPrintf(szBuffer, TEXT("+%u"), dwOffset);
+    iCch = Str_Printf(szBuffer, TEXT("+%u"), dwOffset);
     stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
     stLVItem.iItem = MAXINT;
     stLVItem.iSubItem = 0;
@@ -73,7 +74,7 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
         stLVItem.iSubItem++;
         iCch = 0;
         if (dwError == ERROR_SUCCESS) {
-            iCch = Str_CchPrintf(szBuffer, TEXT("%p"), (LPVOID)lBytes);
+            iCch = Str_Printf(szBuffer, TEXT("%p"), (LPVOID)lBytes);
             if (iCch > 0)
                 szBuffer[uSize * 2] = '\0';
         }

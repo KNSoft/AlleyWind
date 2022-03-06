@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 #include "NTACtl_ColorPicker.h"

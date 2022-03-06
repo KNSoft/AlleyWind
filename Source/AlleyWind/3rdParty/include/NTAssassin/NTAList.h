@@ -1,4 +1,4 @@
-// Implement of two-way linked-list data structure.
+﻿// Implement of two-way linked-list data structure.
 
 #pragma once
 

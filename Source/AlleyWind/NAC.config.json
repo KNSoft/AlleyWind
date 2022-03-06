@@ -6,21 +6,7 @@
         "I18N": {
             "Pattern": "*.NAC.I18N.json",
             "Default": "en"
-        },
-        "SymbolExtract": [
-            {
-                "SymbolFile": "Hijack64.obj",
-                "SymbolName": [
-                    "Hijack_LoadProcAddr_InjectThread"
-                ]
-            },
-            {
-                "SymbolFile": "Hijack32.obj",
-                "SymbolName": [
-                    "Hijack_LoadProcAddr_InjectThread"
-                ]
-            }
-        ]
+        }
     },
     "Output": {
         "HeaderFile": "NAC_Output.h",

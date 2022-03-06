@@ -42,7 +42,7 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     INT     iCch;
     stLVItem.mask = LVIF_TEXT;
     if (IS_ATOM(lpszProp)) {
-        iCch = Str_CchPrintf(szBuffer, TEXT("#%u"), LOWORD(lpszProp));
+        iCch = Str_Printf(szBuffer, TEXT("#%u"), LOWORD(lpszProp));
         stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
     } else
         stLVItem.pszText = lpszProp;
@@ -51,7 +51,7 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     stLVItem.iItem = (INT)SendMessage((HWND)lParam, LVM_INSERTITEM, 0, (LPARAM)&stLVItem);
     if (stLVItem.iItem != -1) {
         stLVItem.iSubItem++;
-        iCch = Str_CchPrintf(szBuffer, TEXT("%p"), hData);
+        iCch = Str_Printf(szBuffer, TEXT("%p"), hData);
         stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
         SendMessage((HWND)lParam, LVM_SETITEM, 0, (LPARAM)&stLVItem);
     }

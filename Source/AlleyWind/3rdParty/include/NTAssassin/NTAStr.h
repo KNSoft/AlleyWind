@@ -1,4 +1,4 @@
-/**
+﻿/**
   * @brief Native library of NTAssassin provides basic string functions.
   * @note ***WILL BE DEPRECATED, assembly language and existing function in ntdll.dll instead***
   * @details Functions are named in pattern: Str_[Cch|Ccb][Len|Cat|Copy|...][IC][Ex]
@@ -31,132 +31,133 @@ typedef enum _STR_HASH_ALGORITHM {
     StrHashAlgorithmRS,
     StrHashAlgorithmELF,
     StrHashAlgorithmPJW,
-    StrHashAlgorithmX65599 = StrHashAlgorithmSDBM
+    StrHashAlgorithmX65599 = StrHashAlgorithmSDBM,
+    StrHashAlgorithmFNV1a
 } STR_HASH_ALGORITHM, * PSTR_HASH_ALGORITHM;
 
-// String Length
+// String Length and Size
 
-NTA_API SIZE_T NTAPI Str_CchLenW(PCWSTR String);
-NTA_API SIZE_T NTAPI Str_CchLenA(PCSTR String);
+NTA_API SIZE_T NTAPI Str_LenW(_In_z_ PCWSTR String);
+NTA_API SIZE_T NTAPI Str_LenA(_In_z_ PCSTR String);
 #ifdef UNICODE
-#define Str_CchLen Str_CchLenW
+#define Str_Len Str_LenW
 #else
-#define Str_CchLen Str_CchLenA
+#define Str_Len Str_LenA
 #endif
 
-NTA_API SIZE_T NTAPI Str_CcbLenW(PCWSTR String);
-#define Str_CcbLenA Str_CchLenA
+#define Str_SizeW(String) (Str_LenW(String) * sizeof(WCHAR))
+#define Str_SizeA Str_LenA
 #ifdef UNICODE
-#define Str_CcbLen Str_CcbLenW
+#define Str_Size Str_SizeW
 #else
-#define Str_CcbLen Str_CcbLenA
+#define Str_Size Str_SizeA
 #endif
 
 // String Copy
 
-NTA_API SIZE_T NTAPI Str_CchCopyExW(PWSTR Dest, SIZE_T DestCchSize, PCWSTR Src);
-NTA_API SIZE_T NTAPI Str_CchCopyExA(PSTR Dest, SIZE_T DestCchSize, PCSTR Src);
-#define Str_CchCopyW(Dest, Src) Str_CchCopyExW(Dest, ARRAYSIZE(Dest), Src)
-#define Str_CchCopyA(Dest, Src) Str_CchCopyExA(Dest, ARRAYSIZE(Dest), Src)
+NTA_API SIZE_T NTAPI Str_CopyExW(_Out_writes_(DestCchSize) _Post_z_ PWSTR Dest, SIZE_T DestCchSize, _In_z_ PCWSTR Src);
+NTA_API SIZE_T NTAPI Str_CopyExA(_Out_writes_(DestCchSize) _Post_z_ PSTR Dest, SIZE_T DestCchSize, _In_z_ PCSTR Src);
+#define Str_CopyW(Dest, Src) Str_CopyExW(Dest, ARRAYSIZE(Dest), Src)
+#define Str_CopyA(Dest, Src) Str_CopyExA(Dest, ARRAYSIZE(Dest), Src)
 #ifdef UNICODE
-#define Str_CchCopyEx Str_CchCopyExW
-#define Str_CchCopy Str_CchCopyW
+#define Str_CopyEx Str_CopyExW
+#define Str_Copy Str_CopyW
 #else
-#define Str_CchCopyEx Str_CchCopyExA
-#define Str_CchCopy Str_CchCopyA
+#define Str_CopyEx Str_CopyExA
+#define Str_Copy Str_CopyA
 #endif
 
-NTA_API SIZE_T NTAPI Str_CcbCopyExW(PWSTR Dest, SIZE_T DestCcbSize, PCWSTR Src);
-#define Str_CcbCopyExA Str_CchCopyExA
-#define Str_CcbCopyW(Dest, Src) Str_CcbCopyExW(Dest, sizeof(Dest), Src)
-#define Str_CcbCopyA(Dest, Src) Str_CcbCopyExA(Dest, sizeof(Dest), Src)
-#ifdef UNICODE
-#define Str_CcbCopy Str_CcbCopyW
-#else
-#define Str_CcbCopy Str_CcbCopyA
-#endif
+// String Compare
 
-// String Equal
-
-NTA_API BOOL NTAPI Str_EqualW(PCWSTR String1, PCWSTR String2);
-NTA_API BOOL NTAPI Str_EqualA(PCSTR String1, PCSTR String2);
+NTA_API INT NTAPI Str_CmpW(_In_z_ PCWSTR String1, _In_z_ PCWSTR String2);
+NTA_API INT NTAPI Str_CmpA(_In_z_ PCSTR String1, _In_z_ PCSTR String2);
+NTA_API INT NTAPI Str_ICmpW(_In_z_ PCWSTR String1, _In_z_ PCWSTR String2);
+NTA_API INT NTAPI Str_ICmpA(_In_z_ PCSTR String1, _In_z_ PCSTR String2);
+#define Str_EqualW(String1, String2) (BOOL)(Str_CmpW(String1, String2) == 0)
+#define Str_EqualA(String1, String2) (BOOL)(Str_CmpA(String1, String2) == 0)
+#define Str_IEqualW(String1, String2) (BOOL)(Str_ICmpW(String1, String2) == 0)
+#define Str_IEqualA(String1, String2) (BOOL)(Str_ICmpA(String1, String2) == 0)
 #ifdef UNICODE
+#define Str_Cmp Str_CmpW
+#define Str_ICmp Str_ICmpW
 #define Str_Equal Str_EqualW
+#define Str_IEqual Str_IEqualW
 #else
+#define Str_Cmp Str_CmpA
+#define Str_ICmp Str_ICmpA
 #define Str_Equal Str_EqualA
+#define Str_IEqual Str_IEqualA
 #endif
 
-NTA_API BOOL NTAPI Str_EqualICW(PCWSTR String1, PCWSTR String2);
-NTA_API BOOL NTAPI Str_EqualICA(PCSTR String1, PCSTR String2);
+// String Printf
+
+NTA_API INT NTAPI Str_VPrintfExW(_Out_writes_(DestCchSize) _Post_z_ PWSTR Dest, _In_ SIZE_T DestCchSize, _In_z_ _Printf_format_string_ PCWSTR Format, _In_ va_list ArgList);
+NTA_API INT NTAPI Str_VPrintfExA(_Out_writes_(DestCchSize) _Post_z_ PSTR Dest, _In_ SIZE_T DestCchSize, _In_z_ _Printf_format_string_ PCSTR Format, _In_ va_list ArgList);
+NTA_API INT WINAPIV Str_PrintfExW(_Out_writes_(DestCchSize) _Post_z_ PWSTR Dest, _In_ SIZE_T DestCchSize, _In_z_ _Printf_format_string_ PCWSTR Format, ...);
+NTA_API INT WINAPIV Str_PrintfExA(_Out_writes_(DestCchSize) _Post_z_ PSTR Dest, _In_ SIZE_T DestCchSize, _In_z_ _Printf_format_string_ PCSTR Format, ...);
 #ifdef UNICODE
-#define Str_EqualIC Str_EqualICW
+#define Str_VPrintfEx Str_VPrintfExW
+#define Str_PrintfEx Str_PrintfExW
 #else
-#define Str_EqualIC Str_EqualICA
+#define Str_VPrintfEx Str_VPrintfExA
+#define Str_PrintfEx Str_PrintfExA
 #endif
+#define Str_PrintfW(Dest, Format, ...) Str_PrintfExW(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
+#define Str_PrintfA(Dest, Format, ...) Str_PrintfExA(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
+#define Str_Printf(Dest, Format, ...) Str_PrintfEx(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
+#define Str_VPrintfW(Dest, Format, ArgList) Str_VPrintfExW(Dest, ARRAYSIZE(Dest), Format, ArgList)
+#define Str_VPrintfA(Dest, Format, ArgList) Str_VPrintfExA(Dest, ARRAYSIZE(Dest), Format, ArgList)
+#define Str_VPrintf(Dest, Format, ArgList) Str_VPrintfEx(Dest, ARRAYSIZE(Dest), Format, ArgList)
 
 // String Index
 
-NTA_API SIZE_T NTAPI Str_Index_BFW(PCWSTR String, PCWSTR Pattern);
-NTA_API SIZE_T NTAPI Str_Index_BFA(PCSTR String, PCSTR Pattern);
+NTA_API INT NTAPI Str_Index_BFW(_In_z_ PCWSTR String, _In_z_ PCWSTR Pattern);
+NTA_API INT NTAPI Str_Index_BFA(_In_z_ PCSTR String, _In_z_ PCSTR Pattern);
 #ifdef UNICODE
 #define Str_Index_BF Str_Index_BFW
 #else
 #define Str_Index_BF Str_Index_BFA
 #endif
 
-// String Printf
-
-#define Str_CchPrintfExW wnsprintfW
-#define Str_CchPrintfExA wnsprintfA
-#define Str_CchPrintfEx wnsprintf
-#define Str_CchPrintfW(Dest, Format, ...) Str_CchPrintfExW(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
-#define Str_CchPrintfA(Dest, Format, ...) Str_CchPrintfExA(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
-#define Str_CchPrintf(Dest, Format, ...) Str_CchPrintfEx(Dest, ARRAYSIZE(Dest), Format, __VA_ARGS__)
-
-#define Str_CchVPrintfExW wvnsprintfW
-#define Str_CchVPrintfExA wvnsprintfA
-#define Str_CchVPrintfEx wvnsprintf
-#define Str_CchVPrintfW(Dest, Format, ArgList) Str_CchVPrintfExW(Dest, ARRAYSIZE(Dest), Format, ArgList)
-#define Str_CchVPrintfA(Dest, Format, ArgList) Str_CchVPrintfExA(Dest, ARRAYSIZE(Dest), Format, ArgList)
-#define Str_CchVPrintf(Dest, Format, ArgList) Str_CchVPrintfEx(Dest, ARRAYSIZE(Dest), Format, ArgList)
-
 // String Encode
 
-NTA_API ULONG NTAPI Str_CchU2AEx(PSTR Dest, ULONG DestCchSize, PCWSTR Src);
-#define Str_CcbU2AEx Str_CchU2AEx
-NTA_API ULONG NTAPI Str_CchA2UEx(_Out_writes_(DestCchSize) PWSTR Dest, _In_ ULONG DestCchSize, PCSTR Src);
-NTA_API ULONG NTAPI Str_CcbA2UEx(_Out_writes_bytes_(DestCcbSize) PWSTR Dest, _In_ ULONG DestCcbSize, PCSTR Src);
+NTA_API ULONG NTAPI Str_U2AEx(_Out_writes_(DestCchSize) _Post_z_ PSTR Dest, _In_ ULONG DestCchSize, _In_z_ PCWSTR Src);
+NTA_API ULONG NTAPI Str_A2UEx(_Out_writes_(DestCchSize) _Post_z_ PWSTR Dest, _In_ ULONG DestCchSize, _In_z_ PCSTR Src);
+#define Str_U2A(Dest, Src) Str_U2AEx(Dest, ARRAYSIZE(Dest), Src)
+#define Str_A2U(Dest, Src) Str_A2UEx(Dest, ARRAYSIZE(Dest), Src)
 
-#define Str_CchA2U(Dest, Src) Str_CchA2UEx(Dest, ARRAYSIZE(Dest), Src)
-#define Str_CcbA2U(Dest, Src) Str_CcbA2UEx(Dest, ARRAYSIZE(Dest) * sizeof(WCHAR), Src)
-#define Str_CchU2A(Dest, Src) Str_CchU2AEx(Dest, ARRAYSIZE(Dest), Src)
-#define Str_CcbU2A(Dest, Src) Str_CcbU2AEx(Dest, ARRAYSIZE(Dest) * sizeof(CHAR), Src)
+NTA_API SIZE_T NTAPI Str_UnicodeToUTF8Ex(_Out_writes_(DestCchSize) _Post_z_ PSTR Dest, _In_ SIZE_T DestCchSize, _In_z_ PCWSTR Src);
+#define Str_UnicodeToUTF8(Dest, Src) Str_UnicodeToUTF8Ex(Dest, ARRAYSIZE(Dest), Src)
 
-NTA_API NTSTATUS NTAPI Str_UnicodeToUTF8Ex(PSTR Dest, SIZE_T DestCchSize, PCWSTR Src, PSIZE_T CharsWritten);
-#define Str_UnicodeToUTF8(pszDest, pszSrc, pulChWritten) Str_UnicodeToUTF8Ex(pszDest, ARRAYSIZE(pszDest), pszSrc, pulChWritten)
-
-NTA_API VOID NTAPI Str_UpperW(PWSTR String);
-NTA_API VOID NTAPI Str_UpperA(PSTR String);
+NTA_API VOID NTAPI Str_UpperW(_Inout_z_ PWSTR String);
+NTA_API VOID NTAPI Str_UpperA(_Inout_z_ PSTR String);
+NTA_API VOID NTAPI Str_LowerW(_Inout_z_ PWSTR String);
+NTA_API VOID NTAPI Str_LowerA(_Inout_z_ PSTR String);
 #ifdef UNICODE
 #define Str_Upper Str_UpperW
+#define Str_Lower Str_LowerW
 #else
 #define Str_Upper Str_UpperA
+#define Str_Lower Str_LowerA
 #endif
+#define Str_UpperChar(Ch) ((Ch) >= 'a' && (Ch) <= 'z' ? (Ch) - 'a' + 'A' : (Ch))
+#define Str_LowerChar(Ch) ((Ch) >= 'A' && (Ch) <= 'Z' ? (Ch) - 'A' + 'a' : (Ch))
 
 // String Initialize
 
-NTA_API VOID NTAPI Str_CchInitW(PUNICODE_STRING NTString, PWSTR String);
-NTA_API VOID NTAPI Str_CchInitA(PSTRING NTString, PSTR String);
+NTA_API VOID NTAPI Str_InitW(PUNICODE_STRING NTString, _In_z_ PWSTR String);
+NTA_API VOID NTAPI Str_InitA(PSTRING NTString, _In_z_ PSTR String);
 #ifdef UNICODE
-#define Str_CchInit Str_CchInitW
+#define Str_Init Str_InitW
 #else
-#define Str_CchInit Str_CchInitA
+#define Str_Init Str_InitA
 #endif
 
 // String Convert
-
-NTA_API BOOL NTAPI Str_ToIntExW(PCWSTR StrValue, BOOL Unsigned, UINT Base, PVOID Value, SIZE_T ValueSize);
-NTA_API BOOL NTAPI Str_ToIntExA(PCSTR StrValue, BOOL Unsigned, UINT Base, PVOID Value, SIZE_T ValueSize);
+_Success_(return == TRUE)
+NTA_API BOOL NTAPI Str_ToIntExW(_In_z_ PCWSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
+_Success_(return == TRUE)
+NTA_API BOOL NTAPI Str_ToIntExA(_In_z_ PCSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
 #ifdef UNICODE
 #define Str_ToIntEx Str_ToIntExW
 #define Str_ToIntW(StrValue, Value) Str_ToIntExW(StrValue, FALSE, 0, Value, sizeof(*(Value)))
@@ -203,8 +204,10 @@ NTA_API BOOL NTAPI Str_ToIntExA(PCSTR StrValue, BOOL Unsigned, UINT Base, PVOID 
 #define Str_BinToUInt Str_BinToUIntA
 #endif
 
-BOOL NTAPI Str_FromIntExW(INT64 Value, BOOL Unsigned, UINT Base, PWSTR StrValue, ULONG DestCchSize);
-BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, PSTR StrValue, ULONG DestCchSize);
+_Success_(return == TRUE)
+BOOL NTAPI Str_FromIntExW(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_(DestCchSize) PWSTR StrValue, _In_ ULONG DestCchSize);
+_Success_(return == TRUE)
+BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_(DestCchSize) PSTR StrValue, _In_ ULONG DestCchSize);
 #ifdef UNICODE
 #define Str_FromIntEx Str_FromIntExW
 #define Str_FromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 0, StrValue, ARRAYSIZE(StrValue))
@@ -251,8 +254,12 @@ BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, PSTR StrValue, 
 #define Str_BinFromUInt Str_BinFromUIntA
 #endif
 
-NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR Dest, SIZE_T DestCchSize);
+_Success_(return == TRUE)
+NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, _Out_writes_(DestCchSize) PWSTR Dest, _In_ SIZE_T DestCchSize);
+_Success_(return == TRUE)
+NTA_API BOOL NTAPI Str_RGBToHexExA(COLORREF Color, _Out_writes_(DestCchSize) PSTR Dest, _In_ SIZE_T DestCchSize);
 #define Str_RGBToHexW(Color, Dest) Str_RGBToHexExW(Color, Dest, ARRAYSIZE(Dest))
+#define Str_RGBToHexA(Color, Dest) Str_RGBToHexExA(Color, Dest, ARRAYSIZE(Dest))
 #ifdef UNICODE
 #define Str_RGBToHexEx Str_RGBToHexExW
 #define Str_RGBToHex Str_RGBToHexW
@@ -263,8 +270,8 @@ NTA_API BOOL NTAPI Str_RGBToHexExW(COLORREF Color, PWSTR Dest, SIZE_T DestCchSiz
 
 // String Hash
 
-NTA_API DWORD NTAPI Str_HashW(PCWSTR String, STR_HASH_ALGORITHM HashAlgorithm);
-NTA_API DWORD NTAPI Str_HashA(PCSTR String, STR_HASH_ALGORITHM HashAlgorithm);
+NTA_API DWORD NTAPI Str_HashW(_In_z_ PCWSTR String, STR_HASH_ALGORITHM HashAlgorithm);
+NTA_API DWORD NTAPI Str_HashA(_In_z_ PCSTR String, STR_HASH_ALGORITHM HashAlgorithm);
 #ifdef UNICODE
 #define Str_Hash Str_HashW
 #else

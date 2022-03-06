@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 
@@ -12,6 +12,12 @@ typedef enum _SYS_LOADDLL_NAME {
     SysLoadDllMax
 } SYS_LOADDLL_NAME, * PSYS_LOADDLL_NAME;
 
+/**
+  * @brief Loads specified system DLL with cache
+  * @param[in] SysDll System DLL
+  * @return Returns Handle to the DLL loaded, or NULL if failed
+  * @see "LoadLibrary"
+  */
 NTA_API HMODULE NTAPI Sys_LoadDll(SYS_LOADDLL_NAME SysDll);
 
 /**
@@ -19,7 +25,7 @@ NTA_API HMODULE NTAPI Sys_LoadDll(SYS_LOADDLL_NAME SysDll);
   * @param[in] ModuleHandle Handle to the module
   * @param[in] MessageId ID of message
   * @return Returns Pointer to the message, or NULL if failed
-  * @see "RtlFindMessage" 
+  * @see "RtlFindMessage"
   */
 NTA_API PCWSTR NTAPI Sys_GetMessage(HMODULE ModuleHandle, DWORD MessageId);
 
@@ -61,7 +67,7 @@ NTA_API VOID NTAPI Sys_ErrorMsgBox(HWND Owner, PCWSTR Title, DWORD Error);
 NTA_API VOID NTAPI Sys_StatusMsgBox(HWND Owner, PCWSTR Title, NTSTATUS Status);
 
 /**
-  * @see "Sys_GetErrorInfo" 
+  * @see "Sys_GetErrorInfo"
   */
 #define Sys_GetLastErrorInfo() Sys_GetErrorInfo(NT_GetLastError())
 
@@ -84,3 +90,15 @@ NTA_API VOID NTAPI Sys_StatusMsgBox(HWND Owner, PCWSTR Title, NTSTATUS Status);
   * @see "IsProcessorFeaturePresent"
   */
 #define Sys_TestCPUFeature(Feature) ((Feature) < PROCESSOR_FEATURE_MAX ? (BOOL)NT_GetKUSD()->ProcessorFeatures[(Feature)] : FALSE)
+
+/**
+  * @see "IsEqualGUID"
+  */
+NTA_API BOOL Sys_EqualGUID(REFGUID GUID1, REFGUID GUID2);
+
+/**
+  * @brief Copies GUID
+  */
+NTA_API VOID Sys_CopyGUID(LPGUID Dest, REFGUID Src);
+
+NTA_API BOOL NTAPI Sys_RegVolatileDriver(PCWSTR Name, PCWSTR ImagePath);

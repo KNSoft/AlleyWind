@@ -1,4 +1,4 @@
-// KNSoft application framework, do not use
+﻿// KNSoft application framework, do not use
 
 #pragma once
 

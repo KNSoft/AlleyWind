@@ -57,7 +57,7 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 } else {
                     lStatus = RProc_ReadMemStringA(hProc, (PVOID)dwpTemp, szANSIBuffer);
                     if (NT_SUCCESS(lStatus))
-                        Str_CchA2U(szBuffer, szANSIBuffer);
+                        Str_A2U(szBuffer, szANSIBuffer);
                 }
                 AW_SetPropCtlString(hDlg, IDC_WNDPROP_CLASS_MENURES_EDIT, szBuffer, NT_SUCCESS(lStatus));
                 NtClose(hProc);

@@ -68,7 +68,7 @@ INT_PTR WINAPI WndPropMessageDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         for (i = 0; i < ARRAYSIZE(DB_stMsgInfo); i++) {
             PTSTR   pszDisplayText;
             TCHAR   szMsgDisplay[MAX_PATH];
-            pszDisplayText = Str_CchPrintf(szMsgDisplay, TEXT("(%4d) %s"), DB_stMsgInfo[i].Msg, DB_stMsgInfo[i].Name) > 0 ? szMsgDisplay : DB_stMsgInfo[i].Name;
+            pszDisplayText = Str_Printf(szMsgDisplay, TEXT("(%4d) %s"), DB_stMsgInfo[i].Msg, DB_stMsgInfo[i].Name) > 0 ? szMsgDisplay : DB_stMsgInfo[i].Name;
             iItem = (UINT)SendMessage(hCombox, CB_ADDSTRING, 0, (LPARAM)pszDisplayText);
             if (iItem != CB_ERR)
                 SendMessage(hCombox, CB_SETITEMDATA, iItem, (LPARAM)&DB_stMsgInfo[i]);
@@ -177,8 +177,8 @@ INT_PTR WINAPI WndPropMessageDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             WPARAM  _wParam;
             LPARAM  _lParam;
             UINT    uTimeout;
-            DWORD   dwError;
-            LRESULT lResult;
+            // DWORD   dwError;
+            // LRESULT lResult;
             hWnd = AW_GetWndPropHWnd(hDlg);
 
             bUnicode = IsWindowUnicode(hWnd);

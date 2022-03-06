@@ -1,4 +1,4 @@
-// provides process functions for current process
+﻿// provides process functions for current process
 
 #pragma once
 

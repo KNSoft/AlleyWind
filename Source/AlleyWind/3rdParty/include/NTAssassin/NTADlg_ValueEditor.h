@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "NTAssassin.h"
 
@@ -17,7 +17,7 @@ typedef struct _DLG_VALUEEDITOR_CONST {
 typedef struct _DLG_VALUEEDITOR {
     HWND                    hwndOwner;
     DWORD                   Flags;
-    PCWSTR                  *lpstr;     // ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
+    PCWSTR*                 lpstr;     // ["Title", "Reset", "OK", "Member", "Value", "Info", "Unknow"]
     PDLG_VALUEEDITOR_CONST  lpstConsts;
     UINT                    uConsts;
     QWORD                   qwValue;
@@ -34,5 +34,5 @@ typedef struct _DLG_VALUEEDITOR {
   * @param[in] ConstCount Number of constants in Consts parameter
   * @return Returns BOOL
   */
-NTA_API BOOL NTAPI Dlg_ValueEditorEx(HWND Owner, DWORD Flags, PCWSTR *Strings, PQWORD Value, PDLG_VALUEEDITOR_CONST Consts, UINT ConstCount);
+NTA_API BOOL NTAPI Dlg_ValueEditorEx(HWND Owner, DWORD Flags, PCWSTR* Strings, PQWORD Value, PDLG_VALUEEDITOR_CONST Consts, UINT ConstCount);
 #define Dlg_ValueEditor(Owner, Flags, Strings, ValuePointer, Consts) Dlg_ValueEditorEx(Owner, Flags, Strings, ValuePointer, Consts, ARRAYSIZE(Consts))

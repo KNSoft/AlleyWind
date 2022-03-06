@@ -499,7 +499,7 @@ PAW_SYSCLASSINFO AW_DBFindSysClassInfoByName(PTSTR pszClassName) {
     PTSTR   pszName;
     for (i = 0; i < ARRAYSIZE(aAWSysCtlLib); i++) {
         if (IS_INTRESOURCE(aAWSysCtlLib[i].ClassName)) {
-            if (Str_CchPrintf(szClassOrdName, TEXT("#%hu"), LOWORD(aAWSysCtlLib[i].ClassName)) <= 0)
+            if (Str_Printf(szClassOrdName, TEXT("#%hu"), LOWORD(aAWSysCtlLib[i].ClassName)) <= 0)
                 szClassOrdName[0] = '\0';
             pszName = szClassOrdName;
         } else

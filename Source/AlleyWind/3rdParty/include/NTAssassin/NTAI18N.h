@@ -1,4 +1,4 @@
-// I18N support, used with NAC is recommanded
+﻿// I18N support, used with NAC is recommanded
 
 #pragma once
 

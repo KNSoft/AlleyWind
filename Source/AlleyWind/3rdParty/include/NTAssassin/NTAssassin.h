@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 // NTAssassin Exports, both of static and dynamic library targets are supported
 // Static library target is recommended
-#ifdef _WINDLL
+#define NTA_DLL 0
+#if NTA_DLL
 #ifdef NTA_EXPORTS
 #define NTA_API DECLSPEC_EXPORT
 #else
@@ -91,12 +92,14 @@
 #define SystemLookasideInformation MS_SystemLookasideInformation
 #define SystemCodeIntegrityInformation MS_SystemCodeIntegrityInformation
 #define SystemPolicyInformation MS_SystemPolicyInformation
+#define OBJECT_INFORMATION_CLASS MS_OBJECT_INFORMATION_CLASS
+#define ObjectBasicInformation MS_ObjectBasicInformation
+#define ObjectTypeInformation MS_ObjectTypeInformation
 
 #include <Windows.h>
 #include <Winternl.h>
 #include <WindowsX.h>
 #include <CommCtrl.h>
-#include <Shlwapi.h>
 #include <Shlobj.h>
 #include <shellscalingapi.h>
 #include <dwmapi.h>
@@ -109,7 +112,7 @@ extern "C" {
 // NTAssassin dependencies
 #pragma comment(lib, "ntdll.lib")
 #pragma comment(lib, "ComCtl32.Lib")
-#pragma comment(lib, "ShLwApi.Lib")
+#pragma comment(lib, "gdiplus.lib")
 
 // Always use ComCtl32.dll V6.0
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -119,7 +122,7 @@ extern "C" {
 #define DECLSPEC_EXPORT __declspec(dllexport)
 
 // Avoid "unused parameter" warnings
-#define UNUSED(x) UNREFERENCED_PARAMETER(x);
+#define UNUSED UNREFERENCED_PARAMETER
 
 #if _WIN64
 #define IS_WIN64 TRUE
@@ -147,9 +150,6 @@ extern "C" {
 
 // Handle to current directory
 #define CURRENT_DIR_HANDLE (NT_GetPEB()->ProcessParameters->CurrentDirectory.Handle)
-
-// Current system locale
-#define CURRENT_LOCALE ((LCID)NT_GetTEBMember(CurrentLocale))
 
 // Clear high 32-bit of HWND
 #if _WIN64
@@ -182,7 +182,8 @@ extern "C" {
 #define MAX_CLASSNAME_CCH                       256
 #define MAX_CIDENTIFIERNAME_CCH                 247
 #define MAX_ATOM_CCH                            255
-#define MAX_REG_VALUE_SIZE                      4096
+#define MAX_REG_KEYNAME_CCH                     255
+#define MAX_REG_VALUENAME_CCH                   16383
 #define MAX_LOCALENAME_CCH                      85
 #define HEXRGB_CCH                              8   // #RRGGBB
 #define MAX_POINTER_CCH                         (sizeof(PVOID) * 2 + 1)
@@ -193,8 +194,6 @@ extern "C" {
 #define CURRENT_THREAD_EFFECTIVETOKEN_HANDLE    ((HANDLE)-6)
 #define FIXED_IMAGE_BASE32                      ((HINSTANCE)0x00400000)
 #define FIXED_IMAGE_BASE64                      ((HINSTANCE)0x0000000140000000)
-
-#define LCID_FUZZY_MASK                         0b1111111111
 
 #define EOLW                                    ((DWORD)0x000A000D)
 #define EOLA                                    ((WORD)0x0A0D)
@@ -214,6 +213,7 @@ extern "C" {
 #include "..\NTA_NAC_Output.h"
 #endif
 
+#include "NTAUCRT.h"
 #include "NTANT.h"
 #include "NTAData.h"
 #include "NTADbg.h"
@@ -238,6 +238,7 @@ extern "C" {
 #include "NTASys.h"
 #include "NTAHijack.h"
 #include "NTADPI.h"
+#include "NTAGDIP.h"
 
 #ifdef __cplusplus
 }

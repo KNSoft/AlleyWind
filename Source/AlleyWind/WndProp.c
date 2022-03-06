@@ -13,7 +13,7 @@ INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
     if (uMsg == WM_INITDIALOG) {
         TCHAR   szCaption[MAX_PATH];
         INT     iCch;
-        iCch = Str_CchPrintf(szCaption, TEXT("%s %08X"), I18N_GetString(I18NIndex_Window), (DWORD)(DWORD_PTR)lParam);
+        iCch = Str_Printf(szCaption, TEXT("%s %08X"), I18N_GetString(I18NIndex_Window), (DWORD)(DWORD_PTR)lParam);
         SendMessage(hDlg, WM_SETTEXT, 0, iCch > 0 ? (LPARAM)szCaption : 0);
         UI_SetWindowIcon(hDlg, KNS_GetIcon());
         Ctl_SetPropertySheet(hDlg, IDC_WNDPROPTAB, astWndPropSheetPage, lParam);

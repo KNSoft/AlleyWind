@@ -1,4 +1,4 @@
-// Native library of NTAssassin provides interfaces to access down-level x86/x64 CPU and Windows NT in R3.
+﻿// Native library of NTAssassin provides interfaces to access down-level x86/x64 CPU and Windows NT in R3.
 
 #pragma once
 
@@ -22,7 +22,7 @@
   * @return Returns the value of member in QWORD(x64 only)/DWORD/WORD/BYTE
   */
 #if defined(_M_AMD64)
-// NT_SetTEBMember may cause code analysis warning, use following NT_SetTEBMember[QWORD/DWORD/WORD/BYTE] instead
+    // NT_SetTEBMember may cause code analysis warning, use following NT_SetTEBMember[QWORD/DWORD/WORD/BYTE] instead
 #define NT_SetTEBMember(m, val) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD64) ? __writegsqword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __writegsdword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __writegsword(FIELD_OFFSET(TEB, m), val) : __writegsbyte(FIELD_OFFSET(TEB, m), val)))))
 #define NT_SetTEBMemberQWORD(m, val) __writegsqword(FIELD_OFFSET(TEB, m), val)
 #define NT_SetTEBMemberDWORD(m, val) __writegsdword(FIELD_OFFSET(TEB, m), val)
@@ -42,10 +42,10 @@
   */
 #define NT_GetTEB() ((PTEB)NT_GetTEBMember(NtTib.Self))
 
-/**
-  * @brief Gets the pointer to current PEB
-  * @return Returns pointer to PEB
-  */
+  /**
+    * @brief Gets the pointer to current PEB
+    * @return Returns pointer to PEB
+    */
 #define NT_GetPEB() ((PPEB)NT_GetTEBMember(ProcessEnvironmentBlock))
 
 /**
