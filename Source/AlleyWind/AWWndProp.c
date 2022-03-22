@@ -103,14 +103,14 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
         if (hProc) {
-            if (IsWow64Process(hProc, &b32Proc)) {
+            if (NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {
                 lpszGLFunc = bClassExtraBytes ?
                     (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
                     (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
                 lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
                 if (NT_SUCCESS(lStatus)) {
                     stCallProc.RetValue = 0;
-                    stCallProc.CallConvention = 0;
+                    stCallProc.CallConvention = CC_STDCALL;
                     stCallProc.ParamCount = ARRAYSIZE(stGLParams);
                     bUseHijack = TRUE;
                 }

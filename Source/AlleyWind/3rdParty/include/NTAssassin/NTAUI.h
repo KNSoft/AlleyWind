@@ -52,7 +52,7 @@ NTA_API BOOL NTAPI UI_IsDWMComposited();
 /**
   * @see "DwmGetWindowAttribute" and "DWMWA_CLOAKED"
   */
-DWORD NTAPI UI_GetWindowCloackedState(HWND Window);
+NTA_API DWORD NTAPI UI_GetWindowCloackedState(HWND Window);
 
 /**
   * @see "GetWindowDisplayAffinity"

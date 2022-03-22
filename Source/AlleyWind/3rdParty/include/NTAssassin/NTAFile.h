@@ -19,6 +19,13 @@ typedef struct _FILE_MAP {
 NTA_API NTSTATUS NTAPI File_Create(PHANDLE FileHandle, PWSTR FileName, HANDLE RootDirectory, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, ULONG CreateOptions);
 
 /**
+  * @brief Read a file
+  * @return Returns NTSTATUS
+  * @see "ReadFile"
+  */
+NTA_API NTSTATUS NTAPI File_Read(HANDLE FileHandle, PVOID Buffer, ULONG Length, PLARGE_INTEGER ByteOffset, PULONG BytesRead);
+
+/**
   * @brief Verifies that a path is a valid directory
   * @param[in] FilePath Path to be Verified
   * @param[out] Result Pointer to a BOOL to receive the result

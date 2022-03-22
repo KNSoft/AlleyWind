@@ -11,8 +11,15 @@
   */
 #if defined(_M_AMD64)
 #define NT_GetTEBMember(m) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD64) ? __readgsqword(FIELD_OFFSET(TEB, m)) : (RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __readgsdword(FIELD_OFFSET(TEB, m)) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __readgsword(FIELD_OFFSET(TEB, m)) : __readgsbyte(FIELD_OFFSET(TEB, m))))))
+#define NT_GetTEBMemberQWORD(m) __readgsqword(FIELD_OFFSET(TEB, m))
+#define NT_GetTEBMemberDWORD(m) __readgsdword(FIELD_OFFSET(TEB, m))
+#define NT_GetTEBMemberWORD(m) __readgsword(FIELD_OFFSET(TEB, m))
+#define NT_GetTEBMemberBYTE(m) __readgsbyte(FIELD_OFFSET(TEB, m))
 #elif defined(_M_IX86)
 #define NT_GetTEBMember(m) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __readfsdword(FIELD_OFFSET(TEB, m)) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __readfsword(FIELD_OFFSET(TEB, m)) : __readfsbyte(FIELD_OFFSET(TEB, m)))))
+#define NT_GetTEBMemberDWORD(m) __readfsdword(FIELD_OFFSET(TEB, m))
+#define NT_GetTEBMemberWORD(m) __readfsword(FIELD_OFFSET(TEB, m))
+#define NT_GetTEBMemberBYTE(m) __readfsbyte(FIELD_OFFSET(TEB, m))
 #endif
 
 /**
@@ -55,16 +62,18 @@
 #define NT_GetKUSD() ((CONST PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
 
 // Last Win32 Error value
-#define NT_ClearLastError() NT_SetTEBMember(LastErrorValue, ERROR_SUCCESS)
-#define NT_GetLastError() NT_GetTEBMember(LastErrorValue)
+#define NT_ClearLastError() NT_SetTEBMemberDWORD(LastErrorValue, ERROR_SUCCESS)
+#define NT_GetLastError() NT_GetTEBMemberDWORD(LastErrorValue)
 #define NT_SetLastError(dwError) NT_SetTEBMemberDWORD(LastErrorValue, dwError)
-#define NT_LastErrorSucceed() (NT_GetTEBMember(LastErrorValue) == ERROR_SUCCESS)
+#define NT_LastErrorSucceed() (NT_GetTEBMemberDWORD(LastErrorValue) == ERROR_SUCCESS)
 
 // Last NT Status value
-#define NT_ClearLastStatus() NT_SetTEBMember(LastStatusValue, STATUS_SUCCESS)
-#define NT_GetLastStatus() NT_GetTEBMember(LastStatusValue)
+#define NT_ClearLastStatus() NT_SetTEBMemberDWORD(LastStatusValue, STATUS_SUCCESS)
+#define NT_GetLastStatus() NT_GetTEBMemberDWORD(LastStatusValue)
 #define NT_SetLastStatus(lStatus) NT_SetTEBMemberDWORD(LastStatusValue, lStatus)
-#define NT_LastStatusSucceed() (NT_GetTEBMember(LastStatusValue) == ERROR_SUCCESS)
+#define NT_LastStatusSucceed() (NT_GetTEBMemberDWORD(LastStatusValue) == STATUS_SUCCESS)
+
+NTA_API DWORD NTAPI NT_SetLastNTError(NTSTATUS Status);
 
 /**
   * @brief Initializes OBJECT_ATTRIBUTES structure

@@ -117,10 +117,10 @@ NTA_API VOID NTAPI Ctl_InitComboBoxEx(HWND ComboBox, PCTL_COMBOBOXCTL_ITEM Items
   * @param[in] Param User defined value passed to the callback
   * @return Returns handle to the last enumerated item if the callback stops the enumeration, or NULL if enumeration finished successfully
   */
-HTREEITEM NTAPI Ctl_EnumTreeViewItems(HWND TreeView, BOOL BFS, CTL_TREEVIEWITEMENUMPROC TreeItemEnumProc, LPARAM Param);
+NTA_API HTREEITEM NTAPI Ctl_EnumTreeViewItems(HWND TreeView, BOOL BFS, CTL_TREEVIEWITEMENUMPROC TreeItemEnumProc, LPARAM Param);
 
 /**
   * @see "CB_SETCURSEL"
   * @note This function will notify parent window by sending "WM_COMMAND"
   */
-LRESULT NTAPI Ctl_ComboBoxSetSelect(HWND ComboBox, INT ItemIndex);
+NTA_API LRESULT NTAPI Ctl_ComboBoxSetSelect(HWND ComboBox, INT ItemIndex);

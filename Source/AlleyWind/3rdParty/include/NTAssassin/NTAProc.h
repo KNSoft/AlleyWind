@@ -64,10 +64,16 @@ typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY DllLdrEntry, LPAR
 #define Proc_CreateThread(StartAddress, Parameter, CreateSuspended, ThreadHandle) RtlCreateUserThread(CURRENT_PROCESS_HANDLE, NULL, CreateSuspended, 0, 0, 0, StartAddress, Parameter, ThreadHandle, NULL)
 
  /**
-  * @brief Gets handle to ntdll.dll, which the first loaded module of executable image
+  * @brief Gets handle to ntdll.dll, which the first initialized module of executable image
   * @return Returns handle of ntdll.dll
   */
 #define Proc_GetNtdllHandle() (CONTAINING_RECORD(NT_GetPEB()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderModuleList)->DllBase)
+
+ /**
+  * @brief Gets handle to exe module, which the first loaded module of executable image
+  * @return Returns handle of exe module
+  */
+#define Proc_GetExeHandle() (CONTAINING_RECORD(NT_GetPEB()->Ldr->InLoadOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InLoadOrderModuleList)->DllBase)
 
 /**
   * @brief Enumerates DLL modules of current process
@@ -78,11 +84,18 @@ typedef BOOL(CALLBACK* PROC_DLLENUMPROC)(PLDR_DATA_TABLE_ENTRY DllLdrEntry, LPAR
 NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_EnumDlls(PROC_DLLENUMPROC DllEnumProc, LPARAM Param);
 
 /**
-  * @brief Gets DLL information with specified module name
+  * @brief Gets DLL information of specified module name
   * @param[in] DllName Module name of DLL
   * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of specified DLL, or NULL if no DLL matched
   */
 NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByName(PWSTR DllName);
+
+/**
+  * @brief Gets DLL information of specified module handle
+  * @param[in] DllName Module name of DLL
+  * @return Returns pointer to LDR_DATA_TABLE_ENTRY structure of specified DLL, or NULL if no DLL matched
+  */
+NTA_API PLDR_DATA_TABLE_ENTRY NTAPI Proc_GetDllByHandle(HMODULE DllHandle);
 
 /**
   * @brief Gets handle to a DLL by module name
@@ -146,3 +159,8 @@ NTA_API NTSTATUS NTAPI Proc_DelayExec(DWORD Milliseconds);
   * @see "GetExitCodeThread"
   */
 NTA_API NTSTATUS NTAPI Proc_GetThreadExitCode(HANDLE ThreadHandle, PDWORD ExitCode);
+
+/**
+  * @see "IsWow64Process"
+  */
+#define Proc_IsWow64(Wow64Process) RProc_IsWow64(CURRENT_PROCESS_HANDLE, Wow64Process)

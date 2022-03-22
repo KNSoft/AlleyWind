@@ -25,18 +25,11 @@ typedef struct _HIJACK_INJECTTHREAD {
     DWORD                   ExceptionCode;
 } HIJACK_INJECTTHREAD, * PHIJACK_INJECTTHREAD;
 
-#define HCPC_X86_STDCALL 0
-#define HCPC_X86_FASTCALL 0x1
-#define HCPC_X86_CDECL 0x2
-#define HCPC_X86_VECTORCALL 0x4
-#define HCPC_X64_MS 0
-#define HCPC_X64_GCC 0x100
-
 #pragma pack(push)
 #pragma pack(4)
 typedef struct _HIJACK_CALLPROCHEADER {
     QWORD       Procedure;
-    DWORD       CallConvention;
+    CALLCONV    CallConvention;
     QWORD       RetValue;
     DWORD       LastError;
     NTSTATUS    LastStatus;

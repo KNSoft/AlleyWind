@@ -236,6 +236,55 @@ NtFreeVirtualMemory(
 NTSYSAPI
 NTSTATUS
 NTAPI
+NtReadVirtualMemory(
+    _In_ HANDLE ProcessHandle,
+    _In_ PVOID BaseAddress,
+    _Out_ PVOID Buffer,
+    _In_ SIZE_T NumberOfBytesToRead,
+    _Out_opt_ PSIZE_T NumberOfBytesRead
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtWriteVirtualMemory(
+    _In_ HANDLE ProcessHandle,
+    _In_ PVOID BaseAddress,
+    _In_ PVOID Buffer,
+    _In_ SIZE_T NumberOfBytesToWrite,
+    _Out_opt_ PSIZE_T NumberOfBytesWritten
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueryVirtualMemory(
+    IN HANDLE ProcessHandle,
+    IN PVOID BaseAddress,
+    IN MEMORY_INFORMATION_CLASS MemoryInformationClass,
+    OUT PVOID MemoryInformation,
+    IN SIZE_T MemoryInformationLength,
+    OUT PSIZE_T ReturnLength
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtReadFile(
+    HANDLE              FileHandle,
+    HANDLE              Event,
+    PIO_APC_ROUTINE     ApcRoutine,
+    PVOID               ApcContext,
+    PIO_STATUS_BLOCK    IoStatusBlock,
+    PVOID               Buffer,
+    ULONG               Length,
+    PLARGE_INTEGER      ByteOffset,
+    PULONG              Key
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
 NtWriteFile(
     HANDLE           FileHandle,
     HANDLE           Event,
@@ -356,32 +405,33 @@ NtOpenProcess(
 NTSYSAPI
 NTSTATUS
 NTAPI
-NtReadVirtualMemory(
-    _In_ HANDLE ProcessHandle,
-    _In_ PVOID BaseAddress,
-    _Out_ PVOID Buffer,
-    _In_ SIZE_T NumberOfBytesToRead,
-    _Out_opt_ PSIZE_T NumberOfBytesRead
-);
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtWriteVirtualMemory(
-    _In_ HANDLE ProcessHandle,
-    _In_ PVOID BaseAddress,
-    _In_ PVOID Buffer,
-    _In_ SIZE_T NumberOfBytesToWrite,
-    _Out_opt_ PSIZE_T NumberOfBytesWritten
-);
-
-NTSYSAPI
-NTSTATUS
-NTAPI
 NtFlushInstructionCache(
     _In_ HANDLE ProcessHandle,
     _In_opt_ PVOID BaseAddress,
     _In_ SIZE_T FlushSize
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtGetContextThread(
+    IN HANDLE ThreadHandle,
+    IN OUT PCONTEXT ThreadContext
+);
+
+NTSTATUS
+NTAPI
+NtSetContextThread(
+    IN HANDLE ThreadHandle,
+    IN PCONTEXT ThreadContext
+);
+
+
+NTSTATUS
+NTAPI
+NtResumeThread(
+    _In_ HANDLE ThreadHandle,
+    _Out_opt_ PULONG SuspendCount
 );
 
 NTSYSAPI

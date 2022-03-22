@@ -15,15 +15,15 @@
 
 #if _DEBUG
 #if _WIN64
-#pragma comment(lib, "\\x64\\Debug\\NTAssassin.lib")
+#pragma comment(lib, "x64\\Debug\\NTAssassin.lib")
 #else
-#pragma comment(lib, "\\x86\\Debug\\NTAssassin.lib")
+#pragma comment(lib, "x86\\Debug\\NTAssassin.lib")
 #endif
 #else
 #if _WIN64
-#pragma comment(lib, "\\x64\\Release\\NTAssassin.lib")
+#pragma comment(lib, "x64\\Release\\NTAssassin.lib")
 #else
-#pragma comment(lib, "\\x86\\Release\\NTAssassin.lib")
+#pragma comment(lib, "x86\\Release\\NTAssassin.lib")
 #endif
 #endif
 

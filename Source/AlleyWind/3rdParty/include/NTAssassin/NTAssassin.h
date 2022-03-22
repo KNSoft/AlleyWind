@@ -18,7 +18,9 @@
 // NTA_CUSTOMENTRY
 #ifdef NTA_CUSTOMENTRY
 #pragma comment(linker, "/ENTRY:" NTA_CUSTOMENTRY)
+#endif
 
+#if defined(NTA_CUSTOMENTRY) || (NTA_DLL && NTA_EXPORTS)
 #if _DEBUG
 #if _DLL
 #pragma comment(lib, "msvcrtd.lib")
@@ -40,7 +42,6 @@
 #pragma comment(lib, "libucrt.lib")
 #endif
 #endif
-
 #endif
 
 #define OEMRESOURCE
@@ -111,8 +112,14 @@ extern "C" {
 
 // NTAssassin dependencies
 #pragma comment(lib, "ntdll.lib")
+#pragma comment(lib, "Kernel32.lib")
+#pragma comment(lib, "User32.Lib")
+#pragma comment(lib, "gdi32.Lib")
+#pragma comment(lib, "Comdlg32.lib")
 #pragma comment(lib, "ComCtl32.Lib")
+#pragma comment(lib, "Shell32.lib")
 #pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "Ole32.lib")
 
 // Always use ComCtl32.dll V6.0
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -192,6 +199,8 @@ extern "C" {
 #define CURRENT_PROCESS_TOKEN_HANDLE            ((HANDLE)-4)
 #define CURRENT_THREAD_TOKEN_HANDLE             ((HANDLE)-5)
 #define CURRENT_THREAD_EFFECTIVETOKEN_HANDLE    ((HANDLE)-6)
+#define CURRENT_PROCESS_ID                      (NT_GetTEBMemberDWORD(ClientId.UniqueProcess))
+#define CURRENT_THREAD_ID                       (NT_GetTEBMemberDWORD(ClientId.UniqueThread))
 #define FIXED_IMAGE_BASE32                      ((HINSTANCE)0x00400000)
 #define FIXED_IMAGE_BASE64                      ((HINSTANCE)0x0000000140000000)
 
@@ -239,6 +248,7 @@ extern "C" {
 #include "NTAHijack.h"
 #include "NTADPI.h"
 #include "NTAGDIP.h"
+#include "NTAHook.h"
 
 #ifdef __cplusplus
 }

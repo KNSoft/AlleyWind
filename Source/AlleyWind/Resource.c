@@ -149,7 +149,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     HIJACK_CALLPROCPARAM    stCFIParams[] = {
                         { (DWORD_PTR)&stLogFont, sizeof(stLogFont), FALSE }
                     };
-                    stCFICallProc.CallConvention = 0;
+                    stCFICallProc.CallConvention = CC_STDCALL;
                     stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
                     if (!NT_SUCCESS(
                         Hijack_CallProc(
@@ -176,7 +176,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                         { stCFICallProc.RetValue, 0, FALSE },
                         { TRUE, 0, FALSE }
                     };
-                    stSMWCallProc.CallConvention = 0;
+                    stSMWCallProc.CallConvention = CC_STDCALL;
                     stSMWCallProc.ParamCount = ARRAYSIZE(stSMWParams);
                     Hijack_CallProc(
                         hProc,

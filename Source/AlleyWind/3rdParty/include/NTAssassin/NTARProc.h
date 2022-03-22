@@ -123,3 +123,8 @@ NTA_API NTSTATUS NTAPI RProc_MemMap(HANDLE ProcessHandle, PRPROC_MAP RemoteMemMa
   * @note This function frees memory only, will not write remote memory back to local
   */
 #define RProc_MemUnmap(ProcessHandle, RemoteMemMap) NtFreeVirtualMemory(ProcessHandle, &(RemoteMemMap)->Remote, &(RemoteMemMap)->RemoteSize, MEM_DECOMMIT)
+
+/**
+  * @see "IsWow64Process"
+  */
+NTA_API NTSTATUS NTAPI RProc_IsWow64(IN HANDLE hProcess, OUT PBOOL Wow64Process);

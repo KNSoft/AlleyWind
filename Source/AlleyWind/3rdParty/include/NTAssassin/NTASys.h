@@ -2,15 +2,15 @@
 
 #include "NTAssassin.h"
 
-typedef enum _SYS_LOADDLL_NAME {
-    SysLoadDllNTDll = 0,
-    SysLoadDllKernel32,
-    SysLoadDllUser32,
-    SysLoadDllUxTheme,
-    SysLoadDllDwmapi,
-    SysLoadDllShcore,
-    SysLoadDllMax
-} SYS_LOADDLL_NAME, * PSYS_LOADDLL_NAME;
+typedef enum _SYS_DLL_NAME {
+    SysDllNameNTDll = 0,
+    SysDllNameKernel32,
+    SysDllNameUser32,
+    SysDllNameUxTheme,
+    SysDllNameDwmapi,
+    SysDllNameShcore,
+    SysDllNameMax
+} SYS_DLL_NAME, * PSYS_DLL_NAME;
 
 /**
   * @brief Loads specified system DLL with cache
@@ -18,7 +18,16 @@ typedef enum _SYS_LOADDLL_NAME {
   * @return Returns Handle to the DLL loaded, or NULL if failed
   * @see "LoadLibrary"
   */
-NTA_API HMODULE NTAPI Sys_LoadDll(SYS_LOADDLL_NAME SysDll);
+NTA_API HMODULE NTAPI Sys_LoadDll(SYS_DLL_NAME SysDll);
+
+/**
+  * @brief Loads API from specified system DLL
+  * @param[in] SysDll System DLL
+  * @param[in] APIName API name
+  * @return Returns address of API, or NULL if failed
+  * @see "GetProcAddress"
+  */
+NTA_API PVOID NTAPI Sys_LoadAPI(SYS_DLL_NAME SysDll, PSTR APIName);
 
 /**
   * @brief Gets Unicode message text in specified module by message ID

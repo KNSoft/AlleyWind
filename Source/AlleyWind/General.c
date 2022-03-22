@@ -79,12 +79,12 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
             { GWLP_WNDPROC, 0, FALSE }
         };
-        if (hProc && IsWow64Process(hProc, &b32Proc)) {
+        if (hProc && NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {
             lpszGWLFunc = b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW";
             lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGWLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
             if (NT_SUCCESS(lStatus)) {
                 stCallProc.RetValue = 0;
-                stCallProc.CallConvention = 0;
+                stCallProc.CallConvention = CC_STDCALL;
                 stCallProc.ParamCount = ARRAYSIZE(stGWLParams);
                 lStatus = Hijack_CallProc(hProc, &stCallProc, stGWLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
                 dwpTemp = NT_SUCCESS(lStatus) ? (DWORD_PTR)stCallProc.RetValue : 0;

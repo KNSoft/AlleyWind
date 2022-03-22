@@ -43,7 +43,7 @@ DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
         return 1;
     do {
         GDI_FrameRect(hDC, &rcClient, -3, PATINVERT);
-        Sleep(100);
+        Proc_DelayExec(100);
     } while (--uTimes);
     return 0;
 }

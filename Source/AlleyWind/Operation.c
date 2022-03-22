@@ -389,7 +389,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
                     "SetWindowDisplayAffinity",
                     (PVOID*)&stCallProc.Procedure,
                     AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
-                stCallProc.CallConvention = 0;
+                stCallProc.CallConvention = CC_STDCALL;
                 stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
                 if (NT_SUCCESS(
                     Hijack_CallProc(

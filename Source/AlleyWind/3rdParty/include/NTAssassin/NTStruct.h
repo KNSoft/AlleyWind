@@ -53,24 +53,24 @@
 typedef struct _MEMORY_RANGE_ENTRY {
     PVOID VirtualAddress;
     SIZE_T NumberOfBytes;
-} MEMORY_RANGE_ENTRY, * PMEMORY_RANGE_ENTRY;
+} MEMORY_RANGE_ENTRY, *PMEMORY_RANGE_ENTRY;
 
 typedef struct _CLIENT_ID {
     INT_PTR UniqueProcess;
     INT_PTR UniqueThread;
-} CLIENT_ID, * PCLIENT_ID;
+} CLIENT_ID, *PCLIENT_ID;
 
 typedef struct _RTL_DRIVE_LETTER_CURDIR {
     USHORT Flags;
     USHORT Length;
     UINT TimeStamp;
     STRING DosPath;
-} RTL_DRIVE_LETTER_CURDIR, * PRTL_DRIVE_LETTER_CURDIR;
+} RTL_DRIVE_LETTER_CURDIR, *PRTL_DRIVE_LETTER_CURDIR;
 
 typedef struct _CURDIR {
     UNICODE_STRING DosPath;
     HANDLE Handle;
-} CURDIR, * PCURDIR;
+} CURDIR, *PCURDIR;
 
 typedef struct _RTL_USER_PROCESS_PARAMETERS {
     DWORD MaximumLength;
@@ -110,16 +110,16 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS {
     UNICODE_STRING HeapPartitionName;
     PINT_PTR DefaultThreadpoolCpuSetMasks;
     UINT DefaultThreadpoolCpuSetMaskCount;
-} RTL_USER_PROCESS_PARAMETERS, * PRTL_USER_PROCESS_PARAMETERS;
+} RTL_USER_PROCESS_PARAMETERS, *PRTL_USER_PROCESS_PARAMETERS;
 
 typedef struct _LEAP_SECOND_DATA {
     UCHAR Enabled;
     UCHAR Padding[3];
     DWORD Count;
     LARGE_INTEGER Data[1];
-} LEAP_SECOND_DATA, * PLEAP_SECOND_DATA;
+} LEAP_SECOND_DATA, *PLEAP_SECOND_DATA;
 
-typedef struct _LDR_SERVICE_TAG_RECORD LDR_SERVICE_TAG_RECORD, * PLDR_SERVICE_TAG_RECORD;
+typedef struct _LDR_SERVICE_TAG_RECORD LDR_SERVICE_TAG_RECORD, *PLDR_SERVICE_TAG_RECORD;
 
 struct _LDR_SERVICE_TAG_RECORD {
     PLDR_SERVICE_TAG_RECORD Next;
@@ -142,11 +142,11 @@ typedef enum _LDR_DDAG_STATE {
     LdrModulesReadyToInit = 7,
     LdrModulesInitializing = 8,
     LdrModulesReadyToRun = 9,
-} LDR_DDAG_STATE, * PLDR_DDAG_STATE;
+} LDR_DDAG_STATE, *PLDR_DDAG_STATE;
 
 typedef struct _LDRP_CSLIST {
     SINGLE_LIST_ENTRY Tail;
-} LDRP_CSLIST, * PLDRP_CSLIST;
+} LDRP_CSLIST, *PLDRP_CSLIST;
 
 typedef struct _LDR_DDAG_NODE {
     LIST_ENTRY Modules;
@@ -159,9 +159,9 @@ typedef struct _LDR_DDAG_NODE {
     LDR_DDAG_STATE State;
     SINGLE_LIST_ENTRY CondenseLink;
     UINT PreorderNumber;
-} LDR_DDAG_NODE, * PLDR_DDAG_NODE;
+} LDR_DDAG_NODE, *PLDR_DDAG_NODE;
 
-typedef struct _RTL_BALANCED_NODE RTL_BALANCED_NODE, * PRTL_BALANCED_NODE;
+typedef struct _RTL_BALANCED_NODE RTL_BALANCED_NODE, *PRTL_BALANCED_NODE;
 
 struct _RTL_BALANCED_NODE {
     union {
@@ -189,7 +189,7 @@ typedef enum LDR_DLL_LOAD_REASON {
     LoadReasonEnclavePrimary = 7,
     LoadReasonEnclaveDependency = 8,
     LoadReasonUnknown = -1
-} LDR_DLL_LOAD_REASON;
+} LDR_DLL_LOAD_REASON, *PLDR_DLL_LOAD_REASON;
 
 typedef struct _LDR_DATA_TABLE_ENTRY {
     LIST_ENTRY InLoadOrderModuleList;
@@ -254,7 +254,7 @@ typedef struct _LDR_DATA_TABLE_ENTRY {
         DWORD DependentLoadFlags;
         UCHAR SigningLevel;
     };
-} LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;
+} LDR_DATA_TABLE_ENTRY, *PLDR_DATA_TABLE_ENTRY;
 
 typedef struct _PEB_LDR_DATA {
     UINT Length;
@@ -266,7 +266,7 @@ typedef struct _PEB_LDR_DATA {
     PVOID EntryInProgress;
     PVOID ShutdownInProgress;
     PVOID ShutdownThreadId;
-} PEB_LDR_DATA, * PPEB_LDR_DATA;
+} PEB_LDR_DATA, *PPEB_LDR_DATA;
 
 typedef struct _PEB {
     UCHAR InheritedAddressSpace;
@@ -416,7 +416,7 @@ typedef struct _PEB {
         };
     };
     DWORD NtGlobalFlag2;
-} PEB, * PPEB;
+} PEB, *PPEB;
 
 typedef struct _GDI_TEB_BATCH {
     struct {
@@ -425,9 +425,9 @@ typedef struct _GDI_TEB_BATCH {
     };
     UINT HDC;
     DWORD Buffer[310];
-} GDI_TEB_BATCH, * PGDI_TEB_BATCH;
+} GDI_TEB_BATCH, *PGDI_TEB_BATCH;
 
-typedef struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME RTL_ACTIVATION_CONTEXT_STACK_FRAME, * PRTL_ACTIVATION_CONTEXT_STACK_FRAME;
+typedef struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME RTL_ACTIVATION_CONTEXT_STACK_FRAME, *PRTL_ACTIVATION_CONTEXT_STACK_FRAME;
 
 struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME {
     struct RTL_ACTIVATION_CONTEXT_STACK_FRAME* Previous;
@@ -441,15 +441,15 @@ typedef struct _ACTIVATION_CONTEXT_STACK {
     DWORD Flags;
     DWORD NextCookieSequenceNumber;
     DWORD StackId;
-} ACTIVATION_CONTEXT_STACK, * PACTIVATION_CONTEXT_STACK;
+} ACTIVATION_CONTEXT_STACK, *PACTIVATION_CONTEXT_STACK;
 
 typedef struct _TEB_ACTIVE_FRAME_CONTEXT {
     DWORD Flags;
     UCHAR Padding[4];
     PCHAR FrameName;
-} TEB_ACTIVE_FRAME_CONTEXT, * PTEB_ACTIVE_FRAME_CONTEXT;
+} TEB_ACTIVE_FRAME_CONTEXT, *PTEB_ACTIVE_FRAME_CONTEXT;
 
-typedef struct _TEB_ACTIVE_FRAME TEB_ACTIVE_FRAME, * PTEB_ACTIVE_FRAME;
+typedef struct _TEB_ACTIVE_FRAME TEB_ACTIVE_FRAME, *PTEB_ACTIVE_FRAME;
 
 struct _TEB_ACTIVE_FRAME {
     DWORD Flags;
@@ -624,25 +624,25 @@ typedef struct _TEB {
     PVOID ReservedForWdf;
     ULONGLONG ReservedForCrt;
     GUID EffectiveContainerId;
-} TEB, * PTEB;
+} TEB, *PTEB;
 
 typedef struct _KSYSTEM_TIME {
     ULONG LowPart;
     LONG High1Time;
     LONG High2Time;
-} KSYSTEM_TIME, * PKSYSTEM_TIME;
+} KSYSTEM_TIME, *PKSYSTEM_TIME;
 
 typedef enum _NT_PRODUCT_TYPE {
     NtProductWinNt = 1,
     NtProductLanManNt,
     NtProductServer
-} NT_PRODUCT_TYPE, * PNT_PRODUCT_TYPE;
+} NT_PRODUCT_TYPE, *PNT_PRODUCT_TYPE;
 
 typedef enum _ALTERNATIVE_ARCHITECTURE_TYPE {
     StandardDesign,                 // None == 0 == standard design
     NEC98x86,                       // NEC PC98xx series on X86
     EndAlternatives                 // past end of known alternatives
-} ALTERNATIVE_ARCHITECTURE_TYPE, * PALTERNATIVE_ARCHITECTURE_TYPE;
+} ALTERNATIVE_ARCHITECTURE_TYPE, *PALTERNATIVE_ARCHITECTURE_TYPE;
 
 typedef struct _KUSER_SHARED_DATA {
     ULONG                         TickCountLowDeprecated;
@@ -759,18 +759,18 @@ typedef struct _KUSER_SHARED_DATA {
     LARGE_INTEGER                 TimeZoneBiasEffectiveStart;
     LARGE_INTEGER                 TimeZoneBiasEffectiveEnd;
     XSTATE_CONFIGURATION          XState;
-} KUSER_SHARED_DATA, * PKUSER_SHARED_DATA;
+} KUSER_SHARED_DATA, *PKUSER_SHARED_DATA;
 
 typedef struct _RTLP_CURDIR_REF {
     LONG RefCount;
     HANDLE Handle;
-} RTLP_CURDIR_REF, * PRTLP_CURDIR_REF;
+} RTLP_CURDIR_REF, *PRTLP_CURDIR_REF;
 
 typedef struct {
     UNICODE_STRING RelativeName;
     HANDLE ContainingDirectory;
     PRTLP_CURDIR_REF CurDirRef;
-} RTL_RELATIVE_NAME_U, * PRTL_RELATIVE_NAME_U;
+} RTL_RELATIVE_NAME_U, *PRTL_RELATIVE_NAME_U;
 
 typedef NTSTATUS
 (NTAPI* PRTL_HEAP_COMMIT_ROUTINE)(
@@ -791,7 +791,7 @@ typedef struct _RTL_HEAP_PARAMETERS {
     SIZE_T InitialReserve;
     PRTL_HEAP_COMMIT_ROUTINE CommitRoutine;
     SIZE_T Reserved[2];
-} RTL_HEAP_PARAMETERS, * PRTL_HEAP_PARAMETERS;
+} RTL_HEAP_PARAMETERS, *PRTL_HEAP_PARAMETERS;
 
 typedef struct _FILE_BASIC_INFORMATION {
     LARGE_INTEGER CreationTime;
@@ -799,7 +799,7 @@ typedef struct _FILE_BASIC_INFORMATION {
     LARGE_INTEGER LastWriteTime;
     LARGE_INTEGER ChangeTime;
     ULONG         FileAttributes;
-} FILE_BASIC_INFORMATION, * PFILE_BASIC_INFORMATION;
+} FILE_BASIC_INFORMATION, *PFILE_BASIC_INFORMATION;
 
 typedef struct _FILE_NETWORK_OPEN_INFORMATION {
     LARGE_INTEGER CreationTime;
@@ -809,20 +809,20 @@ typedef struct _FILE_NETWORK_OPEN_INFORMATION {
     LARGE_INTEGER AllocationSize;
     LARGE_INTEGER EndOfFile;
     ULONG         FileAttributes;
-} FILE_NETWORK_OPEN_INFORMATION, * PFILE_NETWORK_OPEN_INFORMATION;
+} FILE_NETWORK_OPEN_INFORMATION, *PFILE_NETWORK_OPEN_INFORMATION;
 
 typedef struct _FILE_DISPOSITION_INFORMATION {
     BOOLEAN DeleteFile;
-} FILE_DISPOSITION_INFORMATION, * PFILE_DISPOSITION_INFORMATION;
+} FILE_DISPOSITION_INFORMATION, *PFILE_DISPOSITION_INFORMATION;
 
 typedef struct _FILE_DISPOSITION_INFORMATION_EX {
     ULONG Flags;
-} FILE_DISPOSITION_INFORMATION_EX, * PFILE_DISPOSITION_INFORMATION_EX;
+} FILE_DISPOSITION_INFORMATION_EX, *PFILE_DISPOSITION_INFORMATION_EX;
 
 typedef enum _SECTION_INHERIT {
     ViewShare = 1,
     ViewUnmap = 2
-} SECTION_INHERIT;
+} SECTION_INHERIT, *PSECTION_INHERIT;
 
 typedef enum _FILE_INFORMATION_CLASS {
     FileDirectoryInformation,
@@ -901,11 +901,11 @@ typedef enum _FILE_INFORMATION_CLASS {
     FileStorageReserveIdInformation,
     FileCaseSensitiveInformationForceAccessCheck,
     FileMaximumInformation
-} FILE_INFORMATION_CLASS, * PFILE_INFORMATION_CLASS;
+} FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
 typedef struct _FILE_END_OF_FILE_INFORMATION {
     LARGE_INTEGER EndOfFile;
-} FILE_END_OF_FILE_INFORMATION, * PFILE_END_OF_FILE_INFORMATION;
+} FILE_END_OF_FILE_INFORMATION, *PFILE_END_OF_FILE_INFORMATION;
 
 typedef enum _PROCESSINFOCLASS {
     ProcessBasicInformation,
@@ -981,7 +981,7 @@ typedef enum _PROCESSINFOCLASS {
     ProcessSubsystemProcess,
     ProcessJobMemoryInformation,
     MaxProcessInfoClass
-} PROCESSINFOCLASS, * PPROCESSINFOCLASS;
+} PROCESSINFOCLASS, *PPROCESSINFOCLASS;
 
 typedef enum _THREADINFOCLASS {
     ThreadBasicInformation,
@@ -1019,7 +1019,7 @@ typedef enum _THREADINFOCLASS {
     ThreadCounterProfiling,
     ThreadIdealProcessorEx,
     MaxThreadInfoClass
-} THREADINFOCLASS, * PTHREADINFOCLASS;
+} THREADINFOCLASS, *PTHREADINFOCLASS;
 
 typedef struct _THREAD_BASIC_INFORMATION {
     NTSTATUS ExitStatus;
@@ -1028,21 +1028,21 @@ typedef struct _THREAD_BASIC_INFORMATION {
     KAFFINITY AffinityMask;
     KPRIORITY Priority;
     KPRIORITY BasePriority;
-} THREAD_BASIC_INFORMATION, * PTHREAD_BASIC_INFORMATION;
+} THREAD_BASIC_INFORMATION, *PTHREAD_BASIC_INFORMATION;
 
-typedef USHORT RTL_ATOM, * PRTL_ATOM;
+typedef USHORT RTL_ATOM, *PRTL_ATOM;
 
 typedef enum _ATOM_INFORMATION_CLASS {
     AtomBasicInformation,
     AtomTableInformation,
-} ATOM_INFORMATION_CLASS, * PATOM_INFORMATION_CLASS;
+} ATOM_INFORMATION_CLASS, *PATOM_INFORMATION_CLASS;
 
 typedef struct _ATOM_BASIC_INFORMATION {
     USHORT UsageCount;
     USHORT Flags;
     USHORT NameLength;
     WCHAR Name[1];
-} ATOM_BASIC_INFORMATION, * PATOM_BASIC_INFORMATION;
+} ATOM_BASIC_INFORMATION, *PATOM_BASIC_INFORMATION;
 
 typedef enum _SYSTEM_INFORMATION_CLASS {
     SystemBasicInformation = 0,
@@ -1273,7 +1273,7 @@ typedef enum _SYSTEM_INFORMATION_CLASS {
     SystemCodeIntegrityClearDynamicStores = 225,
     SystemPoolZeroingInformation = 227,
     MaxSystemInfoClass = 228
-} SYSTEM_INFORMATION_CLASS, * PSYSTEM_INFORMATION_CLASS;
+} SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
 
 typedef struct _SYSTEM_MODULE_ENTRY {
     ULONG_PTR  Unused;
@@ -1285,12 +1285,12 @@ typedef struct _SYSTEM_MODULE_ENTRY {
     USHORT ModuleNameLength;
     USHORT ModuleNameOffset;
     CHAR   ModuleName[256];
-} SYSTEM_MODULE_ENTRY, * PSYSTEM_MODULE_ENTRY;
+} SYSTEM_MODULE_ENTRY, *PSYSTEM_MODULE_ENTRY;
 
 typedef struct _SYSTEM_MODULE_INFORMATION {
     ULONG               Count;
     SYSTEM_MODULE_ENTRY Module[1];
-} SYSTEM_MODULE_INFORMATION, * PSYSTEM_MODULE_INFORMATION;
+} SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
 
 typedef enum _OBJECT_INFO_CLASS {
     ObjectBasicInformation,
@@ -1298,4 +1298,12 @@ typedef enum _OBJECT_INFO_CLASS {
     ObjectTypeInformation,
     ObjectAllTypesInformation,
     ObjectHandleInformation
-} OBJECT_INFO_CLASS, * POBJECT_INFO_CLASS;
+} OBJECT_INFO_CLASS, *POBJECT_INFO_CLASS;
+
+typedef enum _MEMORY_INFORMATION_CLASS {
+    MemoryBasicInformation,
+    MemoryWorkingSetList,
+    MemorySectionName,
+    MemoryBasicVlmInformation,
+    MemoryWorkingSetExList
+} MEMORY_INFORMATION_CLASS, *PMEMORY_INFORMATION_CLASS;
