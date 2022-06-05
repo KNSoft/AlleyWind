@@ -111,7 +111,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\Precomp4C\Precomp4C.exe $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,13 +125,14 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -141,7 +142,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\Precomp4C\Precomp4C.exe $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -165,7 +166,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\Precomp4C\Precomp4C.exe $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -179,13 +180,14 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -195,7 +197,7 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>3rdParty\bin\NTAssassin\NAC\NAC.exe $(ProjectDir) $(IntDir)</Command>
+      <Command>3rdParty\bin\Precomp4C\Precomp4C.exe $(ProjectDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -212,8 +214,8 @@
     <ClCompile Include="General.c" />
     <ClCompile Include="MainDlg.c" />
     <ClCompile Include="Message.c" />
-    <ClCompile Include="NAC_Output.c" />
     <ClCompile Include="Operation.c" />
+    <ClCompile Include="Precomp4C.Output.c" />
     <ClCompile Include="Relationship.c" />
     <ClCompile Include="Resource.c" />
     <ClCompile Include="AWSettings.c" />
@@ -225,7 +227,6 @@
     <ClInclude Include="AWWndProp.h" />
     <ClInclude Include="DB_Message.h" />
     <ClInclude Include="DB_StyleEditor.h" />
-    <ClInclude Include="NAC_Output.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="AWSettings.h" />
   </ItemGroup>
@@ -233,19 +234,8 @@
     <Image Include="Resource\App.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AlleyWind.NAC.I18N.json" />
-    <None Include="AWDatabase.NAC.I18N.json" />
-    <None Include="Class.NAC.I18N.json" />
-    <None Include="FindWnd.NAC.I18N.json" />
-    <None Include="General.NAC.I18N.json" />
-    <None Include="MainDlg.NAC.I18N.json" />
-    <None Include="Message.NAC.I18N.json" />
-    <None Include="Operation.NAC.I18N.json" />
-    <None Include="Relationship.NAC.I18N.json" />
-    <None Include="Resource.NAC.I18N.json" />
     <None Include="Resource\Capture.cur" />
     <None Include="Resource\Pick.cur" />
-    <None Include="WndProp.NAC.I18N.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

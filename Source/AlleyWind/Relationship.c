@@ -126,7 +126,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         I18N_InitCtlTexts(hDlg, astWndPropRelationshipTextCtl);
         // Process and Thread
         dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
-        hProc = RProc_Open(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, dwPID);
+        hProc = RProc_Open(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, dwPID);
         uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath) : 0;
         iTemp = Str_Printf(szBuffer, TEXT("(%ld) %s"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_EDIT, szBuffer, iTemp > 0);
@@ -173,20 +173,25 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             RECT rcBtn;
             if (UI_GetWindowRect((HWND)lParam, &rcBtn))
                 Ctl_PopupMenu(hPropRelationshipProcMenu, rcBtn.right, rcBtn.top, hDlg);
-        } else if (wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0)) {
-            TCHAR   szPath[MAX_PATH];
-            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath))
-                UI_ShellExec(szPath, NULL, UIShellExecExplore, SW_SHOWDEFAULT, NULL);
+        } else if (wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0) || wParam == MAKEWPARAM(IDM_PROC_PROP, 0)) {
+            BOOL bSucc = FALSE;
+            TCHAR szPath[MAX_PATH];
+            HANDLE hProc = UI_OpenProc(PROCESS_QUERY_LIMITED_INFORMATION, AW_GetWndPropHWnd(hDlg));
+            if (hProc) {
+                if (RProc_GetFullImageName(hProc, szPath)) {
+                    bSucc = Shell_Exec(szPath, NULL, wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0) ? ShellExecExplore : ShellExecProperties, SW_SHOWDEFAULT, NULL);
+                }
+                NtClose(hProc);
+            }
+            if (!bSucc) {
+                KNS_LastErrorMsgBox(hDlg);
+            }
         } else if (wParam == MAKEWPARAM(IDM_PROC_TERMINATE, 0)) {
-            HANDLE  hProc = UI_OpenProc(PROCESS_TERMINATE, AW_GetWndPropHWnd(hDlg));
+            HANDLE hProc = UI_OpenProc(PROCESS_TERMINATE, AW_GetWndPropHWnd(hDlg));
             if (hProc) {
                 NtTerminateProcess(hProc, 1);
                 NtClose(hProc);
             }
-        } else if (wParam == MAKEWPARAM(IDM_PROC_PROP, 0)) {
-            TCHAR   szPath[MAX_PATH];
-            if (UI_GetWindowModuleFileName(AW_GetWndPropHWnd(hDlg), szPath))
-                UI_ShellExec(szPath, NULL, UIShellExecProperties, SW_SHOWDEFAULT, NULL);
         } else if (wParam == MAKEWPARAM(IDM_WNDOP_PROPERTIES, 0)) {
             HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
             if (hRelatedWnd)

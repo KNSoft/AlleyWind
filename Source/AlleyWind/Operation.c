@@ -143,6 +143,9 @@ LRESULT CALLBACK PickColorWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
             SetCursorPos(pt.x, pt.y);
         }
         return 0;
+    } else if (uMsg == WM_DESTROY) {
+        PostQuitMessage(0);
+        return 0;
     } else
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -277,7 +280,7 @@ BOOL WndPropOperationLayeredSet(HWND hDlg) {
 VOID WndPropOperationGetDisplayAffinity(HWND hDlg, HWND hWnd) {
     DWORD   dwTemp;
     HWND hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK);
-    BOOL bEnable = UI_GetWindowDisplayAffinity(hWnd, &dwTemp);
+    BOOL bEnable = GetWindowDisplayAffinity(hWnd, &dwTemp);
     SendMessage(hCtl, BM_SETCHECK, bEnable && dwTemp != WDA_NONE ? BST_CHECKED : BST_UNCHECKED, 0);
     EnableWindow(hCtl, bEnable);
 }
@@ -377,11 +380,11 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             HANDLE                  hProc;
             HIJACK_CALLPROCHEADER   stCallProc;
             HIJACK_CALLPROCPARAM    stSWDAParams[] = {
-                { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                { (DWORD_PTR)hWnd, 0, FALSE },
                 { dwAffinity, 0, FALSE }
             };
             bSucc = FALSE;
-            hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+            hProc = UI_OpenProc(HIJACK_PROCESS_ACCESS, hWnd);
             if (hProc &&
                 NT_SUCCESS(Hijack_LoadProcAddr(
                     hProc,
@@ -428,9 +431,9 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             iCY = GetSystemMetrics(SM_CYCURSOR);
             DPI_FromWindow(hDlg, &uDPIX, &uDPIY);
             if (uDPIX != USER_DEFAULT_SCREEN_DPI)
-                DPI_Scale(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
+                DPI_ScaleInt(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
             if (uDPIY != USER_DEFAULT_SCREEN_DPI)
-                DPI_Scale(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
+                DPI_ScaleInt(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
             GDI_DrawIcon(
                 pdi->hDC,
                 stWndPropOperationPickColorScreenSnapshot.hCursor,

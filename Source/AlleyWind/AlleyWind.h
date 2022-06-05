@@ -2,7 +2,7 @@
 
 #define NTA_CUSTOMENTRY "Main"
 #include "NTAssassin\NTAssassin.h"
-#include "NAC_Output.h"
+#include "Precomp4C.Output.h"
 
 #include <Uxtheme.h>
 
@@ -30,12 +30,6 @@
 #pragma comment(lib, "UxTheme.lib")
 
 #define KNS_NAME TEXT("AlleyWind")
-
-#define AW_VER_MAJOR 1
-#define AW_VER_MINOR 0
-#define AW_VER_REVISION 2
-#define AW_VER_BUILD 11114
-#define AW_VER_TYPE KNS_VERSION_BETA
 
 #define MAX_WNDCAPTION_CCH 128
 

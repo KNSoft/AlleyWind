@@ -69,14 +69,14 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         HANDLE      hProc;
         DWORD       dwPID;
         GetWindowThreadProcessId(hWnd, &dwPID);
-        hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
+        hProc = RProc_Open(HIJACK_PROCESS_ACCESS, dwPID);
         dwpTemp = 0;
         NTSTATUS    lStatus;
         BOOL        b32Proc;
         LPSTR       lpszGWLFunc;
         HIJACK_CALLPROCHEADER   stCallProc;
         HIJACK_CALLPROCPARAM    stGWLParams[] = {
-            { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+            { (DWORD_PTR)hWnd, 0, FALSE },
             { GWLP_WNDPROC, 0, FALSE }
         };
         if (hProc && NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {

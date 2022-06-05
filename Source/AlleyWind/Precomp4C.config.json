@@ -1,0 +1,9 @@
+{
+    "NTAssassinIntegrate": "3rdParty\\include\\NTAssassin\\NTAssassin.h",
+    "Loaders": {
+        "I18N": {
+            "Pattern": "*.I18N.json",
+            "Default": "en"
+        }
+    }
+}

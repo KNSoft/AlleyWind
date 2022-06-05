@@ -1,4 +1,5 @@
-﻿// I18N support, used with NAC is recommanded
+﻿// I18N support, there are some complex problems
+// So we WILL REWRITE this module
 
 #pragma once
 

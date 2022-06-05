@@ -4,12 +4,12 @@
 
 #include "NTAssassin.h"
 
-/**
-  * @brief Gets any member of current TEB
-  * @param[in] m Member of TEB to acquire
-  * @return Returns the value of member in QWORD(x64 only)/DWORD/WORD/BYTE
-  */
-#if defined(_M_AMD64)
+/// <summary>
+/// Gets member value of current TEB
+/// </summary>
+/// <param name="m">Member of TEB to acquire</param>
+/// <returns>The value of member in QWORD(x64 only)/DWORD/WORD/BYTE</returns>
+#if defined(_M_X64)
 #define NT_GetTEBMember(m) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD64) ? __readgsqword(FIELD_OFFSET(TEB, m)) : (RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __readgsdword(FIELD_OFFSET(TEB, m)) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __readgsword(FIELD_OFFSET(TEB, m)) : __readgsbyte(FIELD_OFFSET(TEB, m))))))
 #define NT_GetTEBMemberQWORD(m) __readgsqword(FIELD_OFFSET(TEB, m))
 #define NT_GetTEBMemberDWORD(m) __readgsdword(FIELD_OFFSET(TEB, m))
@@ -22,14 +22,13 @@
 #define NT_GetTEBMemberBYTE(m) __readfsbyte(FIELD_OFFSET(TEB, m))
 #endif
 
-/**
-  * @brief Sets any member of current TEB
-  * @param[in] m Member of TEB to acquire
-  * @param[in] val New value to set
-  * @return Returns the value of member in QWORD(x64 only)/DWORD/WORD/BYTE
-  */
-#if defined(_M_AMD64)
-    // NT_SetTEBMember may cause code analysis warning, use following NT_SetTEBMember[QWORD/DWORD/WORD/BYTE] instead
+/// <summary>
+/// Sets member value of current TEB
+/// </summary>
+/// <param name="m">Member of TEB to set</param>
+/// <param name="val">New value to set</param>
+#if defined(_M_X64)
+// NT_SetTEBMember may cause code analysis warning, use following NT_SetTEBMember[QWORD/DWORD/WORD/BYTE] instead
 #define NT_SetTEBMember(m, val) ((RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD64) ? __writegsqword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(DWORD) ? __writegsdword(FIELD_OFFSET(TEB, m), val) : (RTL_FIELD_SIZE(TEB, m) == sizeof(WORD) ? __writegsword(FIELD_OFFSET(TEB, m), val) : __writegsbyte(FIELD_OFFSET(TEB, m), val)))))
 #define NT_SetTEBMemberQWORD(m, val) __writegsqword(FIELD_OFFSET(TEB, m), val)
 #define NT_SetTEBMemberDWORD(m, val) __writegsdword(FIELD_OFFSET(TEB, m), val)
@@ -42,54 +41,56 @@
 #define NT_SetTEBMemberBYTE(m, val) __writefsbyte(FIELD_OFFSET(TEB, m), val)
 #endif
 
-/**
-  * @brief Gets the pointer to current TEB
-  * @return Returns pointer to TEB
-  * @note To obtain or modify member value of TEB, use "NT_GetTEBMember" or "NT_SetTEBMember" instead
-  */
+/// <summary>
+/// Gets the pointer to TEB
+/// </summary>
+/// <returns>The the pointer to TEB</returns>
+/// <remarks> To obtain or modify member value of TEB, use "NT_GetTEBMember" or "NT_SetTEBMember" instead</remarks>
 #define NT_GetTEB() ((PTEB)NT_GetTEBMember(NtTib.Self))
 
-  /**
-    * @brief Gets the pointer to current PEB
-    * @return Returns pointer to PEB
-    */
+/// <summary>
+/// Gets the pointer to PEB
+/// </summary>
+/// <returns>The the pointer to PEB</returns>
 #define NT_GetPEB() ((PPEB)NT_GetTEBMember(ProcessEnvironmentBlock))
 
-/**
-  * @brief Gets the pointer to current KUSER_SHARED_DATA
-  * @return Returns pointer to KUSER_SHARED_DATA
-  */
+/// <summary>
+/// Gets the pointer to KUSER_SHARED_DATA
+/// </summary>
+/// <returns>The the pointer to KUSER_SHARED_DATA</returns>
 #define NT_GetKUSD() ((CONST PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
 
-// Last Win32 Error value
+/// <summary>
+/// Gets or sets the last error
+/// </summary>
 #define NT_ClearLastError() NT_SetTEBMemberDWORD(LastErrorValue, ERROR_SUCCESS)
 #define NT_GetLastError() NT_GetTEBMemberDWORD(LastErrorValue)
 #define NT_SetLastError(dwError) NT_SetTEBMemberDWORD(LastErrorValue, dwError)
 #define NT_LastErrorSucceed() (NT_GetTEBMemberDWORD(LastErrorValue) == ERROR_SUCCESS)
 
-// Last NT Status value
+/// <summary>
+/// Gets or sets the last status
+/// </summary>
 #define NT_ClearLastStatus() NT_SetTEBMemberDWORD(LastStatusValue, STATUS_SUCCESS)
 #define NT_GetLastStatus() NT_GetTEBMemberDWORD(LastStatusValue)
 #define NT_SetLastStatus(lStatus) NT_SetTEBMemberDWORD(LastStatusValue, lStatus)
-#define NT_LastStatusSucceed() (NT_GetTEBMemberDWORD(LastStatusValue) == STATUS_SUCCESS)
+#define NT_LastStatusSucceed() (NT_SUCCESS(NT_GetTEBMemberDWORD(LastStatusValue)))
 
+/// <summary>
+/// Sets last win32 error according to given NT Status
+/// </summary>
+/// <param name="Status">NT Status</param>
+/// <returns>Win32 Error code corresponding to the given NT Status</returns>
 NTA_API DWORD NTAPI NT_SetLastNTError(NTSTATUS Status);
 
-/**
-  * @brief Initializes OBJECT_ATTRIBUTES structure
-  * @param[out] Object Pointer to OBJECT_ATTRIBUTES to be filled
-  * @param[in] RootDirectory RootDirectory member of OBJECT_ATTRIBUTES
-  * @param[in] ObjectName ObjectName member of OBJECT_ATTRIBUTES
-  * @param[in] Attributes Attributes member of OBJECT_ATTRIBUTES
-  */
-NTA_API VOID NTAPI NT_InitObject(POBJECT_ATTRIBUTES Object, HANDLE RootDirectory, PUNICODE_STRING ObjectName, ULONG Attributes);
+/// <summary>
+/// Initializes OBJECT_ATTRIBUTES structure
+/// </summary>
+NTA_API VOID NTAPI NT_InitObject(_Out_ POBJECT_ATTRIBUTES Object, HANDLE RootDirectory, PUNICODE_STRING ObjectName, ULONG Attributes);
 
-/**
-  * @brief Initializes OBJECT_ATTRIBUTES structure of path
-  * @param[in] Path Pointer to path string
-  * @param[in] RootDirectory RootDirectory member of OBJECT_ATTRIBUTES
-  * @param[out] Object Pointer to OBJECT_ATTRIBUTES to be filled
-  * @param[out] ObjectName ObjectName member of OBJECT_ATTRIBUTES
-  * @warning ObjectName.Buffer should be freed by "Mem_HeapFree" when you no longer need
-  */
-NTA_API NTSTATUS NTAPI NT_InitPathObject(PCWSTR Path, HANDLE RootDirectory, POBJECT_ATTRIBUTES Object, PUNICODE_STRING ObjectName);
+/// <summary>
+/// Initializes OBJECT_ATTRIBUTES structure for a path
+/// </summary>
+/// <returns>TRUE if succeeded, or FALSE if failed, no error code reports</returns>
+/// <remarks>ObjectName.Buffer should be freed by <c>Mem_HeapFree</c> when no longer needs</remarks>
+NTA_API BOOL NTAPI NT_InitPathObject(POBJECT_ATTRIBUTES Object, _In_z_ PCWSTR Path, HANDLE RootDirectory, PUNICODE_STRING ObjectName);

@@ -1,0 +1,162 @@
+{
+    "CombinedValueEditor": {
+        "en": "Combined Value Editor",
+        "zh-Hans": "组合值编辑器"
+    },
+    "Reset": {
+        "en": "Reset",
+        "zh-Hans": "重置"
+    },
+    "Member": {
+        "en": "Member",
+        "zh-Hans": "成员"
+    },
+    "Value": {
+        "en": "Value",
+        "zh-Hans": "值"
+    },
+    "Description": {
+        "en": "Description",
+        "zh-Hans": "描述"
+    },
+    "DVEUnknow": {
+        "en": "(Unknow)",
+        "zh-Hans": "（未知）"
+    },
+    "RectEditor": {
+        "en": "Rectangle Editor",
+        "zh-Hans": "矩形编辑器"
+    },
+    "Left": {
+        "en": "Left",
+        "zh-Hans": "左"
+    },
+    "Top": {
+        "en": "Top",
+        "zh-Hans": "上"
+    },
+    "Right": {
+        "en": "Right",
+        "zh-Hans": "右"
+    },
+    "Bottom": {
+        "en": "Bottom",
+        "zh-Hans": "下"
+    },
+    "Width": {
+        "en": "Width",
+        "zh-Hans": "宽"
+    },
+    "Height": {
+        "en": "Height",
+        "zh-Hans": "高"
+    },
+    "Desktop": {
+        "en": "Desktop",
+        "zh-Hans": "桌面"
+    },
+    "Dialog": {
+        "en": "Dialog",
+        "zh-Hans": "对话框"
+    },
+    "Animation": {
+        "en": "Animation",
+        "zh-Hans": "动画"
+    },
+    "DateAndTimePicker": {
+        "en": "Date and Time Picker",
+        "zh-Hans": "时间日期选取器"
+    },
+    "Calendar": {
+        "en": "Calendar",
+        "zh-Hans": "日历"
+    },
+    "ProgressBar": {
+        "en": "Progress Bar",
+        "zh-Hans": "进度条"
+    },
+    "StatusBar": {
+        "en": "Status Bar",
+        "zh-Hans": "状态栏"
+    },
+    "ToolBar": {
+        "en": "Tool Bar",
+        "zh-Hans": "工具栏"
+    },
+    "ToolTips": {
+        "en": "Tool Tips",
+        "zh-Hans": "工具提示"
+    },
+    "SliderBar": {
+        "en": "Slider Bar",
+        "zh-Hans": "滑动条"
+    },
+    "UpDownControl": {
+        "en": "Up-down Control",
+        "zh-Hans": "数值调节钮控件"
+    },
+    "Button": {
+        "en": "Button",
+        "zh-Hans": "按钮"
+    },
+    "ComboBox": {
+        "en": "Combo Box",
+        "zh-Hans": "组合框"
+    },
+    "ExtendedComboBox": {
+        "en": "Extended Combo Box",
+        "zh-Hans": "扩展组合框"
+    },
+    "EditControl": {
+        "en": "Edit Control",
+        "zh-Hans": "编辑控件"
+    },
+    "HeaderControl": {
+        "en": "Header Control",
+        "zh-Hans": "列头控件"
+    },
+    "ListBox": {
+        "en": "List Box",
+        "zh-Hans": "列表框"
+    },
+    "IPAddressControl": {
+        "en": "IP Address Control",
+        "zh-Hans": "IP地址控件"
+    },
+    "Hyperlink": {
+        "en": "Hyperlink",
+        "zh-Hans": "超链接"
+    },
+    "ListView": {
+        "en": "List View",
+        "zh-Hans": "列表视图"
+    },
+    "NativeFont": {
+        "en": "Native Font",
+        "zh-Hans": "原生字体"
+    },
+    "PageScroller": {
+        "en": "Page Scroller",
+        "zh-Hans": "页面滚动条"
+    },
+    "ScrollBar": {
+        "en": "Scroll Bar",
+        "zh-Hans": "滚动条"
+    },
+    "StaticControl": {
+        "en": "Static Control",
+        "zh-Hans": "静态控件"
+    },
+    "TabControl": {
+        "en": "Tab Control",
+        "zh-Hans": "选项卡控件"
+    },
+    "TreeView": {
+        "en": "Tree View",
+        "zh-Hans": "树形视图"
+    },
+    "MDIClient": {
+        "en": "MDI Client",
+        "zh-Hans": "MDI客户端"
+    }
+}

@@ -77,7 +77,10 @@ BOOL CALLBACK ExpTreeItemEnumProc(HWND TreeView, HTREEITEM TreeItem, UINT Level,
     }
     stTVI.pszText = szUniBuff + Level;
     if (SendMessage(hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI)) {
+        // Patches C6054: szUniBuff is always zero-terminated here
+    #pragma warning(disable: 6054)
         uChWritten = Str_UnicodeToUTF8(szUTF8Buff, szUniBuff);
+    #pragma warning(default: 6054)
         szUTF8Buff[uChWritten] = '\r';
         szUTF8Buff[uChWritten + 1] = '\n';
         IO_Write(hExpFile, 0, szUTF8Buff, (ULONG)(uChWritten + 2));
@@ -95,7 +98,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     HTREEITEM           hTreeItem = NULL, hParent;
     BOOL                bCaptionMatched, bClassMatched;
     UINT                uCount;
-    TVINSERTSTRUCT      stTVIInsert = { 0, 0, { TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM } };
+    TVINSERTSTRUCT      stTVIInsert = { 0, TVI_LAST, { TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM } };
     uCount = lpstEnumChildren->uCount;
     bCaptionMatched = bClassMatched = FALSE;
     // Filter Node
@@ -252,13 +255,14 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             CHAR        szUTF8BOM[] = "\xEF\xBB\xBF";
             szExpTreeFileName[0] = '\0';
             if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_ExportTreeFilter), szExpTreeFileName, lpszExpTreeFileExt)) {
-                if (NT_SUCCESS(File_Create(&hExpTreeFile, szExpTreeFileName, NULL, FILE_APPEND_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT | FILE_SEQUENTIAL_ONLY))) {
+                if ((hExpTreeFile = File_Create(szExpTreeFileName, NULL, FILE_APPEND_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT | FILE_SEQUENTIAL_ONLY)) != NULL) {
                     // Write UTF-8 BOM
                     IO_Write(hExpTreeFile, 0, szUTF8BOM, ARRAYSIZE(szUTF8BOM) - 1);
                     Ctl_EnumTreeViewItems(hTree, FALSE, ExpTreeItemEnumProc, (LPARAM)hExpTreeFile);
                     NtClose(hExpTreeFile);
-                } else
-                    KNS_MsgBox(hDlg, I18N_GetString(I18NIndex_ExportTreeFailed), NULL, MB_ICONERROR);
+                } else {
+                    KNS_LastStatusMsgBox(hDlg);
+                }
             }
         } else if (wParam == MAKEWPARAM(IDM_FINDWND, 0)) {
             AW_OpenFindWndDlg(hDlg);

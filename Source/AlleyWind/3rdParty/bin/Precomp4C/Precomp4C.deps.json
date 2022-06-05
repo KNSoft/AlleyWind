@@ -6,15 +6,15 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "NAC/1.0.0": {
+      "Precomp4C/1.0.0.0": {
         "runtime": {
-          "NAC.dll": {}
+          "Precomp4C.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "NAC/1.0.0": {
+    "Precomp4C/1.0.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

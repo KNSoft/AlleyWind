@@ -3,7 +3,7 @@
 KNS_INFO stKNSInfo = {
     KNS_NAME,
     TRUE,
-    { AW_VER_MAJOR, AW_VER_MINOR, AW_VER_REVISION, AW_VER_BUILD, AW_VER_TYPE },
+    { 1, 1, 0, 20611, KNS_VERSION_RC },
     {
         RGB(255, 140, 0),
         IDI_APP,
@@ -14,7 +14,7 @@ KNS_INFO stKNSInfo = {
         0,
         FALSE
     },
-    { NAC_I18N_Lang_Table, ARRAYSIZE(NAC_I18N_Lang_Table), NAC_I18N_ITEM_COUNT },
+    { Precomp4C_I18N_Lang_Table, ARRAYSIZE(Precomp4C_I18N_Lang_Table), Precomp4C_I18N_ITEM_COUNT },
     {
         TEXT("https://knsoft.org/Products/AlleyWind/"),
         TEXT("https://knsoft.org/Products/AlleyWind/"),

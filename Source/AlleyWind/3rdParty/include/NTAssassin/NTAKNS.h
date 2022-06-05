@@ -1,4 +1,4 @@
-﻿// KNSoft application framework, do not use
+﻿// KNSoft internal application framework, NOT RECOMMANDED
 
 #pragma once
 
@@ -59,6 +59,12 @@ NTA_API INT_PTR NTAPI KNS_Startup(PKNS_INFO KNSInfo);
 NTA_API INT NTAPI KNS_MsgBox(HWND Owner, PCWSTR Text, PCWSTR Title, UINT Type);
 
 NTA_API VOID NTAPI KNS_ErrorMsgBox(HWND Owner, DWORD Error);
+
+NTA_API VOID NTAPI KNS_StatusMsgBox(HWND Owner, NTSTATUS Status);
+
+NTA_API VOID NTAPI KNS_LastErrorMsgBox(HWND Owner);
+
+NTA_API VOID NTAPI KNS_LastStatusMsgBox(HWND Owner);
 
 NTA_API BOOL NTAPI KNS_GetVersionStringEx(PWSTR StrVersion, UINT ChCount);
 #define KNS_GetVersionString(StrVersion) KNS_GetVersionStringEx(StrVersion, ARRAYSIZE(StrVersion))

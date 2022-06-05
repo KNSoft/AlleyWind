@@ -13,10 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="NAC I18N Files">
-      <UniqueIdentifier>{f3729266-6a7e-4bad-87b2-8c8595353a04}</UniqueIdentifier>
-      <Extensions>NAC.I18N.json</Extensions>
-    </Filter>
     <Filter Include="Source Files\Database">
       <UniqueIdentifier>{67e5c167-ea56-4f2f-827d-7d2d6eac6d54}</UniqueIdentifier>
     </Filter>
@@ -43,9 +39,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AlleyWind.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NAC_Output.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AWSettings.c">
@@ -78,6 +71,9 @@
     <ClCompile Include="DB_StyleEditor.c">
       <Filter>Source Files\Database</Filter>
     </ClCompile>
+    <ClCompile Include="Precomp4C.Output.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.h">
@@ -90,9 +86,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NAC_Output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AWSettings.h">
@@ -116,39 +109,6 @@
     </None>
     <None Include="Resource\Pick.cur">
       <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Operation.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="Resource.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="Class.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="FindWnd.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="AWDatabase.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="MainDlg.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="General.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="WndProp.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="AlleyWind.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="Relationship.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
-    </None>
-    <None Include="Message.NAC.I18N.json">
-      <Filter>NAC I18N Files</Filter>
     </None>
   </ItemGroup>
 </Project>

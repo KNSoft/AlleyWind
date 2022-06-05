@@ -134,6 +134,9 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             DestroyWindow(hWnd);
         }
         return 0;
+    } else if (uMsg == WM_DESTROY) {
+        PostQuitMessage(0);
+        return 0;
     } else
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -192,7 +195,7 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         KNS_SetDialogSubclass(hDlg, NULL);
         I18N_InitCtlTexts(hDlg, astFindWndTextCtl);
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)I18N_GetString(I18NIndex_FindWindow));
-        UI_SetWindowIcon(hDlg, KNS_GetIcon());
+        SendMessage(hDlg, WM_SETICON, ICON_BIG, (LPARAM)KNS_GetIcon());
         UI_SetDlgButtonCheck(hDlg, IDC_FINDWND_THOROUGHSEARCH_CHECK, lFindWndThoroughSearchState);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_FINDWND_CAPTURE_PIC, STN_CLICKED)) {
@@ -254,9 +257,9 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             iCY = GetSystemMetrics(SM_CYCURSOR);
             DPI_FromWindow(hDlg, &uDPIX, &uDPIY);
             if (uDPIX != USER_DEFAULT_SCREEN_DPI)
-                DPI_Scale(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
+                DPI_ScaleInt(&iCX, USER_DEFAULT_SCREEN_DPI, uDPIX);
             if (uDPIY != USER_DEFAULT_SCREEN_DPI)
-                DPI_Scale(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
+                DPI_ScaleInt(&iCY, USER_DEFAULT_SCREEN_DPI, uDPIY);
             GDI_DrawIcon(
                 pdi->hDC,
                 stFindWndCaptureScreenSnapshot.hCursor,

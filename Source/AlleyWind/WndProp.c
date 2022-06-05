@@ -15,7 +15,7 @@ INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         INT     iCch;
         iCch = Str_Printf(szCaption, TEXT("%s %08X"), I18N_GetString(I18NIndex_Window), (DWORD)(DWORD_PTR)lParam);
         SendMessage(hDlg, WM_SETTEXT, 0, iCch > 0 ? (LPARAM)szCaption : 0);
-        UI_SetWindowIcon(hDlg, KNS_GetIcon());
+        SendMessage(hDlg, WM_SETICON, ICON_BIG, (LPARAM)KNS_GetIcon());
         Ctl_SetPropertySheet(hDlg, IDC_WNDPROPTAB, astWndPropSheetPage, lParam);
         KNS_SetDialogSubclass(hDlg, NULL);
     } else if (uMsg == WM_DPICHANGED) {

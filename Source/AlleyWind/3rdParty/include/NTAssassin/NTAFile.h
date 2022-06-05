@@ -9,66 +9,73 @@ typedef struct _FILE_MAP {
     HANDLE              FileHandle;
     HANDLE              SectionHandle;
     MEMORY_RANGE_ENTRY  Mem;
-} FILE_MAP, * PFILE_MAP;
+} FILE_MAP, *PFILE_MAP;
 
-/**
-  * @brief Creates or opens a file
-  * @return Returns NTSTATUS
-  * @see "NtCreateFile"
-  */
-NTA_API NTSTATUS NTAPI File_Create(PHANDLE FileHandle, PWSTR FileName, HANDLE RootDirectory, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, ULONG CreateOptions);
+/// <summary>
+/// Creates or open a file
+/// </summary>
+/// <seealso cref="NtCreateFile"/>
+/// <returns>Handle to the file, or NULL if failed, error code storaged in last STATUS</returns>
+NTA_API HANDLE NTAPI File_Create(_In_z_ PCWSTR FileName, HANDLE RootDirectory, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, ULONG CreateOptions);
 
-/**
-  * @brief Read a file
-  * @return Returns NTSTATUS
-  * @see "ReadFile"
-  */
-NTA_API NTSTATUS NTAPI File_Read(HANDLE FileHandle, PVOID Buffer, ULONG Length, PLARGE_INTEGER ByteOffset, PULONG BytesRead);
+/// <summary>
+/// Reads a file
+/// </summary>
+/// <seealso cref="NtReadFile"/>
+/// <returns>Number of bytes read</returns>
+NTA_API ULONG NTAPI File_Read(HANDLE FileHandle, _In_ PVOID Buffer, ULONG BytesToRead, PLARGE_INTEGER ByteOffset);
 
-/**
-  * @brief Verifies that a path is a valid directory
-  * @param[in] FilePath Path to be Verified
-  * @param[out] Result Pointer to a BOOL to receive the result
-  * @return Returns NTSTATUS
-  * @see "PathIsDirectory"
-  */
-NTA_API NTSTATUS NTAPI File_IsDirectory(PWSTR FilePath, PBOOL Result);
+/// <summary>
+/// Verifies that a path is a valid directory
+/// </summary>
+/// <seealso cref="PathIsDirectory"/>
+/// <param name="FilePath">Path to be verified</param>
+/// <param name="Result">Pointer to a BOOL to receive the result</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+_Success_(return == TRUE) NTA_API BOOL NTAPI File_IsDirectory(_In_z_ PCWSTR FilePath, _Out_ PBOOL Result);
 
-/**
-  * @brief Deletes specified file
-  * @param[in] FileName Path to the file to delete
-  * @return Returns NTSTATUS
-  * @see "DeleteFile"
-  */
-NTA_API NTSTATUS NTAPI File_Delete(PWSTR FileName);
+/// <summary>
+/// Deletes a file
+/// </summary>
+/// <param name="FileName">Path to the file to delete</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+NTA_API BOOL NTAPI File_Delete(_In_z_ PCWSTR FilePath);
 
-/**
-  * @see "NtSetInformationFile" and "FileDispositionInformation"
-  */
-NTA_API NTSTATUS NTAPI File_Dispose(HANDLE FileHandle, BOOL Disposition);
+/// <summary>
+/// Marks a file should be deleted when closed
+/// </summary>
+/// <param name="FileHandle">Handle to the file</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+NTA_API BOOL NTAPI File_Dispose(HANDLE FileHandle);
 
-/**
-  * @brief Sets size of specified file
-  * @param[in] FileHandle Handle to the file to set size
-  * @param[in] NewSize New size of the file
-  * @return Returns NTSTATUS
-  */
-NTA_API NTSTATUS NTAPI File_SetSize(HANDLE FileHandle, ULONGLONG NewSize);
+/// <summary>
+/// Sets size of specified file
+/// </summary>
+/// <param name="FileHandle">Handle to the file</param>
+/// <param name="NewSize">New size of the file</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+NTA_API BOOL NTAPI File_SetSize(HANDLE FileHandle, ULONGLONG NewSize);
 
-/**
-  * @brief Maps a file
-  * @param[in] FileName Path to the file to map
-  * @param[in] RootDirectory Path to the directory as root of file
-  * @param[out] FileMap pointer to FILE_MAP structure to receive map information
-  * @param[in] NoCache Set to TRUE to disable cache when writing the map
-  * @return Returns NTSTATUS
-  * @see "NtCreateFile"
-  */
-NTA_API NTSTATUS NTAPI File_Map(PWSTR FileName, HANDLE RootDirectory, PFILE_MAP FileMap, ULONGLONG MaximumSize, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, BOOL NoCache, SECTION_INHERIT InheritDisposition);
+/// <summary>
+/// Maps a file
+/// </summary>
+/// <seealso cref="NtCreateFile"/>
+/// <seealso cref="MapViewOfFile"/>
+/// <param name="FileName">Path to the file to map</param>
+/// <param name="RootDirectory">Handle to the directory as root of file</param>
+/// <param name="FileMap">Pointer to a FILE_MAP structure to receive map information</param>
+/// <param name="MaximumSize"></param>
+/// <param name="DesiredAccess"></param>
+/// <param name="ShareAccess"></param>
+/// <param name="CreateDisposition"></param>
+/// <param name="NoCache">Set to TRUE to disable cache when writing the map</param>
+/// <param name="InheritDisposition"></param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+_Success_(return == TRUE) NTA_API BOOL NTAPI File_Map(_In_z_ PCWSTR FileName, HANDLE RootDirectory, _Out_ PFILE_MAP FileMap, ULONGLONG MaximumSize, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, BOOL NoCache, SECTION_INHERIT InheritDisposition);
 
-/**
-  * @brief Unmaps a file mapped by "File_Map"
-  * @param[in] FileMap pointer to FILE_MAP structure contains map information
-  * @return Returns NTSTATUS
-  */
-NTA_API NTSTATUS NTAPI File_Unmap(PFILE_MAP FileMap);
+/// <summary>
+/// Unmaps a file mapped by "File_Map"
+/// </summary>
+/// <param name="FileMap">Pointer to a FILE_MAP structure contains map information</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+NTA_API BOOL NTAPI File_Unmap(_In_ PFILE_MAP FileMap);

@@ -92,7 +92,7 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
     UINT_PTR                uWordSize;
     HIJACK_CALLPROCHEADER   stCallProc;
     HIJACK_CALLPROCPARAM    stGLParams[] = {
-        { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+        { (DWORD_PTR)hWnd, 0, FALSE },
         { 0, 0, FALSE }
     };
     BOOL                    bUseHijack = FALSE, b32Proc;
@@ -101,7 +101,7 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
     if (dwpExtraSize) {
         DWORD       dwPID;
         GetWindowThreadProcessId(hWnd, &dwPID);
-        hProc = RProc_Open(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, dwPID);
+        hProc = RProc_Open(HIJACK_PROCESS_ACCESS, dwPID);
         if (hProc) {
             if (NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {
                 lpszGLFunc = bClassExtraBytes ?

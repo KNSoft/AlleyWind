@@ -2,13 +2,13 @@
 
 #include "NTAssassin.h"
 
-NTA_API PVOID WINAPIV Data_StructCombineEx(UINT GroupCount, UINT Size, ...);
+/// <summary>
+/// Combines groups of structures into a new allocated buffer
+/// </summary>
+/// <param name="GroupCount">Number of groups</param>
+/// <param name="Size">Size of single structure in bytes</param>
+/// <param name="...">pst1, u1, pst2, u2, ...</param>
+/// <returns>New allocated buffer that combined groups of structures input, should be freed by calling "Mem_HeapFree"</returns>
+NTA_API _Check_return_ PVOID WINAPIV Data_StructCombineEx(_In_ UINT GroupCount, _In_ UINT Size, ...);
 
-/**
-  * @brief Combines groups of structures into a new allocated buffer
-  * @param[in] uGroupCount Number of groups
-  * @param[in] t Type of structure
-  * @param[in] ... lpst1, uCount1, lpst2, uCount2, ...
-  * @return Returns new allocated buffer, should be freed by calling "Mem_HeapFree"
-  */
-#define Data_StructCombine(uGroupCount, t, ...) (t*)Data_StructCombineEx(uGroupCount, sizeof(t), __VA_ARGS__)
+#define Data_StructCombine(GroupCount, Type, ...) (Type*)Data_StructCombineEx(GroupCount, sizeof(Type), __VA_ARGS__)

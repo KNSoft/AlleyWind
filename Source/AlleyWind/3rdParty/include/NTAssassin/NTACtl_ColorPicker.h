@@ -5,25 +5,25 @@
 // No color specified in color picker yet
 #define CTL_COLORPICKER_NOCOLOR 0xFF000000
 
-/**
-  * @brief Subclasses a button control to be a RGB color picker
-  * @param[in] ButtonCtl Handle to the button control
-  * @param[in] Color Initial color, or CTL_COLORPICKER_NOCOLOR
-  * @return Returns BOOL
-  */
+/// <summary>
+/// Subclasses a button control to be a RGB color picker
+/// </summary>
+/// <param name="ButtonCtl">Handle to the button control</param>
+/// <param name="Color"> Initial color, or CTL_COLORPICKER_NOCOLOR</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, no error code reports due to SetWindowSubclass does</returns>
 NTA_API BOOL NTAPI Ctl_SetColorPickerSubclass(HWND ButtonCtl, COLORREF Color);
 
-/**
-  * @brief Gets RGB value of color picker subclassed by "Ctl_SetColorPickerSubclass"
-  * @param[in] ButtonCtl Handle to the button control
-  * @return Returns RGB value or CTL_COLORPICKER_NOCOLOR
-  */
+/// <summary>
+/// Gets RGB value of color picker subclassed by "Ctl_SetColorPickerSubclass"
+/// </summary>
+/// <param name="ButtonCtl">Handle to the button control</param>
+/// <returns>RGB value or CTL_COLORPICKER_NOCOLOR</returns>
 NTA_API COLORREF NTAPI Ctl_GetColorPickerValue(HWND ButtonCtl);
 
-/**
-  * @brief Sets RGB value of color picker subclassed by "Ctl_SetColorPickerSubclass"
-  * @param[in] ButtonCtl Handle to the button control
-  * @param[in] Color RGB value to set or CTL_COLORPICKER_NOCOLOR
-  * @return Returns BOOL
-  */
+/// <summary>
+/// Sets RGB value of color picker subclassed by "Ctl_SetColorPickerSubclass"
+/// </summary>
+/// <param name="ButtonCtl">Handle to the button control</param>
+/// <param name="Color">RGB value to set or CTL_COLORPICKER_NOCOLOR</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last ERROR</returns>
 NTA_API BOOL NTAPI Ctl_SetColorPickerValue(HWND ButtonCtl, COLORREF Color);

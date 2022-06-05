@@ -4,7 +4,7 @@
 
 #include "NTAssassin.h"
 
-typedef struct _DATA_LIST_NODE DATA_LIST_NODE, * PDATA_LIST_NODE;
+typedef struct _DATA_LIST_NODE DATA_LIST_NODE, *PDATA_LIST_NODE;
 
 struct _DATA_LIST_NODE {
     PDATA_LIST_NODE Flink;  // Forward link, point to the next node
@@ -18,76 +18,74 @@ typedef struct _DATA_LIST {
     BOOL                Lock;       // Set to TRUE to implement thread-safe
     UINT                Length;     // Number of nodes the list has
     CRITICAL_SECTION    Reserved;   // Internal lock to implement thread-safe, do not use it
-} DATA_LIST, * PDATA_LIST;
+} DATA_LIST, *PDATA_LIST;
 
-/**
-  * @brief Initializes list structure
-  * @param[in] DataList Pointer to DATA_LIST structure to be initialized
-  */
-NTA_API VOID NTAPI Data_ListInit(PDATA_LIST DataList);
+/// <summary>
+/// Initializes DATA_LIST structure
+/// </summary>
+NTA_API VOID NTAPI Data_ListInit(_Out_ PDATA_LIST DataList);
 
-/**
-  * @brief Inserts node to the end of list
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[in] NodeValue Node value to the new node to be inserted
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListPushBack(PDATA_LIST DataList, PVOID NodeValue);
+/// <summary>
+/// Inserts node to the end of list
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="NodeValue">Node value to the new node to be inserted</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Data_ListPushBack(_In_ PDATA_LIST DataList, PVOID NodeValue);
 
-/**
-  * @brief Inserts node to the beginning of list
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[in] NodeValue Node value to the new node to be inserted
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListPushFront(PDATA_LIST DataList, PVOID NodeValue);
+/// <summary>
+/// Inserts node to the beginning of list
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="NodeValue">Node value to the new node to be inserted</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Data_ListPushFront(_In_ PDATA_LIST DataList, PVOID NodeValue);
 
-/**
-  * @brief Removes node in the end of list
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[out, opt] NodeValuePointer Pointer to a buffer to receive node value to be removed
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListPopBack(PDATA_LIST DataList, PVOID* NodeValuePointer);
+/// <summary>
+/// Removes node in the end of list
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="NodeValue">Pointer to a buffer to receive node value to be removed</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+_Success_(return != FALSE) NTA_API BOOL NTAPI Data_ListPopBack(_In_ PDATA_LIST DataList, _Out_opt_ PVOID* NodeValue);
 
+/// <summary>
+/// Removes node in the beginning of list
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="NodeValue">Pointer to a buffer to receive node value to be removed</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+_Success_(return != FALSE) NTA_API BOOL NTAPI Data_ListPopFront(_In_ PDATA_LIST DataList, _Out_opt_ PVOID* NodeValue);
 
-/**
-  * @brief Removes node in the beginning of list
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[out, opt] NodeValuePointer Pointer to a buffer to receive node value to be removed
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListPopFront(PDATA_LIST DataList, PVOID* NodeValuePointer);
+/// <summary>
+/// Inserts node before specified node
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="RelNode">Pointer to DATA_LIST_NODE structure of the node relative to</param>
+/// <param name="NodeValue">Node value to the new node to be inserted</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Data_ListInsertBefore(_In_ PDATA_LIST DataList, _In_ PDATA_LIST_NODE RelNode, PVOID NodeValue);
 
-/**
-  * @brief Inserts node before specified node
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[in] DestNode Pointer to DATA_LIST_NODE structure of the referenced node
-  * @param[in] NodeValue Node value to the new node to be inserted
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListInsertBefore(PDATA_LIST DataList, PDATA_LIST_NODE DestNode, PVOID NodeValue);
+/// <summary>
+/// Inserts node after specified node
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="RelNode">Pointer to DATA_LIST_NODE structure of the node relative to</param>
+/// <param name="NodeValue">Node value to the new node to be inserted</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Data_ListInsertAfter(_In_ PDATA_LIST DataList, _In_ PDATA_LIST_NODE RelNode, PVOID NodeValue);
 
-/**
-  * @brief Inserts node after specified node
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[in] DestNode Pointer to DATA_LIST_NODE structure of the referenced node
-  * @param[in] NodeValue Node value to the new node to be inserted
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListInsertAfter(PDATA_LIST DataList, PDATA_LIST_NODE DestNode, PVOID NodeValue);
+/// <summary>
+/// Removes specified node
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="Node">Pointer to DATA_LIST_NODE structure of the node to be removed</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Data_ListRemove(_In_ PDATA_LIST DataList, _In_ PDATA_LIST_NODE Node);
 
-/**
-  * @brief Removes specified node
-  * @param[in] DataList Pointer to DATA_LIST structure
-  * @param[in] Node Pointer to DATA_LIST_NODE structure of the node to be removed
-  * @return Returns TRUE if succeed, otherwise returns FALSE
-  */
-NTA_API BOOL NTAPI Data_ListRemove(PDATA_LIST DataList, PDATA_LIST_NODE Node);
-
-/**
-  * @brief Resets list structure
-  * @param[in] DataList Pointer to DATA_LIST structure to be initialized
-  * @param[in] FreeValuePtr Set to TRUE to free each memory pointed by node value
-  */
-NTA_API VOID NTAPI Data_ListReset(PDATA_LIST DataList, BOOL FreeValuePtr);
+/// <summary>
+/// Resets list structure
+/// </summary>
+/// <param name="DataList">Pointer to the DATA_LIST structure</param>
+/// <param name="FreeValuePtr">Set to TRUE to frees each memory address in node value by calling <c>Mem_Free</c></param>
+NTA_API VOID NTAPI Data_ListReset(_In_ PDATA_LIST DataList, BOOL FreeValuePtr);

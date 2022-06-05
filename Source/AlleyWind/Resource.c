@@ -133,7 +133,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
             }
             if (bChosen) {
                 HANDLE  hProc;
-                hProc = UI_OpenProc(PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE | SYNCHRONIZE, hWnd);
+                hProc = UI_OpenProc(HIJACK_PROCESS_ACCESS, hWnd);
                 if (hProc) {
                     // Create new font
                     HIJACK_CALLPROCHEADER   stCFICallProc;
@@ -171,7 +171,7 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                         )
                         goto Label_0;
                     HIJACK_CALLPROCPARAM    stSMWParams[] = {
-                        { (DWORD)(DWORD_PTR)hWnd, 0, FALSE },
+                        { (DWORD_PTR)hWnd, 0, FALSE },
                         { WM_SETFONT, 0, FALSE },
                         { stCFICallProc.RetValue, 0, FALSE },
                         { TRUE, 0, FALSE }
@@ -197,20 +197,20 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         } else if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0) || wParam == MAKEWPARAM(IDM_IMAGE_COPY, 0)) {
             TCHAR           szExpImageFileName[MAX_PATH];
             HWND            hWnd;
-            SIZE_T          uSize;
+            UINT            uSize;
             FILE_MAP        stFileMap;
             GDI_SNAPSHOT    stSnapshot;
             hWnd = AW_GetWndPropHWnd(hDlg);
             if (GDI_CreateSnapshot(hWnd == GetDesktopWindow() ? NULL : hWnd, &stSnapshot)) {
                 SelectObject(stSnapshot.DC, stSnapshot.OriginalBitmap);
                 if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0)) {
-                    uSize = GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, NULL);
+                    uSize = GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, NULL, 0);
                     if (uSize) {
                         szExpImageFileName[0] = '\0';
                         if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, lpszExpImageFileExt)) {
                             if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap))) {
-                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Mem.VirtualAddress))
-                                    File_Dispose(stFileMap.FileHandle, TRUE);
+                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Mem.VirtualAddress, uSize))
+                                    File_Dispose(stFileMap.FileHandle);
                                 File_Unmap(&stFileMap);
                             }
                         }

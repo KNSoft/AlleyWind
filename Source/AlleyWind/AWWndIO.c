@@ -22,30 +22,26 @@ UINT AW_GetWindowTextEx(HWND hWnd, PWSTR psz, UINT cCh) {
 DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
     HWND        hWnd = lParam;
     DWORD_PTR   dwpStyle;
+    HDC         hDC;
     RECT        rcClient;
-    HDC         hDC = GetDC(hWnd);
     UINT        uTimes = 4 * 2;
     BOOL        bFlash;
-    bFlash = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle) && (
-        dwpStyle & WS_DLGFRAME ||
-        dwpStyle & WS_THICKFRAME ||
-        dwpStyle & WS_HSCROLL ||
-        dwpStyle & WS_VSCROLL
-        );
+    bFlash = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle) && (dwpStyle & WS_DLGFRAME || dwpStyle & WS_THICKFRAME);
     if (bFlash) {
         FLASHWINFO fwi = { sizeof(FLASHWINFO), hWnd, FLASHW_ALL, 4, 200 };
         FlashWindowEx(&fwi);
-        return 0;
+        return ERROR_SUCCESS;
     }
-    if (!GetClientRect(hWnd, &rcClient))
-        return 1;
+    hDC = GetDC(hWnd);
     if (!hDC)
-        return 1;
+        return ERROR_INVALID_HANDLE;
+    if (!GetClientRect(hWnd, &rcClient))
+        return NT_GetLastError();
     do {
         GDI_FrameRect(hDC, &rcClient, -3, PATINVERT);
         Proc_DelayExec(100);
     } while (--uTimes);
-    return 0;
+    return ERROR_SUCCESS;
 }
 
 VOID AW_HighlightWindow(HWND hWnd) {
