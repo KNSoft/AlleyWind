@@ -47,3 +47,30 @@ DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
 VOID AW_HighlightWindow(HWND hWnd) {
     Proc_CreateThread(HighlightWindowThread, hWnd, FALSE, NULL);
 }
+
+PCSTR pszGWLFunc[] = {
+    "GetWindowLongPtrA",   // 000
+    "GetWindowLongPtrW",   // 001
+    "GetWindowLongA",      // 010
+    "GetWindowLongW",      // 011
+    "GetClassLongPtrA",    // 100
+    "GetClassLongPtrW",    // 101
+    "GetClassLongA",       // 110
+    "GetClassLongW",       // 111
+};
+
+PCSTR AW_GetWindowLongFunc(BOOL ClassLong, BOOL b32Proc, BOOL bUnicode) {
+    UINT u = 0;
+    if (ClassLong) {
+        u |= 1;
+    }
+    u <<= 1;
+    if (b32Proc) {
+        u |= 1;
+    }
+    u <<= 1;
+    if (bUnicode) {
+        u |= 1;
+    }
+    return pszGWLFunc[u];
+}

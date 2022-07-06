@@ -25,7 +25,7 @@ CTL_LISTCTL_COLUME aPropListCol[] = {
     {I18NIndex_Data, 180}
 };
 
-LPTSTR lpszExpImageFileExt = TEXT("bmp");
+PTSTR pszExpImageFileExt = TEXT("bmp");
 
 VOID WndPropResourceInit() {
     hWndPropResourceImage = CreatePopupMenu();
@@ -137,13 +137,12 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                 if (hProc) {
                     // Create new font
                     HIJACK_CALLPROCHEADER   stCFICallProc;
-                    if (!NT_SUCCESS(
-                        Hijack_LoadProcAddr(
+                    if (!Hijack_LoadProcAddr(
                             hProc,
                             L"gdi32.dll",
                             "CreateFontIndirectW",
                             (PVOID*)&stCFICallProc.Procedure,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
                         )
                         goto Label_0;
                     HIJACK_CALLPROCPARAM    stCFIParams[] = {
@@ -151,23 +150,21 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     };
                     stCFICallProc.CallConvention = CC_STDCALL;
                     stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
-                    if (!NT_SUCCESS(
-                        Hijack_CallProc(
+                    if (!Hijack_CallProc(
                             hProc,
                             &stCFICallProc,
                             stCFIParams,
                             AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                        )) || !stCFICallProc.RetValue)
+                        ) || !stCFICallProc.RetValue)
                         goto Label_0;
                     // Apply new font created
                     HIJACK_CALLPROCHEADER   stSMWCallProc;
-                    if (!NT_SUCCESS(
-                        Hijack_LoadProcAddr(
+                    if (!Hijack_LoadProcAddr(
                             hProc,
                             L"user32.dll",
                             "SendMessageW",
                             (PVOID*)&stSMWCallProc.Procedure,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))
+                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
                         )
                         goto Label_0;
                     HIJACK_CALLPROCPARAM    stSMWParams[] = {
@@ -207,9 +204,9 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     uSize = GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, NULL, 0);
                     if (uSize) {
                         szExpImageFileName[0] = '\0';
-                        if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, lpszExpImageFileExt)) {
-                            if (NT_SUCCESS(File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap))) {
-                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Mem.VirtualAddress, uSize))
+                        if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, pszExpImageFileExt)) {
+                            if (File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap)) {
+                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Map, uSize))
                                     File_Dispose(stFileMap.FileHandle);
                                 File_Unmap(&stFileMap);
                             }

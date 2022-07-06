@@ -72,10 +72,22 @@ NTA_API BOOL NTAPI UI_SetTheme(HWND Window);
 #define UI_SetDlgButtonCheck(Dialog, ButtonID, CheckState) SendMessageW(GetDlgItem(Dialog, ButtonID), BM_SETCHECK, (WPARAM)(CheckState), 0)
 
 /// <seealso cref="SetWindowText"/>
-#define UI_SetWindowText(Window, Text) SendMessageW(Window, WM_SETTEXT, 0, (LPARAM)(Text))
+#define UI_SetWindowTextW(Window, Text) SendMessageW(Window, WM_SETTEXT, 0, (LPARAM)(Text))
+#define UI_SetWindowTextA(Window, Text) SendMessageA(Window, WM_SETTEXT, 0, (LPARAM)(Text))
+#ifdef UNICODE
+#define UI_SetWindowText UI_SetWindowTextW
+#else
+#define UI_SetWindowText UI_SetWindowTextA
+#endif
 
 /// <seealso cref="SetDlgItemText"/>
-#define UI_SetDlgItemText(Dialog, ItemID, Text) UI_SetWindowText(GetDlgItem(Dialog, ItemID), Text)
+#define UI_SetDlgItemTextW(Dialog, ItemID, Text) UI_SetWindowTextW(GetDlgItem(Dialog, ItemID), Text)
+#define UI_SetDlgItemTextA(Dialog, ItemID, Text) UI_SetWindowTextA(GetDlgItem(Dialog, ItemID), Text)
+#ifdef UNICODE
+#define UI_SetDlgItemText UI_SetDlgItemTextW
+#else
+#define UI_SetDlgItemText UI_SetDlgItemTextA
+#endif
 
 /// <seealso cref="GetProp"/>
 #define UI_GetDlgItemProp(Dialog, ItemID, Prop) GetPropW(GetDlgItem(Dialog, ItemID), Prop)
@@ -94,7 +106,7 @@ NTA_API BOOL NTAPI UI_SetTheme(HWND Window);
 /// Invalidates and updates the whole window immediately
 /// </summary>
 /// <seealso cref="RedrawWindow"/>
-#define UI_Redraw(Window) RedrawWindow(Window, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW)
+#define UI_Redraw(Window) RedrawWindow(Window, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_UPDATENOW)
 
 /// <summary>
 /// Enables or disables specified style or extended style for a widnow

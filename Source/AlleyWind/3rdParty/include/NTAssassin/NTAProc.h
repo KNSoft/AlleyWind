@@ -96,7 +96,7 @@ NTA_API PVOID NTAPI Proc_LoadProcAddr(_In_z_ PCWSTR LibName, _In_z_ PCSTR ProcNa
 #define Proc_DisablePrivilege(Privilege) Proc_AdjustPrivilege(Privilege, FALSE)
 
 /// <seealso cref="NtWaitForSingleObject"/>
-NTA_API BOOL NTAPI Proc_WaitForObject(HANDLE Object, DWORD Milliseconds);
+NTA_API NTSTATUS NTAPI Proc_WaitForObject(HANDLE Object, DWORD Milliseconds);
 
 /// <seealso cref="Sleep"/>
 NTA_API VOID NTAPI Proc_DelayExec(DWORD Milliseconds);

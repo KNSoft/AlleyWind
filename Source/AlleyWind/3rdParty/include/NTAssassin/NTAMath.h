@@ -32,6 +32,8 @@ NTA_API ULONG NTAPI Math_RangedRandom(ULONG Min, ULONG Max);
 #define Math_IsPowerOf2(n) ((n != 0) && ((n & (n - 1)) == 0))
 
 /// <summary>
-/// Gets the absolute difference between two number 
+/// Gets the absolute difference between two numbers
 /// </summary>
 #define Math_AbsDiff(v1, v2) ((v1) > (v2) ? (v1) - (v2) : (v2) - (v1))
+
+NTA_API DOUBLE NTAPI Math_SimplifySize(UINT64 Size, PCHAR Unit);

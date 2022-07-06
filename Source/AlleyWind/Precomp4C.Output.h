@@ -71,9 +71,7 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Find,
 	I18NIndex_Caption,
 	I18NIndex_Handle,
-	I18NIndex_Explore,
-	I18NIndex_Terminate,
-	I18NIndex_Properties,
+	I18NIndex_WindowProcedure,
 	I18NIndex_ControlID,
 	I18NIndex_SystemClass,
 	I18NIndex_Style,
@@ -136,6 +134,9 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_EndTask,
 	I18NIndex_Process,
 	I18NIndex_Thread,
+	I18NIndex_Explore,
+	I18NIndex_Terminate,
+	I18NIndex_Properties,
 	I18NIndex_LocateInList,
 	I18NIndex_RelatedWindow,
 	I18NIndex_ParentWindow,
@@ -150,7 +151,6 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Save,
 	I18NIndex_SaveBitmapFilter,
 	I18NIndex_InstanceHandle,
-	I18NIndex_WindowProcedure,
 	I18NIndex_FontHandle,
 	I18NIndex_MenuHandle,
 	I18NIndex_Icons,
@@ -167,7 +167,7 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Window
 } I18N_ITEM_INDEX, *PI18N_ITEM_INDEX;
 
-EXTERN_C I18N_ITEM Precomp4C_I18N_Lang_en_Items[151];
-EXTERN_C I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151];
-EXTERN_C PI18N_LANGUAGE Precomp4C_I18N_Lang_Table[2];
+extern I18N_ITEM Precomp4C_I18N_Lang_en_Items[151];
+extern I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151];
+extern PI18N_LANGUAGE Precomp4C_I18N_Lang_Table[2];
 

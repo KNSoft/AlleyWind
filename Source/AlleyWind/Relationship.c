@@ -128,14 +128,14 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         dwTID = GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, dwPID);
         uTemp = hProc ? RProc_GetFullImageName(hProc, szTempPath) : 0;
-        iTemp = Str_Printf(szBuffer, TEXT("(%ld) %s"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
+        iTemp = Str_Printf(szBuffer, TEXT("(%ld) %ws"), dwPID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_EDIT, szBuffer, iTemp > 0);
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_RELATIONSHIP_PROCESS_BTN, hProc != NULL);
         hThread = RProc_OpenThread(THREAD_QUERY_INFORMATION, dwTID);
         uTemp = hProc && hThread && NT_SUCCESS(NtQueryInformationThread(hThread, ThreadQuerySetWin32StartAddress, &pThreadStartAddr, sizeof(pThreadStartAddr), NULL)) ?
             RProc_TranslateAddress(hProc, pThreadStartAddr, szTempPath) :
             0;
-        iTemp = Str_Printf(szBuffer, TEXT("(%ld) %s"), dwTID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
+        iTemp = Str_Printf(szBuffer, TEXT("(%ld) %ws"), dwTID, uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_RELATIONSHIP_THREAD_EDIT, szBuffer, iTemp > 0);
         if (hProc)
             NtClose(hProc);

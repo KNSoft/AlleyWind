@@ -27,6 +27,19 @@ typedef struct _DLG_SCREENSNAPSHOT {
     GDI_SNAPSHOT    Snapshot;
 } DLG_SCREENSNAPSHOT, *PDLG_SCREENSNAPSHOT;
 
+typedef struct _DLG_TREEVIEWPROPSHEETPAGE DLG_TREEVIEWPROPSHEETPAGE, *PDLG_TREEVIEWPROPSHEETPAGE;
+struct _DLG_TREEVIEWPROPSHEETPAGE {
+    PWSTR       DisplayName;
+    HINSTANCE   Instance;
+    INT         DlgResID;
+    DLGPROC     DlgProc;
+    LPARAM      Param;
+    PDLG_TREEVIEWPROPSHEETPAGE  SubItems;
+    UINT                        Count;
+    HANDLE                      Handle;     // Reserved
+    HTREEITEM                   TreeItem;   // Reserved
+};
+
 #include "NTADlg_ValueEditor.h"
 #include "NTADlg_RectEditor.h"
 
@@ -100,3 +113,5 @@ typedef VOID(CALLBACK* DLG_RESIZEDPROC)(HWND Dialog, LONG NewWidth, LONG NewHeig
 /// <param name="ResizedProc">Callback procedure will be invoked when the size of dialog box changed</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, no error code reports due to SetWindowSubclass does</returns>
 NTA_API BOOL NTAPI Dlg_SetResizingSubclass(HWND Dialog, LONG MinWidth, LONG MinHeight, DLG_RESIZEDPROC ResizedProc);
+
+NTA_API BOOL NTAPI Dlg_SetTreeViewPropertySheetSubclass(HWND Dialog, HWND TreeView, PRECT SheetRect, _In_ PDLG_TREEVIEWPROPSHEETPAGE Sheets, UINT Count);

@@ -20,7 +20,6 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
         CHAR        szANSIBuffer[1024];
         INT         iTemp;
         HANDLE      hProc;
-        NTSTATUS    lStatus;
         DWORD_PTR   dwpTemp;
         BOOL        bSucc;
         hWnd = (HWND)lParam;
@@ -52,14 +51,15 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
             hProc = UI_OpenProc(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, hWnd);
             if (hProc) {
                 szBuffer[0] = '\0';
+                UINT uCch;
                 if (IsWindowUnicode(hWnd)) {
-                    lStatus = RProc_ReadMemStringW(hProc, (PVOID)dwpTemp, szBuffer);
+                    uCch = RProc_ReadMemStringW(hProc, (PVOID)dwpTemp, szBuffer);
                 } else {
-                    lStatus = RProc_ReadMemStringA(hProc, (PVOID)dwpTemp, szANSIBuffer);
-                    if (NT_SUCCESS(lStatus))
+                    uCch = RProc_ReadMemStringA(hProc, (PVOID)dwpTemp, szANSIBuffer);
+                    if (uCch)
                         Str_A2U(szBuffer, szANSIBuffer);
                 }
-                AW_SetPropCtlString(hDlg, IDC_WNDPROP_CLASS_MENURES_EDIT, szBuffer, NT_SUCCESS(lStatus));
+                AW_SetPropCtlString(hDlg, IDC_WNDPROP_CLASS_MENURES_EDIT, szBuffer, uCch);
                 NtClose(hProc);
             } else
                 UI_EnableDlgItem(hDlg, IDC_WNDPROP_CLASS_MENURES_EDIT, FALSE);

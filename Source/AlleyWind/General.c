@@ -71,23 +71,21 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(HIJACK_PROCESS_ACCESS, dwPID);
         dwpTemp = 0;
-        NTSTATUS    lStatus;
         BOOL        b32Proc;
-        LPSTR       lpszGWLFunc;
+        PCSTR       pszGWLFunc;
+        BOOL        bUnicode = IsWindowUnicode(hWnd);
         HIJACK_CALLPROCHEADER   stCallProc;
         HIJACK_CALLPROCPARAM    stGWLParams[] = {
             { (DWORD_PTR)hWnd, 0, FALSE },
             { GWLP_WNDPROC, 0, FALSE }
         };
-        if (hProc && NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {
-            lpszGWLFunc = b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW";
-            lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGWLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-            if (NT_SUCCESS(lStatus)) {
+        if (hProc && RProc_IsWow64(hProc, &b32Proc)) {
+            pszGWLFunc = AW_GetWindowLongFunc(FALSE, b32Proc, bUnicode);
+            if (Hijack_LoadProcAddr(hProc, L"user32.dll", pszGWLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))) {
                 stCallProc.RetValue = 0;
                 stCallProc.CallConvention = CC_STDCALL;
                 stCallProc.ParamCount = ARRAYSIZE(stGWLParams);
-                lStatus = Hijack_CallProc(hProc, &stCallProc, stGWLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                dwpTemp = NT_SUCCESS(lStatus) ? (DWORD_PTR)stCallProc.RetValue : 0;
+                dwpTemp = Hijack_CallProc(hProc, &stCallProc, stGWLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)) ? (DWORD_PTR)stCallProc.RetValue : 0;
                 if (b32Proc)
                     dwpTemp = (DWORD)dwpTemp;
             }
@@ -95,7 +93,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         if (!dwpTemp)
             UI_GetWindowLong(hWnd, FALSE, GWLP_WNDPROC, &dwpTemp);
         uTemp = hProc && dwpTemp ? RProc_TranslateAddress(hProc, (PVOID)dwpTemp, szTempPath) : 0;
-        iTemp = Str_Printf(szBuffer, TEXT("%s (%s)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), IsWindowUnicode(hWnd) ? TEXT("Unicode") : TEXT("ANSI"));
+        iTemp = Str_Printf(szBuffer, TEXT("%s (%ws)"), uTemp ? szTempPath : I18N_GetString(I18NIndex_NotApplicable), bUnicode ? TEXT("Unicode") : TEXT("ANSI"));
         AW_SetPropCtlString(hDlg, IDC_WNDPROP_GENERAL_WNDPROC_EDIT, szBuffer, iTemp > 0);
         if (hProc)
             NtClose(hProc);

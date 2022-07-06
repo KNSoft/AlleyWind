@@ -14,6 +14,7 @@ typedef struct _PE_STRUCT {
     };
     PIMAGE_SECTION_HEADER           SectionHeader;
     PVOID                           OverlayData;
+    SIZE_T                          OverlayDataSize;
 } PE_STRUCT, *PPE_STRUCT;
 
 /// <summary>
@@ -23,7 +24,7 @@ typedef struct _PE_STRUCT {
 /// <param name="Image">Pointer to the PE image</param>
 /// <param name="OfflineMap">TRUE if PE image is offline (like file map), or FALSE if PE image is loaded in memory as a module</param>
 /// <returns>TRUE if succeeded, or FALSE if failed</returns>
-_Success_(return != FALSE) NTA_API BOOL NTAPI PE_Resolve(_Out_ PPE_STRUCT PEStruct, _In_ PVOID Image, BOOL OfflineMap);
+_Success_(return != FALSE) NTA_API BOOL NTAPI PE_Resolve(_Out_ PPE_STRUCT PEStruct, _In_ PVOID Image, BOOL OfflineMap, SIZE_T OfflineMapFileSize);
 
 /// <summary>
 /// Gets data directory entry of PE image
@@ -83,3 +84,6 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI PE_Ptr2Offset(_In_ PPE_STRUCT PESt
 /// <param name="Name">Pointer to a PCSTR variable to receive the exported name of the function</param>
 /// <returns>TRUE if succeeded, or FALSE if failed</returns>
 _Success_(return != FALSE) NTA_API BOOL NTAPI PE_GetExportedName(_In_ PPE_STRUCT PEStruct, _In_ PVOID Function, _Out_ PZPCSTR Name);
+
+NTA_API PCWSTR PE_GetMachineName(_In_ PPE_STRUCT PEStruct);
+NTA_API PCWSTR PE_GetSubsystemName(_In_ PPE_STRUCT PEStruct);

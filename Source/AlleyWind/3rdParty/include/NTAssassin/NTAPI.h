@@ -297,6 +297,18 @@ NtWriteFile(
     PULONG           Key
 );
 
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueryInformationFile(
+    IN HANDLE hFile,
+    OUT PIO_STATUS_BLOCK pIoStatusBlock,
+    OUT PVOID FileInformationBuffer,
+    IN ULONG FileInformationBufferLength,
+    IN FILE_INFORMATION_CLASS FileInfoClass
+);
+
 NTSYSAPI
 NTSTATUS
 NTAPI

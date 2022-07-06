@@ -14,13 +14,6 @@
 NTA_API BOOL NTAPI DPI_FromWindow(HWND Window, _Out_ PUINT DPIX, _Out_ PUINT DPIY);
 
 /// <summary>
-/// Gets DPI awareness state
-/// </summary>
-/// <seealso cref="IsProcessDPIAware"/>
-/// <returns>TRUE if the process is DPI aware, or FALSE if not or failed</returns>
-NTA_API BOOL NTAPI DPI_IsAware();
-
-/// <summary>
 /// Scales a value according to given DPI
 /// </summary>
 /// <param name="Value">Pointer to the value to be scaled</param>

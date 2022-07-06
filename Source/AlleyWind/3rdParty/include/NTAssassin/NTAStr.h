@@ -153,8 +153,8 @@ NTA_API VOID NTAPI Str_InitA(_Out_ PSTRING NTString, _In_ PSTR String);
 
 // String Convert
 
-_Success_(return == TRUE) NTA_API BOOL NTAPI Str_ToIntExW(_In_ PCWSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
-_Success_(return == TRUE) NTA_API BOOL NTAPI Str_ToIntExA(_In_ PCSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
+_Success_(return != FALSE) NTA_API BOOL NTAPI Str_ToIntExW(_In_ PCWSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
+_Success_(return != FALSE) NTA_API BOOL NTAPI Str_ToIntExA(_In_ PCSTR StrValue, BOOL Unsigned, UINT Base, _Out_writes_bytes_(ValueSize) PVOID Value, _In_ SIZE_T ValueSize);
 
 #define Str_ToIntW(StrValue, Value) Str_ToIntExW(StrValue, FALSE, 0, Value, sizeof(*(Value)))
 #define Str_ToIntA(StrValue, Value) Str_ToIntExA(StrValue, FALSE, 0, Value, sizeof(*(Value)))
@@ -203,8 +203,8 @@ _Success_(return == TRUE) NTA_API BOOL NTAPI Str_ToIntExA(_In_ PCSTR StrValue, B
 #define Str_BinToUInt Str_BinToUIntA
 #endif
 
-_Success_(return == TRUE) BOOL NTAPI Str_FromIntExW(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_z_(DestCchSize) PWSTR StrValue, _In_ ULONG DestCchSize);
-_Success_(return == TRUE) BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_z_(DestCchSize) PSTR StrValue, _In_ ULONG DestCchSize);
+_Success_(return != FALSE) BOOL NTAPI Str_FromIntExW(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_z_(DestCchSize) PWSTR StrValue, _In_ ULONG DestCchSize);
+_Success_(return != FALSE) BOOL NTAPI Str_FromIntExA(INT64 Value, BOOL Unsigned, UINT Base, _Out_writes_z_(DestCchSize) PSTR StrValue, _In_ ULONG DestCchSize);
 
 #define Str_FromIntW(Value, StrValue) Str_FromIntExW(Value, FALSE, 0, StrValue, ARRAYSIZE(StrValue))
 #define Str_FromIntA(Value, StrValue) Str_FromIntExA(Value, FALSE, 0, StrValue, ARRAYSIZE(StrValue))
@@ -274,3 +274,5 @@ NTA_API DWORD NTAPI Str_HashA(_In_ PCSTR String, STR_HASH_ALGORITHM HashAlgorith
 #else
 #define Str_Hash Str_HashA
 #endif
+
+PWSTR NTAPI Str_NameOfPath(_In_ PWSTR Path, _In_opt_ ULONG LengthOfPath);

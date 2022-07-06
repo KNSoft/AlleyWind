@@ -21,7 +21,6 @@ I18N_CTLTEXT astWndPropOperationTextCtl[] = {
     { IDC_WNDPROP_OPERATION_ANTICAPTURE_CHECK, I18NIndex_AntiCapture },
     { IDC_WNDPROP_OPERATION_SWITCHTO_BTN, I18NIndex_SwitchTo },
     { IDC_WNDPROP_OPERATION_HIGHLIGHT_BTN, I18NIndex_Highlight },
-    { IDC_WNDPROP_OPERATION_FILL_TEXT, I18NIndex_Fill },
     { IDC_WNDPROP_OPERATION_REDRAW_BTN, I18NIndex_Redraw },
     { IDC_WNDPROP_OPERATION_CLOSE_BTN, I18NIndex_Close },
     { IDC_WNDPROP_OPERATION_ENDTASK_BTN, I18NIndex_EndTask }
@@ -302,8 +301,6 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         // Layered
         Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN), CTL_COLORPICKER_NOCOLOR);
         WndPropOperationLayeredGet(hDlg);
-        // Fill
-        Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_FILL_BTN), CTL_COLORPICKER_NOCOLOR);
         // Visual Style
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_VISUALSTYLE_COMBOX);
         Ctl_InitComboBox(hCtl, astVisualStyleComboBoxItem, FALSE);
@@ -350,15 +347,6 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
                     WndPropOperationLayeredGet(hDlg);
             }
             BringWindowToTop(hDlg);
-        } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_FILL_BTN, BN_CLICKED)) {
-            HWND    hWnd = AW_GetWndPropHWnd(hDlg);
-            HDC     hDC = GetDC(hWnd);
-            RECT    rcClient;
-            if (GetClientRect(hWnd, &rcClient)) {
-                COLORREF    cr = Ctl_GetColorPickerValue((HWND)lParam);
-                if (cr != CTL_COLORPICKER_NOCOLOR)
-                    GDI_FillSolidRect(hDC, &rcClient, cr);
-            }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_VISUALSTYLE_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             TCHAR   szTheme[AW_WNDPROP_OPERATION_THEMT_MAX_CCH + 1];
@@ -385,22 +373,20 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
             };
             bSucc = FALSE;
             hProc = UI_OpenProc(HIJACK_PROCESS_ACCESS, hWnd);
-            if (hProc &&
-                NT_SUCCESS(Hijack_LoadProcAddr(
+            if (hProc && Hijack_LoadProcAddr(
                     hProc,
                     L"user32.dll",
                     "SetWindowDisplayAffinity",
                     (PVOID*)&stCallProc.Procedure,
-                    AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)))) {
+                    AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))) {
                 stCallProc.CallConvention = CC_STDCALL;
                 stCallProc.ParamCount = ARRAYSIZE(stSWDAParams);
-                if (NT_SUCCESS(
-                    Hijack_CallProc(
+                if (Hijack_CallProc(
                         hProc,
                         &stCallProc,
                         stSWDAParams,
                         AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                    )) && stCallProc.RetValue)
+                    ) && stCallProc.RetValue)
                     bSucc = TRUE;
             }
             if (!bSucc)

@@ -4,8 +4,6 @@
 
 typedef DWORD64 QWORD, *PQWORD, *LPQWORD;
 
-typedef BOOL(WINAPI* PFNIsProcessDPIAware)();
-
 typedef HRESULT(STDAPICALLTYPE* PFNGetDpiForMonitor)(
     _In_ HMONITOR hmonitor,
     _In_ MONITOR_DPI_TYPE dpiType,

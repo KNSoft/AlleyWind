@@ -146,7 +146,7 @@ NTA_API VOID NTAPI RProc_InitMap(_Out_ PRPROC_MAP RemoteMemMap, _In_ PVOID Local
 /// <param name="ProcessHandle">Handle to the remote process</param>
 /// <param name="RemoteMemMap">Pointer to the RPROC_MAP structure contains necessary information to setup map</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-/// <remark>LocalAddress, LocalSize and RemotePageProtect should be specified in RemoteMemMap, or initialize by <c>RProc_InitMap</c></remarks>
+/// <remarks>LocalAddress, LocalSize and RemotePageProtect should be specified in RemoteMemMap, or initialize by <c>RProc_InitMap</c></remarks>
 _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_MemMap(HANDLE ProcessHandle, _Inout_ PRPROC_MAP RemoteMemMap);
 
 /// <summary>

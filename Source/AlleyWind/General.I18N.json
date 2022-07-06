@@ -7,17 +7,9 @@
         "en": "Handle",
         "zh-Hans": "句柄"
     },
-    "Explore": {
-        "en": "Explore",
-        "zh-Hans": "浏览"
-    },
-    "Terminate": {
-        "en": "Terminate",
-        "zh-Hans": "终止"
-    },
-    "Properties": {
-        "en": "Properties",
-        "zh-Hans": "属性"
+    "WindowProcedure": {
+        "en": "Window Procedure",
+        "zh-Hans": "窗口过程"
     },
     "ControlID": {
         "en": "Control ID",

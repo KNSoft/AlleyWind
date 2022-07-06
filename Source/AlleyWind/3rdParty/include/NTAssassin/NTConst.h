@@ -7,6 +7,9 @@
 #define PROCESSOR_FEATURE_MAX	64
 #define MM_SHARED_USER_DATA_VA	0x7FFE0000
 
+// Well-known SIDs
+#define SID_STRING_LOCAL_SYSTEM L"S-1-5-18"
+
 // NTSTATUS
 #undef WIN32_NO_STATUS
 #include <ntstatus.h>
@@ -18,6 +21,9 @@
 
 #undef TCN_FIRST
 #define TCN_FIRST 4294966746
+
+#undef TVN_FIRST
+#define TVN_FIRST 0xFFFFFE70
 
 #undef LVN_ITEMCHANGING
 #define LVN_ITEMCHANGING 4294967196

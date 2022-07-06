@@ -105,11 +105,11 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
     if (bFilter) {
         if (uCount == 0) {
             if (bFindCaption && !bFindClassName)
-                iCch = Str_Printf(szBuffer, TEXT("%s - \"%s\""), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName);
+                iCch = Str_Printf(szBuffer, TEXT("%ws - \"%s\""), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName);
             else if (!bFindCaption && bFindClassName)
-                iCch = Str_Printf(szBuffer, TEXT("%s - %s"), I18N_GetString(I18NIndex_SearchResult), szFindClassName);
+                iCch = Str_Printf(szBuffer, TEXT("%ws - %s"), I18N_GetString(I18NIndex_SearchResult), szFindClassName);
             else
-                iCch = Str_Printf(szBuffer, TEXT("%s - \"%s\" %s"), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName, szFindClassName);
+                iCch = Str_Printf(szBuffer, TEXT("%ws - \"%s\" %s"), I18N_GetString(I18NIndex_SearchResult), szFindCaptionName, szFindClassName);
             stTVIInsert.item.iImage = 0;
             stTVIInsert.hParent = lpstEnumChildren->hParentNode;
             stTVIInsert.item.pszText = iCch > 0 ? szBuffer : NULL;
@@ -135,7 +135,7 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
             pSysClsInfo = AW_DBFindSysClassInfoByName(szClassName);
             iCch = pSysClsInfo ?
                 Str_Printf(szBuffer,
-                    TEXT("%08X \"%s\" %s (%s)"),
+                    TEXT("%08X \"%s\" %s (%ws)"),
                     (DWORD)(DWORD_PTR)hWnd,
                     szCaption,
                     szClassName,
@@ -186,7 +186,7 @@ BOOL AW_LoadWindowTreeAsync(BOOL bUpdateFilter, LPTSTR lpszCaption, LPTSTR lpszC
         bFindClassName = lpszClassName ? Str_Copy(szFindClassName, lpszClassName), TRUE : FALSE;
         bFilter = bFindCaption || bFindClassName;
     }
-    return hthrLoadWindowTree ? FALSE : NT_SUCCESS(Proc_CreateThread(LoadWindowTreeThread, NULL, FALSE, &hthrLoadWindowTree));
+    return hthrLoadWindowTree ? FALSE : Proc_CreateThread(LoadWindowTreeThread, NULL, FALSE, &hthrLoadWindowTree);
 }
 
 HWND AW_GetMainDlg() {
@@ -230,6 +230,10 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         hTree = GetDlgItem(hDlg, IDC_MAINTREE);
         UI_SetTheme(hTree);
         // Prepare controls and resources
+        HMENU hMenu = GetMenu(hDlg);
+        if (hMenu) {
+            DestroyMenu(hMenu);
+        }
         Ctl_SetMenu(hDlg, stDlgMenu);
         hSearchMenu = CreatePopupMenu();
         Ctl_CreateMenu(stSearchMenu, hSearchMenu);

@@ -19,10 +19,6 @@
         "en": "Instance Handle",
         "zh-Hans": "实例句柄"
     },
-    "WindowProcedure": {
-        "en": "Window Procedure",
-        "zh-Hans": "窗口过程"
-    },
     "FontHandle": {
         "en": "Font Handle",
         "zh-Hans": "字体句柄"

@@ -35,6 +35,12 @@
 #undef ThreadIsIoPending
 #undef _SYSTEM_INFORMATION_CLASS
 #undef SYSTEM_INFORMATION_CLASS
+#undef _SYSTEM_PROCESS_INFORMATION
+#undef SYSTEM_PROCESS_INFORMATION
+#undef PSYSTEM_PROCESS_INFORMATION
+#undef _SYSTEM_THREAD_INFORMATION
+#undef SYSTEM_THREAD_INFORMATION
+#undef PSYSTEM_THREAD_INFORMATION
 #undef SystemBasicInformation
 #undef SystemPerformanceInformation
 #undef SystemTimeOfDayInformation
@@ -759,6 +765,9 @@ typedef struct _KUSER_SHARED_DATA {
     LARGE_INTEGER                 TimeZoneBiasEffectiveStart;
     LARGE_INTEGER                 TimeZoneBiasEffectiveEnd;
     XSTATE_CONFIGURATION          XState;
+    KSYSTEM_TIME                  FeatureConfigurationChangeStamp;
+    ULONG                         Spare;
+    ULONG64                       UserPointerAuthMask;
 } KUSER_SHARED_DATA, *PKUSER_SHARED_DATA;
 
 typedef struct _RTLP_CURDIR_REF {
@@ -801,6 +810,14 @@ typedef struct _FILE_BASIC_INFORMATION {
     ULONG         FileAttributes;
 } FILE_BASIC_INFORMATION, *PFILE_BASIC_INFORMATION;
 
+typedef struct _FILE_STANDARD_INFORMATION {
+    LARGE_INTEGER AllocationSize;
+    LARGE_INTEGER EndOfFile;
+    ULONG         NumberOfLinks;
+    BOOLEAN       DeletePending;
+    BOOLEAN       Directory;
+} FILE_STANDARD_INFORMATION, *PFILE_STANDARD_INFORMATION;
+
 typedef struct _FILE_NETWORK_OPEN_INFORMATION {
     LARGE_INTEGER CreationTime;
     LARGE_INTEGER LastAccessTime;
@@ -825,81 +842,83 @@ typedef enum _SECTION_INHERIT {
 } SECTION_INHERIT, *PSECTION_INHERIT;
 
 typedef enum _FILE_INFORMATION_CLASS {
-    FileDirectoryInformation,
-    FileFullDirectoryInformation,
-    FileBothDirectoryInformation,
-    FileBasicInformation,
-    FileStandardInformation,
-    FileInternalInformation,
-    FileEaInformation,
-    FileAccessInformation,
-    FileNameInformation,
-    FileRenameInformation,
-    FileLinkInformation,
-    FileNamesInformation,
-    FileDispositionInformation,
-    FilePositionInformation,
-    FileFullEaInformation,
-    FileModeInformation,
-    FileAlignmentInformation,
-    FileAllInformation,
-    FileAllocationInformation,
-    FileEndOfFileInformation,
-    FileAlternateNameInformation,
-    FileStreamInformation,
-    FilePipeInformation,
-    FilePipeLocalInformation,
-    FilePipeRemoteInformation,
-    FileMailslotQueryInformation,
-    FileMailslotSetInformation,
-    FileCompressionInformation,
-    FileObjectIdInformation,
-    FileCompletionInformation,
-    FileMoveClusterInformation,
-    FileQuotaInformation,
-    FileReparsePointInformation,
-    FileNetworkOpenInformation,
-    FileAttributeTagInformation,
-    FileTrackingInformation,
-    FileIdBothDirectoryInformation,
-    FileIdFullDirectoryInformation,
-    FileValidDataLengthInformation,
-    FileShortNameInformation,
-    FileIoCompletionNotificationInformation,
-    FileIoStatusBlockRangeInformation,
-    FileIoPriorityHintInformation,
-    FileSfioReserveInformation,
-    FileSfioVolumeInformation,
-    FileHardLinkInformation,
-    FileProcessIdsUsingFileInformation,
-    FileNormalizedNameInformation,
-    FileNetworkPhysicalNameInformation,
-    FileIdGlobalTxDirectoryInformation,
-    FileIsRemoteDeviceInformation,
-    FileUnusedInformation,
-    FileNumaNodeInformation,
-    FileStandardLinkInformation,
-    FileRemoteProtocolInformation,
-    FileRenameInformationBypassAccessCheck,
-    FileLinkInformationBypassAccessCheck,
-    FileVolumeNameInformation,
-    FileIdInformation,
-    FileIdExtdDirectoryInformation,
-    FileReplaceCompletionInformation,
-    FileHardLinkFullIdInformation,
-    FileIdExtdBothDirectoryInformation,
-    FileDispositionInformationEx,
-    FileRenameInformationEx,
-    FileRenameInformationExBypassAccessCheck,
-    FileDesiredStorageClassInformation,
-    FileStatInformation,
-    FileMemoryPartitionInformation,
-    FileStatLxInformation,
-    FileCaseSensitiveInformation,
-    FileLinkInformationEx,
-    FileLinkInformationExBypassAccessCheck,
-    FileStorageReserveIdInformation,
-    FileCaseSensitiveInformationForceAccessCheck,
+    FileDirectoryInformation = 1,
+    FileFullDirectoryInformation,                   // 2
+    FileBothDirectoryInformation,                   // 3
+    FileBasicInformation,                           // 4
+    FileStandardInformation,                        // 5
+    FileInternalInformation,                        // 6
+    FileEaInformation,                              // 7
+    FileAccessInformation,                          // 8
+    FileNameInformation,                            // 9
+    FileRenameInformation,                          // 10
+    FileLinkInformation,                            // 11
+    FileNamesInformation,                           // 12
+    FileDispositionInformation,                     // 13
+    FilePositionInformation,                        // 14
+    FileFullEaInformation,                          // 15
+    FileModeInformation,                            // 16
+    FileAlignmentInformation,                       // 17
+    FileAllInformation,                             // 18
+    FileAllocationInformation,                      // 19
+    FileEndOfFileInformation,                       // 20
+    FileAlternateNameInformation,                   // 21
+    FileStreamInformation,                          // 22
+    FilePipeInformation,                            // 23
+    FilePipeLocalInformation,                       // 24
+    FilePipeRemoteInformation,                      // 25
+    FileMailslotQueryInformation,                   // 26
+    FileMailslotSetInformation,                     // 27
+    FileCompressionInformation,                     // 28
+    FileObjectIdInformation,                        // 29
+    FileCompletionInformation,                      // 30
+    FileMoveClusterInformation,                     // 31
+    FileQuotaInformation,                           // 32
+    FileReparsePointInformation,                    // 33
+    FileNetworkOpenInformation,                     // 34
+    FileAttributeTagInformation,                    // 35
+    FileTrackingInformation,                        // 36
+    FileIdBothDirectoryInformation,                 // 37
+    FileIdFullDirectoryInformation,                 // 38
+    FileValidDataLengthInformation,                 // 39
+    FileShortNameInformation,                       // 40
+    FileIoCompletionNotificationInformation,        // 41
+    FileIoStatusBlockRangeInformation,              // 42
+    FileIoPriorityHintInformation,                  // 43
+    FileSfioReserveInformation,                     // 44
+    FileSfioVolumeInformation,                      // 45
+    FileHardLinkInformation,                        // 46
+    FileProcessIdsUsingFileInformation,             // 47
+    FileNormalizedNameInformation,                  // 48
+    FileNetworkPhysicalNameInformation,             // 49
+    FileIdGlobalTxDirectoryInformation,             // 50
+    FileIsRemoteDeviceInformation,                  // 51
+    FileUnusedInformation,                          // 52
+    FileNumaNodeInformation,                        // 53
+    FileStandardLinkInformation,                    // 54
+    FileRemoteProtocolInformation,                  // 55
+    FileRenameInformationBypassAccessCheck,         // 56
+    FileLinkInformationBypassAccessCheck,           // 57
+    FileVolumeNameInformation,                      // 58
+    FileIdInformation,                              // 59
+    FileIdExtdDirectoryInformation,                 // 60
+    FileReplaceCompletionInformation,               // 61
+    FileHardLinkFullIdInformation,                  // 62
+    FileIdExtdBothDirectoryInformation,             // 63
+    FileDispositionInformationEx,                   // 64
+    FileRenameInformationEx,                        // 65
+    FileRenameInformationExBypassAccessCheck,       // 66
+    FileDesiredStorageClassInformation,             // 67
+    FileStatInformation,                            // 68
+    FileMemoryPartitionInformation,                 // 69
+    FileStatLxInformation,                          // 70
+    FileCaseSensitiveInformation,                   // 71
+    FileLinkInformationEx,                          // 72
+    FileLinkInformationExBypassAccessCheck,         // 73
+    FileStorageReserveIdInformation,                // 74
+    FileCaseSensitiveInformationForceAccessCheck,   // 75
+    FileKnownFolderInformation,   // 76
+
     FileMaximumInformation
 } FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
 
@@ -1275,6 +1294,59 @@ typedef enum _SYSTEM_INFORMATION_CLASS {
     MaxSystemInfoClass = 228
 } SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
 
+typedef enum _KTHREAD_STATE {
+    Initialized,
+    Ready,
+    Running,
+    Standby,
+    Terminated,
+    Waiting,
+    Transition,
+    DeferredReady,
+    GateWait
+} KTHREAD_STATE, *PKTHREAD_STATE;
+
+typedef enum _KWAIT_REASON {
+    Executive,
+    FreePage,
+    PageIn,
+    PoolAllocation,
+    DelayExecution,
+    Suspended,
+    UserRequest,
+    WrExecutive,
+    WrFreePage,
+    WrPageIn,
+    WrPoolAllocation,
+    WrDelayExecution,
+    WrSuspended,
+    WrUserRequest,
+    WrEventPair,
+    WrQueue,
+    WrLpcReceive,
+    WrLpcReply,
+    WrVirtualMemory,
+    WrPageOut,
+    WrRendezvous,
+    WrKeyedEvent,
+    WrTerminated,
+    WrProcessInSwap,
+    WrCpuRateControl,
+    WrCalloutStack,
+    WrKernel,
+    WrResource,
+    WrPushLock,
+    WrMutex,
+    WrQuantumEnd,
+    WrDispatchInt,
+    WrPreempted,
+    WrYieldExecution,
+    WrFastMutex,
+    WrGuardedMutex,
+    WrRundown,
+    MaximumWaitReason
+} KWAIT_REASON, *PKWAIT_REASON;
+
 typedef struct _SYSTEM_MODULE_ENTRY {
     ULONG_PTR  Unused;
     ULONG_PTR  Always0;
@@ -1292,6 +1364,58 @@ typedef struct _SYSTEM_MODULE_INFORMATION {
     SYSTEM_MODULE_ENTRY Module[1];
 } SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
 
+typedef struct _SYSTEM_PROCESS_INFORMATION {
+    ULONG NextEntryOffset;
+    ULONG NumberOfThreads;
+    LARGE_INTEGER WorkingSetPrivateSize; //VISTA
+    ULONG HardFaultCount; //WIN7
+    ULONG NumberOfThreadsHighWatermark; //WIN7
+    ULONGLONG CycleTime; //WIN7
+    LARGE_INTEGER CreateTime;
+    LARGE_INTEGER UserTime;
+    LARGE_INTEGER KernelTime;
+    UNICODE_STRING ImageName;
+    KPRIORITY BasePriority;
+    HANDLE UniqueProcessId;
+    HANDLE InheritedFromUniqueProcessId;
+    ULONG HandleCount;
+    ULONG SessionId;
+    ULONG_PTR PageDirectoryBase;
+    SIZE_T PeakVirtualSize;
+    SIZE_T VirtualSize;
+    ULONG PageFaultCount;
+    SIZE_T PeakWorkingSetSize;
+    SIZE_T WorkingSetSize;
+    SIZE_T QuotaPeakPagedPoolUsage;
+    SIZE_T QuotaPagedPoolUsage;
+    SIZE_T QuotaPeakNonPagedPoolUsage;
+    SIZE_T QuotaNonPagedPoolUsage;
+    SIZE_T PagefileUsage;
+    SIZE_T PeakPagefileUsage;
+    SIZE_T PrivatePageCount;
+    LARGE_INTEGER ReadOperationCount;
+    LARGE_INTEGER WriteOperationCount;
+    LARGE_INTEGER OtherOperationCount;
+    LARGE_INTEGER ReadTransferCount;
+    LARGE_INTEGER WriteTransferCount;
+    LARGE_INTEGER OtherTransferCount;
+} SYSTEM_PROCESS_INFORMATION, *PSYSTEM_PROCESS_INFORMATION;
+
+typedef struct _SYSTEM_THREAD_INFORMATION {
+    LARGE_INTEGER KernelTime;
+    LARGE_INTEGER UserTime;
+    LARGE_INTEGER CreateTime;
+    ULONG WaitTime;
+    PVOID StartAddress;
+    CLIENT_ID ClientId;
+    KPRIORITY Priority;
+    LONG BasePriority;
+    ULONG ContextSwitches;
+    KTHREAD_STATE ThreadState;
+    KWAIT_REASON WaitReason;
+    ULONG PadPadAlignment;
+} SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
+
 typedef enum _OBJECT_INFO_CLASS {
     ObjectBasicInformation,
     ObjectNameInformation,
@@ -1307,3 +1431,4 @@ typedef enum _MEMORY_INFORMATION_CLASS {
     MemoryBasicVlmInformation,
     MemoryWorkingSetExList
 } MEMORY_INFORMATION_CLASS, *PMEMORY_INFORMATION_CLASS;
+

@@ -7,6 +7,18 @@
         "en": "Thread",
         "zh-Hans": "线程"
     },
+    "Explore": {
+        "en": "Explore",
+        "zh-Hans": "浏览"
+    },
+    "Terminate": {
+        "en": "Terminate",
+        "zh-Hans": "终止"
+    },
+    "Properties": {
+        "en": "Properties",
+        "zh-Hans": "属性"
+    },
     "LocateInList": {
         "en": "Locate in list",
         "zh-Hans": "在列表中定位"

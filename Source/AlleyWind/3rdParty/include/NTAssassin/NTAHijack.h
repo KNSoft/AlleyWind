@@ -38,7 +38,10 @@ typedef struct _HIJACK_CALLPROCPARAM {
 /// <param name="ExitCode">Pointer to variable to receive remote thread exit code</param>
 /// <param name="Timeout">Timeout in milliseconds</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-/// <remarks>HIJACK_PROCESS_ACCESS access is required</remarks>
+/// <remarks>
+/// HIJACK_PROCESS_ACCESS access is required
+/// if Timeout is 0, ExitCode always returns STILL_ACTIVE
+/// </remarks>
 _Success_(return != FALSE) NTA_API BOOL NTAPI Hijack_ExecShellcode(_In_ HANDLE ProcessHandle, _In_reads_bytes_(ShellCodeSize) PVOID ShellCode, SIZE_T ShellCodeSize, _In_reads_bytes_opt_(ParamSize) PVOID Param, SIZE_T ParamSize, _Out_opt_ PDWORD ExitCode, DWORD Timeout);
 
 /// <summary>

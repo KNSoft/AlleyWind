@@ -41,35 +41,35 @@ NTA_API BOOL NTAPI GDI_FrameRect(HDC DC, PRECT Rect, INT Width, DWORD ROP);
 NTA_API UINT NTAPI GDI_WriteBitmap(HDC DC, HBITMAP Bitmap, _Out_writes_bytes_opt_(BufferSize) PVOID Buffer, UINT BufferSize);
 
 /// <summary>
-/// Initializes ENUMLOGFONTEXDVW structure members EXCEPT LOGFONT (elfEnumLogfontEx.elfLogFont)
+/// Initializes ENUMLOGFONTEXDVW structure
 /// </summary>
-/// <param name="InternalFontInfo">Pointer to the ENUMLOGFONTEXDVW structure</param>
-NTA_API VOID NTAPI GDI_InitInternalFontInfo(_Out_ PENUMLOGFONTEXDVW InternalFontInfo);
-
-/// <summary>
-/// Initializes LOGFONTW structure with default and specified attributes
-/// </summary>
-/// <param name="FontInfo">Pointer to the LOGFONTW structure</param>
-/// <param name="FontSize">Font size</param>
-/// <param name="FontWeight">Font weight</param>
-/// <param name="FontName">Font's famliy name, or NULL to use the first font matches attributes</param>
-NTA_API VOID NTAPI GDI_SetFontInfo(_Out_ PLOGFONTW FontInfo, LONG FontSize, LONG FontWeight, _In_opt_z_ PCWSTR FontName);
-
-/// <summary>
-/// Creates a logical font
-/// </summary>
-/// <seealso cref="CreateFont"/>
-/// <returns>Handle to the logical font, or NULL if failed</returns>
-NTA_API HFONT NTAPI GDI_CreateFont(LONG FontSize, LONG FontWeight, _In_opt_z_ PCWSTR FontName);
+/// <seealso cref="LOGFONT"/>
+NTA_API VOID NTAPI GDI_InitFontInfoEx(
+    _Out_ PENUMLOGFONTEXDVW FontInfo,
+    LONG Height,
+    LONG Width,
+    LONG Escapement,
+    LONG Orientation,
+    LONG Weight,
+    BOOL Italic,
+    BOOL Underline,
+    BOOL StrikeOut,
+    BYTE CharSet,
+    BYTE OutPrecision,
+    BYTE ClipPrecision,
+    BYTE Quality,
+    BYTE PitchAndFamily,
+    _In_opt_z_ PCWSTR Name);
+#define GDI_InitFontInfo(FontInfo, Size, Weight, Name) GDI_InitFontInfoEx(FontInfo, Size, 0, 0, 0, Weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Name)
 
 /// <summary>
 /// Retrieves information for the font
 /// </summary>
 /// <seealso cref="GetObject"/>
 /// <param name="Font">Handle to the font</param>
-/// <param name="FontInfo">Pointer to the LOGFONTW structure receives information</param>
+/// <param name="FontInfo">Pointer to the ENUMLOGFONTEXDVW structure receives information</param>
 /// <returns>Number of bytes stored or 0 if failed</returns>
-NTA_API INT NTAPI GDI_GetFont(HFONT Font, PLOGFONTW FontInfo);
+NTA_API INT NTAPI GDI_GetFont(HFONT Font, PENUMLOGFONTEXDVW FontInfo);
 
 /// <summary>
 /// Draws an icon

@@ -85,7 +85,6 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
 }
 
 BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
-    NTSTATUS                lStatus;
     HANDLE                  hProc = NULL;
     DWORD_PTR               dwpExtraSize, dwpNextOffset, dwpOffset;
     LONG_PTR                lBytes;
@@ -96,19 +95,16 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         { 0, 0, FALSE }
     };
     BOOL                    bUseHijack = FALSE, b32Proc;
-    LPSTR                   lpszGLFunc;
+    PCSTR                   pszGLFunc;
     UI_GetWindowLong(hWnd, TRUE, bClassExtraBytes ? GCL_CBCLSEXTRA : GCL_CBWNDEXTRA, &dwpExtraSize);
     if (dwpExtraSize) {
         DWORD       dwPID;
         GetWindowThreadProcessId(hWnd, &dwPID);
         hProc = RProc_Open(HIJACK_PROCESS_ACCESS, dwPID);
         if (hProc) {
-            if (NT_SUCCESS(RProc_IsWow64(hProc, &b32Proc))) {
-                lpszGLFunc = bClassExtraBytes ?
-                    (b32Proc ? "GetClassLongW" : "GetClassLongPtrW") :
-                    (b32Proc ? "GetWindowLongW" : "GetWindowLongPtrW");
-                lStatus = Hijack_LoadProcAddr(hProc, L"user32.dll", lpszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                if (NT_SUCCESS(lStatus)) {
+            if (RProc_IsWow64(hProc, &b32Proc)) {
+                pszGLFunc = AW_GetWindowLongFunc(bClassExtraBytes, b32Proc, IsWindowUnicode(hWnd));
+                if (Hijack_LoadProcAddr(hProc, L"user32.dll", pszGLFunc, (PVOID*)&stCallProc.Procedure, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))) {
                     stCallProc.RetValue = 0;
                     stCallProc.CallConvention = CC_STDCALL;
                     stCallProc.ParamCount = ARRAYSIZE(stGLParams);
@@ -126,9 +122,8 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         dwpOffset = 0;
         do {
             if (bUseHijack) {
-                stGLParams[1].Value = dwpOffset;
-                lStatus = Hijack_CallProc(hProc, &stCallProc, stGLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout));
-                if (NT_SUCCESS(lStatus) && stCallProc.LastError == ERROR_SUCCESS) {
+                if (Hijack_CallProc(hProc, &stCallProc, stGLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)) &&
+                    stCallProc.LastError == ERROR_SUCCESS) {
                     lBytes = (LONG_PTR)stCallProc.RetValue;
                 } else {
                     lBytes = 0;
