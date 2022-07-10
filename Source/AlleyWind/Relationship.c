@@ -115,7 +115,7 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
         HWND        hWnd, hCtl;
         TCHAR       szTempPath[MAX_PATH], szBuffer[1024];
         DWORD       dwPID, dwTID;
-        HANDLE      hProc, hThread;
+        HANDLE      hProc = NULL, hThread = NULL;
         PVOID       pThreadStartAddr;
         INT         i, iTemp;
         UINT        uTemp;
@@ -193,24 +193,24 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
                 NtClose(hProc);
             }
         } else if (wParam == MAKEWPARAM(IDM_WNDOP_PROPERTIES, 0)) {
-            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            HWND hRelatedWnd = GetSelectedRelationship(hDlg);
             if (hRelatedWnd)
                 AW_OpenWndPropDlg(hRelatedWnd);
         } else if (wParam == MAKEWPARAM(IDM_WNDOP_LOCATEINLIST, 0)) {
-            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            HWND hRelatedWnd = GetSelectedRelationship(hDlg);
             if (hRelatedWnd && AW_LocateWindowInTree(hRelatedWnd))
                 BringWindowToTop(AW_GetMainDlg());
         } else if (wParam == MAKEWPARAM(IDM_WNDOP_HIGHLIGHT, 0)) {
-            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            HWND hRelatedWnd = GetSelectedRelationship(hDlg);
             if (hRelatedWnd)
                 AW_HighlightWindow(hRelatedWnd);
         }
     } else if (uMsg == WM_NOTIFY) {
         LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE)lParam;
         if (lpnmitem->hdr.idFrom == IDC_WNDPROP_RELATIONSHIP_WINDOW_LIST && lpnmitem->hdr.code == NM_RCLICK && lpnmitem->iItem != -1) {
-            HWND    hRelatedWnd = GetSelectedRelationship(hDlg);
+            HWND hRelatedWnd = GetSelectedRelationship(hDlg);
             if (IsWindow(hRelatedWnd)) {
-                POINT   pt;
+                POINT pt;
                 if (!GetCursorPos(&pt))
                     pt.x = pt.y = 0;
                 Ctl_PopupMenu(hPropRelationshipWndOpMenu, pt.x, pt.y, hDlg);
