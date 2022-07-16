@@ -10,7 +10,7 @@
 /// <param name="Window">Handle to the window</param>
 /// <param name="DPIX">Pointer to an UINT variable to receive DPI-X</param>
 /// <param name="DPIY">Pointer to an UINT variable to receive DPI-Y</param>
-/// <returns>TRUE if DPI values returned by dialog box subclassed by DPI_SetAutoAdjustSubclass, or FALSE if returned by system</returns>
+/// <returns>TRUE if DPI values returned by GetDpiForMonitor, or FALSE if returned by GetDeviceCaps</returns>
 NTA_API BOOL NTAPI DPI_FromWindow(HWND Window, _Out_ PUINT DPIX, _Out_ PUINT DPIY);
 
 /// <summary>

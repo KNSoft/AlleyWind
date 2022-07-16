@@ -13,47 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Simplified, China) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""winres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-#endif    // Chinese (Simplified, China) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
 // Neutral (Default) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
-#pragma code_page(1252)
+#pragma code_page(936)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -312,7 +276,7 @@ IDI_APP                 ICON                    "Resource\\App.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,20611
+ FILEVERSION 1,1,0,20716
  PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -330,7 +294,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "KNSoft(knsoft.org)"
             VALUE "FileDescription", "AlleyWind"
-            VALUE "FileVersion", "1.1.0.20611"
+            VALUE "FileVersion", "1.1.0.20716"
             VALUE "InternalName", "AlleyWind.exe"
             VALUE "LegalCopyright", "Copyright (c) 2022 KNSoft"
             VALUE "OriginalFilename", "AlleyWind.exe"
@@ -417,6 +381,42 @@ BEGIN
 END
 
 #endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (Simplified, China) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Chinese (Simplified, China) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
