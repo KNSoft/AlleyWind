@@ -313,7 +313,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_VISIBLE_CHECK, BN_CLICKED)) {
             HWND hWnd = AW_GetWndPropHWnd(hDlg);
-            ShowWindow(hWnd, SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED ? SW_SHOW : SW_HIDE);
+            ShowWindowAsync(hWnd, SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED ? SW_SHOW : SW_HIDE);
             SendMessage((HWND)lParam, BM_SETCHECK, IsWindowVisible(hWnd) ? BST_CHECKED : BST_UNCHECKED, 0);
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_OPERATION_ENABLED_CHECK, BN_CLICKED)) {
             HWND hWnd = AW_GetWndPropHWnd(hDlg);
