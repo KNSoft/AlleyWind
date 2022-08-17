@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 /// <summary>
 /// Writes data to specified file or device

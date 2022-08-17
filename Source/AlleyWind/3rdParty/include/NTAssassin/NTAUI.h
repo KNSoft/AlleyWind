@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 #define UI_NONOTIFYPROP TEXT("NTAssassin.UI.NoNotify")
 
@@ -176,3 +176,10 @@ NTA_API BOOL NTAPI UI_MessageLoop(HWND Window);
 /// <param name="Point">Pointer to a POINT structure receives position of virtual screen</param>
 /// <param name="Size">Pointer to a SIZE structure receives size of virtual screen</param>
 NTA_API VOID NTAPI UI_GetScreenPos(_Out_opt_ PPOINT Point, _Out_opt_ PSIZE Size);
+
+/// <summary>
+/// Allows WM_DROPFILES message, especially in an elevated application
+/// </summary>
+/// <param name="Window">Handle to the window</param>
+/// <returns>TRUE if successed, or FALSE if failed</returns>
+NTA_API BOOL NTAPI UI_AllowDrop(HWND Window);

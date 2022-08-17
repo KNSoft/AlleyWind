@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 /// <summary>
 /// Gets time interval like stop watch

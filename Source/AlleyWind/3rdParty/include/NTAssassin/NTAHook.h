@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 #pragma region C-style wrappers of Microsoft Detours
 

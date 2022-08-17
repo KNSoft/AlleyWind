@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef struct _PE_STRUCT {
     PIMAGE_DOS_HEADER               Image;

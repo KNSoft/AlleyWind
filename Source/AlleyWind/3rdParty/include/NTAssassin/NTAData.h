@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 /// <summary>
 /// Combines groups of structures into a new allocated buffer

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 // Ldr*
 
@@ -220,7 +220,7 @@ NtProtectVirtualMemory(
     _Inout_ _At_(*BaseAddress, _Readable_bytes_(*RegionSize) _Writable_bytes_(*RegionSize) _Post_readable_byte_size_(*RegionSize)) PVOID* BaseAddress,
     _Inout_ PSIZE_T RegionSize,
     _In_ ULONG Protect,
-    _In_ PULONG OldProtect
+    _Out_ PULONG OldProtect
 );
 
 NTSYSAPI
@@ -392,6 +392,18 @@ NtOpenProcessToken(
     _Out_ PHANDLE       TokenHandle
 );
 
+_Must_inspect_result_ __kernel_entry
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueryInformationToken(
+    _In_ HANDLE TokenHandle,
+    _In_ TOKEN_INFORMATION_CLASS TokenInformationClass,
+    _Out_writes_bytes_to_opt_(TokenInformationLength, *ReturnLength) PVOID TokenInformation,
+    _In_ ULONG TokenInformationLength,
+    _Out_ PULONG ReturnLength
+);
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -556,4 +568,22 @@ EndTask(
     HWND hWnd,
     BOOL fShutDown,
     BOOL fForce
+);
+
+// WinStation
+
+NTSYSAPI
+BOOL
+NTAPI
+WinStationEnumerateW(
+    HANDLE ServerHandle,
+    PSESSIONIDW *SessionIds,
+    PULONG Count
+);
+
+NTSYSAPI
+BOOL
+NTAPI
+WinStationFreeMemory(
+    PVOID Buffer
 );

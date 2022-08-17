@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
+#include "NTARProc.h"
 
 /// <summary>
 /// Callback procedure to enumerate DLL modules
@@ -59,11 +60,6 @@ NTA_API HMODULE NTAPI Proc_GetDllHandleByName(_In_z_ PCWSTR DllName);
 /// </summary>
 /// <seealso cref="RtlCreateUserThread"/>
 #define Proc_CreateThread(StartAddress, Parameter, CreateSuspended, ThreadHandle) RProc_CreateThread(CURRENT_PROCESS_HANDLE, StartAddress, Parameter, CreateSuspended, ThreadHandle)
-
-/// <summary>
-/// Gets handle to ntdll.dll, which the first initialized module
-/// </summary>
-#define Proc_GetNtdllHandle() (CONTAINING_RECORD(NT_GetPEB()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderModuleList)->DllBase)
 
 /// <summary>
 /// Loads specified DLL

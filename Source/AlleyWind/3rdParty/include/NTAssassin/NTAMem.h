@@ -1,19 +1,20 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
+#include "NTANT.h"
 
 /// <summary>
 /// Allocates heap memory
 /// </summary>
 /// <seealso cref="RtlAllocateHeap"/>
-#define Mem_HeapAllocEx(Flags, Size) RtlAllocateHeap(DEFAULT_HEAP_HANDLE, Flags, Size)
-#define Mem_HeapAlloc(Size) RtlAllocateHeap(DEFAULT_HEAP_HANDLE, 0, Size)
+#define Mem_HeapAllocEx(Flags, Size) RtlAllocateHeap(NT_GetHeap(), Flags, Size)
+#define Mem_HeapAlloc(Size) RtlAllocateHeap(NT_GetHeap(), 0, Size)
 
 /// <summary>
 /// Frees heap memory
 /// </summary>
 /// <seealso cref="RtlFreeHeap"/>
-#define Mem_HeapFree(BaseAddress) RtlFreeHeap(DEFAULT_HEAP_HANDLE, 0, BaseAddress)
+#define Mem_HeapFree(BaseAddress) RtlFreeHeap(NT_GetHeap(), 0, BaseAddress)
 
 /// <summary>
 /// Allocates memory pages
@@ -27,7 +28,7 @@ NTA_API _Ret_maybenull_ _Post_writable_byte_size_(Size) _Check_return_ PVOID NTA
 /// </summary>
 /// <seealso cref="VirtualProtect"/>
 /// <return>Error code storaged in last STATUS</return>
-NTA_API BOOL NTAPI Mem_PageProt(_In_ PVOID BaseAddress, _In_ SIZE_T Size, ULONG Protect, _In_ PULONG OldProtect);
+NTA_API BOOL NTAPI Mem_PageProt(_In_ PVOID BaseAddress, _In_ SIZE_T Size, ULONG Protect, _Out_ PULONG OldProtect);
 
 /// <summary>
 /// Frees memory pages

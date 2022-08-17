@@ -37,5 +37,5 @@ INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 }
 
 DWORD WINAPI OpenWndPropDlgThread(PVOID lParam) {
-    return (DWORD)DialogBoxParam(IMAGE_BASE, MAKEINTRESOURCE(IDD_WNDPROP), NULL, WndPropDlgProc, (LPARAM)lParam);
+    return (DWORD)DialogBoxParam(NT_GetImageBase(), MAKEINTRESOURCE(IDD_WNDPROP), NULL, WndPropDlgProc, (LPARAM)lParam);
 }

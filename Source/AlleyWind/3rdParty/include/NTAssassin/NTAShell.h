@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef enum _SHELL_EXEC_VERB {
     ShellExecEdit,

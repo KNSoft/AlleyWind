@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef struct _GDI_SNAPSHOT {
     HDC     DC;

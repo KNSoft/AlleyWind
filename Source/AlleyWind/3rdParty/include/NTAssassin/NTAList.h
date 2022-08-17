@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef struct _DATA_LIST_NODE DATA_LIST_NODE, *PDATA_LIST_NODE;
 

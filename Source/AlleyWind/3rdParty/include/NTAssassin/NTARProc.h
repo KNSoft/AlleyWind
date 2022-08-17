@@ -2,46 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
-
-typedef enum _RPROC_LM_SE_NAMES {
-    LSE_CREATE_TOKEN_NAME = 2,
-    LSE_ASSIGNPRIMARYTOKEN_NAME = 3,
-    LSE_LOCK_MEMORY_NAME = 4,
-    LSE_INCREASE_QUOTA_NAME = 5,
-    LSE_UNSOLICITED_INPUT_NAME = 0,
-    LSE_MACHINE_ACCOUNT_NAME = 6,
-    LSE_TCB_NAME = 7,
-    LSE_SECURITY_NAME = 8,
-    LSE_TAKE_OWNERSHIP_NAME = 9,
-    LSE_LOAD_DRIVER_NAME = 10,
-    LSE_SYSTEM_PROFILE_NAME = 11,
-    LSE_SYSTEMTIME_NAME = 12,
-    LSE_PROF_SINGLE_PROCESS_NAME = 13,
-    LSE_INC_BASE_PRIORITY_NAME = 14,
-    LSE_CREATE_PAGEFILE_NAME = 15,
-    LSE_CREATE_PERMANENT_NAME = 16,
-    LSE_BACKUP_NAME = 17,
-    LSE_RESTORE_NAME = 18,
-    LSE_SHUTDOWN_NAME = 19,
-    LSE_DEBUG_NAME = 20,
-    LSE_AUDIT_NAME = 21,
-    LSE_SYSTEM_ENVIRONMENT_NAME = 22,
-    LSE_CHANGE_NOTIFY_NAME = 23,
-    LSE_REMOTE_SHUTDOWN_NAME = 24,
-    LSE_UNDOCK_NAME = 25,
-    LSE_SYNC_AGENT_NAME = 26,
-    LSE_ENABLE_DELEGATION_NAME = 27,
-    LSE_MANAGE_VOLUME_NAME = 28,
-    LSE_IMPERSONATE_NAME = 29,
-    LSE_CREATE_GLOBAL_NAME = 30,
-    LSE_TRUSTED_CREDMAN_ACCESS_NAME = 31,
-    LSE_RELABEL_NAME = 32,
-    LSE_INC_WORKING_SET_NAME = 34,
-    LSE_TIME_ZONE_NAME = 35,
-    LSE_CREATE_SYMBOLIC_LINK_NAME = 36,
-    LSE_DELEGATE_SESSION_USER_IMPERSONATE_NAME = 37
-} RPROC_LM_SE_NAMES, *PRPROC_LM_SE_NAMES;
+#include "NTADef.h"
 
 typedef struct _RPROC_MAP {
     PVOID   Local;
@@ -93,7 +54,7 @@ NTA_API HANDLE NTAPI RProc_OpenThread(DWORD DesiredAccess, DWORD ThreadId);
 /// <param name="Privilege">Privilege to adjust, specify one of RPROC_LM_SE_NAMES value</param>
 /// <param name="EnableState">Set to TRUE to enable specified privilege, or FALSE to disable</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-NTA_API BOOL NTAPI RProc_AdjustPrivilege(HANDLE ProcessHandle, RPROC_LM_SE_NAMES Privilege, BOOL EnableState);
+NTA_API BOOL NTAPI RProc_AdjustPrivilege(HANDLE ProcessHandle, SE_PRIVILEGE Privilege, BOOL EnableState);
 
 /// <summary>
 /// Gets Win32 format full path of specified process
@@ -154,8 +115,8 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_MemMap(HANDLE ProcessHandle,
 /// </summary>
 /// <param name="ProcessHandle">Handle to the remote process</param>
 /// <param name="RemoteMemMap">Pointer to the RPROC_MAP structure</param>
-/// <returns>NTSTATUS</returns>
-#define RProc_MemUnmap(ProcessHandle, RemoteMemMap) NtFreeVirtualMemory(ProcessHandle, &(RemoteMemMap)->Remote, &(RemoteMemMap)->RemoteSize, MEM_DECOMMIT)
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
+NTA_API BOOL NTAPI RProc_MemUnmap(HANDLE ProcessHandle, _In_ PRPROC_MAP RemoteMemMap);
 
 /// <seealso cref="IsWow64Process"/>
 _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_IsWow64(_In_ HANDLE hProcess, _Out_ PBOOL Wow64Process);

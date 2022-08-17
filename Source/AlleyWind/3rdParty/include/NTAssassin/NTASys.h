@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
+#include "NTANT.h"
 
 typedef enum _SYS_DLL_NAME {
     SysDllNameNTDll = 0,
@@ -95,19 +96,32 @@ NTA_API VOID NTAPI Sys_StatusMsgBox(HWND Owner, PCWSTR Title, NTSTATUS Status);
 /// Gets current system processes information
 /// </summary>
 /// <returns>Pointer to SYSTEM_PROCESS_INFORMATION buffer, should be freed by <c>Sys_FreeProcessInfo</c> when no longer needed</returns>
-NTA_API PSYSTEM_PROCESS_INFORMATION Sys_GetProcessInfo();
+NTA_API PSYSTEM_PROCESS_INFORMATION NTAPI Sys_GetProcessInfo();
 #define Sys_FreeProcessInfo(p) Mem_Free(p);
 
 /// <seealso cref="IsProcessorFeaturePresent"/>
 #define Sys_TestCPUFeature(Feature) ((Feature) < PROCESSOR_FEATURE_MAX ? (BOOL)NT_GetKUSD()->ProcessorFeatures[(Feature)] : FALSE)
 
 /// <seealso cref="IsEqualGUID"/>
-NTA_API BOOL Sys_EqualGUID(REFGUID GUID1, REFGUID GUID2);
+NTA_API BOOL NTAPI Sys_EqualGUID(REFGUID GUID1, REFGUID GUID2);
 
 /// <summary>
 /// Copies GUID
 /// </summary>
-NTA_API VOID Sys_CopyGUID(LPGUID Dest, REFGUID Src);
+NTA_API VOID NTAPI Sys_CopyGUID(LPGUID Dest, REFGUID Src);
+
+/// <summary>
+/// Gets current active session
+/// </summary>
+/// <param name="SessionId">Pointer to a DWORD variable receives Session ID returned</param>
+/// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI Sys_GetActiveSession(PDWORD SessionId);
+
+// Error code converts
+NTA_API DWORD NTAPI Sys_HRESULTToWin32(HRESULT hr);
+#define Sys_Win32ToHRESULT HRESULT_FROM_WIN32
+#define Sys_StatusToWin32 RtlNtStatusToDosError
+#define Sys_StatusToHRESULT HRESULT_FROM_NT
 
 /// Still in draft, do not use
 NTA_API BOOL NTAPI Sys_RegDriver(PCWSTR Name, PCWSTR ImagePath, BOOL Volatile);

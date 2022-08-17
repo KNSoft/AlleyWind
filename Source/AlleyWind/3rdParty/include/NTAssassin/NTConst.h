@@ -10,6 +10,11 @@
 // Well-known SIDs
 #define SID_STRING_LOCAL_SYSTEM L"S-1-5-18"
 
+// User32
+#ifndef WM_COPYGLOBALDATA
+#define WM_COPYGLOBALDATA 0x49
+#endif
+
 // NTSTATUS
 #undef WIN32_NO_STATUS
 #include <ntstatus.h>

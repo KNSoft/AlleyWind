@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
+#include "NTANT.h"
 
 /// <seealso cref="GetStdHandle"/>
 #define Con_GetStdHandle(i) (\

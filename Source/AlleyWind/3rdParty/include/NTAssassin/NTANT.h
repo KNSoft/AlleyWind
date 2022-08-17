@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 /// <summary>
 /// Gets member value of current TEB
@@ -57,8 +57,22 @@
 /// <summary>
 /// Gets the pointer to KUSER_SHARED_DATA
 /// </summary>
-/// <returns>The the pointer to KUSER_SHARED_DATA</returns>
 #define NT_GetKUSD() ((CONST PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
+
+/// <summary>
+/// Gets the Handle to the default heap
+/// </summary>
+#define NT_GetHeap() ((HANDLE)NT_GetPEB()->ProcessHeap)
+
+/// <summary>
+/// Gets instance handle of current executable module
+/// </summary>
+#define NT_GetImageBase() (NT_GetPEB()->ImageBaseAddress)
+
+/// <summary>
+/// Gets the handle to current directory
+/// </summary>
+#define NT_GetCurDirHandle() (NT_GetPEB()->ProcessParameters->CurrentDirectory.Handle)
 
 /// <summary>
 /// Gets or sets the last error
@@ -75,6 +89,11 @@
 #define NT_GetLastStatus() NT_GetTEBMemberDWORD(LastStatusValue)
 #define NT_SetLastStatus(lStatus) NT_SetTEBMemberDWORD(LastStatusValue, lStatus)
 #define NT_LastStatusSucceed() (NT_SUCCESS(NT_GetTEBMemberDWORD(LastStatusValue)))
+
+/// <summary>
+/// Gets handle to ntdll.dll, which the first initialized module
+/// </summary>
+#define NT_GetNtdllHandle() (CONTAINING_RECORD(NT_GetPEB()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderModuleList)->DllBase)
 
 /// <summary>
 /// Sets last win32 error according to given NT Status

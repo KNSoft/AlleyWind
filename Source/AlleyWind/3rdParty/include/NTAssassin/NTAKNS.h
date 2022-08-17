@@ -2,7 +2,9 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
+#include "NTAI18N.h"
+#include "NTADlg.h"
 
 #define KNS_VERSION_ALPHA 1
 #define KNS_VERSION_BETA 2

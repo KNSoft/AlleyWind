@@ -1,60 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
-
-#undef _LDR_DATA_TABLE_ENTRY
-#undef LDR_DATA_TABLE_ENTRY
-#undef PLDR_DATA_TABLE_ENTRY
-#undef _PEB_LDR_DATA
-#undef PEB_LDR_DATA
-#undef PPEB_LDR_DATA
-#undef _PEB
-#undef PEB
-#undef PPEB
-#undef _TEB
-#undef TEB
-#undef PTEB
-#undef _RTL_USER_PROCESS_PARAMETERS
-#undef RTL_USER_PROCESS_PARAMETERS
-#undef PRTL_USER_PROCESS_PARAMETERS
-#undef _CLIENT_ID
-#undef CLIENT_ID
-#undef _FILE_INFORMATION_CLASS
-#undef FILE_INFORMATION_CLASS
-#undef PFILE_INFORMATION_CLASS
-#undef FileDirectoryInformation
-#undef _PROCESSINFOCLASS
-#undef PROCESSINFOCLASS
-#undef ProcessBasicInformation
-#undef ProcessDebugPort
-#undef ProcessWow64Information
-#undef ProcessImageFileName
-#undef ProcessBreakOnTermination
-#undef _THREADINFOCLASS
-#undef THREADINFOCLASS
-#undef ThreadIsIoPending
-#undef _SYSTEM_INFORMATION_CLASS
-#undef SYSTEM_INFORMATION_CLASS
-#undef _SYSTEM_PROCESS_INFORMATION
-#undef SYSTEM_PROCESS_INFORMATION
-#undef PSYSTEM_PROCESS_INFORMATION
-#undef _SYSTEM_THREAD_INFORMATION
-#undef SYSTEM_THREAD_INFORMATION
-#undef PSYSTEM_THREAD_INFORMATION
-#undef SystemBasicInformation
-#undef SystemPerformanceInformation
-#undef SystemTimeOfDayInformation
-#undef SystemProcessInformation
-#undef SystemProcessorPerformanceInformation
-#undef SystemInterruptInformation
-#undef SystemExceptionInformation
-#undef SystemRegistryQuotaInformation
-#undef SystemLookasideInformation
-#undef SystemCodeIntegrityInformation
-#undef SystemPolicyInformation
-#undef OBJECT_INFORMATION_CLASS
-#undef ObjectBasicInformation
-#undef ObjectTypeInformation
+#include "NTADef.h"
 
 typedef struct _MEMORY_RANGE_ENTRY {
     PVOID VirtualAddress;
@@ -1416,13 +1362,13 @@ typedef struct _SYSTEM_THREAD_INFORMATION {
     ULONG PadPadAlignment;
 } SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
 
-typedef enum _OBJECT_INFO_CLASS {
+typedef enum _OBJECT_INFORMATION_CLASS {
     ObjectBasicInformation,
     ObjectNameInformation,
     ObjectTypeInformation,
     ObjectAllTypesInformation,
     ObjectHandleInformation
-} OBJECT_INFO_CLASS, *POBJECT_INFO_CLASS;
+} OBJECT_INFORMATION_CLASS, *POBJECT_INFORMATION_CLASS;
 
 typedef enum _MEMORY_INFORMATION_CLASS {
     MemoryBasicInformation,
@@ -1432,3 +1378,65 @@ typedef enum _MEMORY_INFORMATION_CLASS {
     MemoryWorkingSetExList
 } MEMORY_INFORMATION_CLASS, *PMEMORY_INFORMATION_CLASS;
 
+typedef WCHAR WINSTATIONNAME[WINSTATIONNAME_LENGTH + 1];
+
+typedef enum _WINSTATIONSTATECLASS {
+    State_Active = 0,
+    State_Connected = 1,
+    State_ConnectQuery = 2,
+    State_Shadow = 3,
+    State_Disconnected = 4,
+    State_Idle = 5,
+    State_Listen = 6,
+    State_Reset = 7,
+    State_Down = 8,
+    State_Init = 9
+} WINSTATIONSTATECLASS, *PWINSTATIONSTATECLASS;
+
+typedef struct _SESSIONIDW {
+    DWORD SessionId;
+    WINSTATIONNAME WinStationName;
+    WINSTATIONSTATECLASS State;
+} SESSIONIDW, *PSESSIONIDW;
+
+// Well-known privileges
+typedef enum _SE_PRIVILEGE {
+    SE_MIN_WELL_KNOWN_PRIVILEGE = 2,
+    SE_CREATE_TOKEN_PRIVILEGE = 2,
+    SE_ASSIGNPRIMARYTOKEN_PRIVILEGE = 3,
+    SE_LOCK_MEMORY_PRIVILEGE = 4,
+    SE_INCREASE_QUOTA_PRIVILEGE = 5,
+    SE_UNSOLICITED_INPUT_PRIVILEGE = 0,
+    SE_MACHINE_ACCOUNT_PRIVILEGE = 6,
+    SE_TCB_PRIVILEGE = 7,
+    SE_SECURITY_PRIVILEGE = 8,
+    SE_TAKE_OWNERSHIP_PRIVILEGE = 9,
+    SE_LOAD_DRIVER_PRIVILEGE = 10,
+    SE_SYSTEM_PROFILE_PRIVILEGE = 11,
+    SE_SYSTEMTIME_PRIVILEGE = 12,
+    SE_PROF_SINGLE_PROCESS_PRIVILEGE = 13,
+    SE_INC_BASE_PRIORITY_PRIVILEGE = 14,
+    SE_CREATE_PAGEFILE_PRIVILEGE = 15,
+    SE_CREATE_PERMANENT_PRIVILEGE = 16,
+    SE_BACKUP_PRIVILEGE = 17,
+    SE_RESTORE_PRIVILEGE = 18,
+    SE_SHUTDOWN_PRIVILEGE = 19,
+    SE_DEBUG_PRIVILEGE = 20,
+    SE_AUDIT_PRIVILEGE = 21,
+    SE_SYSTEM_ENVIRONMENT_PRIVILEGE = 22,
+    SE_CHANGE_NOTIFY_PRIVILEGE = 23,
+    SE_REMOTE_SHUTDOWN_PRIVILEGE = 24,
+    SE_UNDOCK_PRIVILEGE = 25,
+    SE_SYNC_AGENT_PRIVILEGE = 26,
+    SE_ENABLE_DELEGATION_PRIVILEGE = 27,
+    SE_MANAGE_VOLUME_PRIVILEGE = 28,
+    SE_IMPERSONATE_PRIVILEGE = 29,
+    SE_CREATE_GLOBAL_PRIVILEGE = 30,
+    SE_TRUSTED_CREDMAN_ACCESS_PRIVILEGE = 31,
+    SE_RELABEL_PRIVILEGE = 32,
+    SE_INC_WORKING_SET_PRIVILEGE = 34,
+    SE_TIME_ZONE_PRIVILEGE = 35,
+    SE_CREATE_SYMBOLIC_LINK_PRIVILEGE = 36,
+    SE_DELEGATE_SESSION_USER_IMPERSONATE_PRIVILEGE = 37,
+    SE_MAX_WELL_KNOWN_PRIVILEGE = SE_DELEGATE_SESSION_USER_IMPERSONATE_PRIVILEGE
+} SE_PRIVILEGE, *PSE_PRIVILEGE;

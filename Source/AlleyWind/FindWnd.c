@@ -20,13 +20,13 @@ LRESULT             lFindWndThoroughSearchState = BST_UNCHECKED;
 BLENDFUNCTION       stFindWndCaptureBlendFunc = { AC_SRC_OVER, 0, 128, 0 };
 
 VOID AW_OpenFindWndDlg(HWND hDlg) {
-    DialogBoxParam(IMAGE_BASE, MAKEINTRESOURCE(IDD_FINDWND), hDlg, FindWndDlgProc, (LPARAM)hDlg);
+    DialogBoxParam(NT_GetImageBase(), MAKEINTRESOURCE(IDD_FINDWND), hDlg, FindWndDlgProc, (LPARAM)hDlg);
 }
 
 VOID FindWndInit() {
     RtlInitializeCriticalSection(&csFindWndCapture);
-    stFindWndCaptureScreenSnapshot.hCursor = LoadImage(IMAGE_BASE, MAKEINTRESOURCE(IDC_CAPTURE), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
-    stFindWndCaptureScreenSnapshot.hInstance = IMAGE_BASE;
+    stFindWndCaptureScreenSnapshot.hCursor = LoadImage(NT_GetImageBase(), MAKEINTRESOURCE(IDC_CAPTURE), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
+    stFindWndCaptureScreenSnapshot.hInstance = NT_GetImageBase();
 }
 
 VOID FindWndUninit() {

@@ -1,11 +1,15 @@
 ﻿#pragma once
 
+#include "NTADef.h"
+#include "NTAGDI.h"
+
+#include "NTADlg_ValueEditor.h"
+#include "NTADlg_RectEditor.h"
+
 #define DLG_PADDING_X   14
 #define DLG_PADDING_Y   20
 #define DLG_CONTROL_H   28
 #define DLG_BUTTON_W    124
-
-#include "NTAssassin.h"
 
 typedef struct _DLG_TEMPLATE {
     DLGTEMPLATE Template;
@@ -39,9 +43,6 @@ struct _DLG_TREEVIEWPROPSHEETPAGE {
     HANDLE                      Handle;     // Reserved
     HTREEITEM                   TreeItem;   // Reserved
 };
-
-#include "NTADlg_ValueEditor.h"
-#include "NTADlg_RectEditor.h"
 
 /// <summary>
 /// Initializes DLGTEMPLATE structure
@@ -92,7 +93,7 @@ NTA_API BOOL NTAPI Dlg_ChooseColor(HWND Owner, _Inout_ LPCOLORREF Color);
 /// <param name="Font">Pointer to a LOGFONT specifies initial font and receives the result</param>
 /// <param name="Color">Pointer to a COLORREF specifies initial font color and receives the result, or NULL if ignore effects of font</param>
 /// <returns>TRUE if a font was chosen, or FALSE if user canceled or an error occured</returns>
-NTA_API BOOL NTAPI Dlg_ChooseFont(HWND Owner, _Out_ PLOGFONTW Font, _Inout_opt_ LPCOLORREF Color);
+NTA_API BOOL NTAPI Dlg_ChooseFont(HWND Owner, _Inout_ PLOGFONTW Font, _Inout_opt_ LPCOLORREF Color);
 
 /// <summary>
 /// Takes snapshot for current screen and provides a new created window

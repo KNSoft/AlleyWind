@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef struct _I18N_ITEM {
     DWORD   KeyHash;

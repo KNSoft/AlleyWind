@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 NTA_API _Check_return_ size_t __cdecl UCRT_wcslen(_In_z_ wchar_t const* _String);
 NTA_API _Check_return_ size_t __cdecl UCRT_strlen(_In_z_ char const* _Str);

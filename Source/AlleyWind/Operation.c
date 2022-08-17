@@ -43,8 +43,8 @@ COLORREF            crPicked;
 
 VOID WndPropOperationInit() {
     RtlInitializeCriticalSection(&csPickColor);
-    stWndPropOperationPickColorScreenSnapshot.hCursor = LoadImage(IMAGE_BASE, MAKEINTRESOURCE(IDC_PICK), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
-    stWndPropOperationPickColorScreenSnapshot.hInstance = IMAGE_BASE;
+    stWndPropOperationPickColorScreenSnapshot.hCursor = LoadImage(NT_GetImageBase(), MAKEINTRESOURCE(IDC_PICK), IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
+    stWndPropOperationPickColorScreenSnapshot.hInstance = NT_GetImageBase();
     GetIconInfo(stWndPropOperationPickColorScreenSnapshot.hCursor, &stPickColorCursorInfo);
     if (stPickColorCursorInfo.hbmColor)
         DeleteObject(stPickColorCursorInfo.hbmColor);

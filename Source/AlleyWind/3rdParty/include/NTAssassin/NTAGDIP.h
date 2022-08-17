@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef PVOID PGDIP_IMAGE, PGDIP_GRAPHICS, PGDIP_BRUSH, PGDIP_PATH;
 
