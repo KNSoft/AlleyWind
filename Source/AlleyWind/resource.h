@@ -15,6 +15,7 @@
 #define IDD_FINDWND                     110
 #define IDR_MENU                        110
 #define IDD_WNDPROP_RELATIONSHIP        111
+#define IDR_MAIN                        111
 #define IDC_MAINBANNER                  1001
 #define IDC_MAINTREE                    1002
 #define IDC_WNDPROPTAB                  1003
@@ -128,6 +129,7 @@
 #define IDC_FINDWND_HANDLE_CHECK        1080
 #define IDC_FINDWND_HANDLE_EDIT         1081
 #define IDC_FINDWND_THOROUGHSEARCH_CHECK 1082
+#define IDC_FINDWND_IGNORECHILD_CHECK   1082
 #define IDC_FINDWND_RECT_TEXT           1083
 #define IDC_WNDPROP_GENERAL_RECTRELATIVEPOS_CHECK 1083
 #define IDC_FINDWND_CLASS_EDIT2         1084
@@ -136,7 +138,9 @@
 #define IDC_FINDWND_CAPTURE_TEXT        1085
 #define IDC_WNDPROP_OPERATION_VISIBLE_CHECK 1085
 #define IDC_WNDPROP_OPERATION_TOPMOST_CHECK 1086
+#define IDC_FINDWND_IGNORETRANSPARENT_CHECK 1086
 #define IDC_WNDPROP_OPERATION_SWITCHTO_BTN 1087
+#define IDC_FINDWND_IGNORE_TEXT         1087
 #define IDC_FINDWND_OK_BTN              1088
 #define IDC_WNDPROP_OPERATION_REDRAW_BTN 1088
 #define IDC_WNDPROP_GENERAL_PROCESS_BTN 1089
@@ -181,13 +185,17 @@
 #define IDC_WNDPROP_MSG_TIMEOUT_COMBOX  1117
 #define IDC_WNDPROP_MSG_MSDN_LINK       1118
 #define IDC_WNDPROP_MSG_ATTACH_CHECK    1119
+#define IDM_FINDWND                     40001
+#define IDM_RELOAD                      40004
+#define IDM_EXPWNDTREE                  40006
+#define IDM_SAVETREE                    40006
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_RESOURCE_VALUE        112
+#define _APS_NEXT_COMMAND_VALUE         40008
 #define _APS_NEXT_CONTROL_VALUE         1120
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

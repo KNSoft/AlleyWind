@@ -63,13 +63,27 @@ NTA_API VOID NTAPI GDI_InitFontInfoEx(
 #define GDI_InitFontInfo(FontInfo, Size, Weight, Name) GDI_InitFontInfoEx(FontInfo, Size, 0, 0, 0, Weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Name)
 
 /// <summary>
+/// Gets system default display font information
+/// </summary>
+/// <param name="FontInfo">Pointer to the ENUMLOGFONTEXDVW structure receives information</param>
+/// <param name="Height">New height value overwrites outputs</param>
+/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last ERROR</returns>
+NTA_API _Success_(return != FALSE) BOOL NTAPI GDI_GetDefaultFont(_Out_ PENUMLOGFONTEXDVW FontInfo, _In_opt_ LONG Height);
+
+/// <summary>
+/// Creates default UI font
+/// </summary>
+/// <returns>Handle to the font</returns>
+NTA_API HFONT NTAPI GDI_CreateDefaultFont();
+
+/// <summary>
 /// Retrieves information for the font
 /// </summary>
 /// <seealso cref="GetObject"/>
 /// <param name="Font">Handle to the font</param>
 /// <param name="FontInfo">Pointer to the ENUMLOGFONTEXDVW structure receives information</param>
 /// <returns>Number of bytes stored or 0 if failed</returns>
-NTA_API INT NTAPI GDI_GetFont(HFONT Font, PENUMLOGFONTEXDVW FontInfo);
+NTA_API _Success_(return > 0) INT NTAPI GDI_GetFont(_In_ HFONT Font, _Out_ PENUMLOGFONTEXDVW FontInfo);
 
 /// <summary>
 /// Draws an icon

@@ -36,6 +36,16 @@ VOID NTAPI DPI_ScaleRect(_Inout_ PRECT Rect, _In_ UINT OldDPIX, _In_ UINT NewDPI
 /// Subclasses a dialog box to support High-DPI
 /// </summary>
 /// <param name="Dialog">Handle to the dialog box</param>
-/// <param name="Font">Handle to the font apply to the dialog box</param>
+/// <param name="FontInfo">Pointer to an ENUMLOGFONTEXDVW structure specifies font to use, NULL to use default UI font</param>
 /// <returns>TRUE if subclass successfully, or FALSE if failed</returns>
-NTA_API BOOL NTAPI DPI_SetAutoAdjustSubclass(HWND Dialog, _In_opt_ HFONT Font);
+NTA_API BOOL NTAPI DPI_SetAutoAdjustSubclass(_In_ HWND Dialog, _In_opt_ PENUMLOGFONTEXDVW FontInfo);
+
+/// <summary>
+/// Gets information about a dialog box subclassed by DPI_SetAutoAdjustSubclass
+/// </summary>
+/// <param name="Dialog">Handle to the dialog box</param>
+/// <param name="NewDPIX">Current DPI-X</param>
+/// <param name="NewDPIY">Current DPI-Y</param>
+/// <param name="Font">Current font</param>
+/// <returns>TRUE if subclass successfully, or FALSE if failed</returns>
+NTA_API _Success_(return != FALSE) BOOL NTAPI DPI_GetAutoAdjustSubclass(_In_ HWND Dialog, _Out_opt_ PDWORD NewDPIX, _Out_opt_ PDWORD NewDPIY, _Out_opt_ HFONT * Font);

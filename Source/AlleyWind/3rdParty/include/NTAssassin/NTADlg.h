@@ -103,16 +103,26 @@ NTA_API BOOL NTAPI Dlg_ChooseFont(HWND Owner, _Inout_ PLOGFONTW Font, _Inout_opt
 /// <returns>TRUE if the window created and ended successfully, or FALSE if failed</returns>
 NTA_API BOOL NTAPI Dlg_ScreenSnapshot(_In_ PDLG_SCREENSNAPSHOT ScreenSnapshot);
 
-typedef VOID(CALLBACK* DLG_RESIZEDPROC)(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc);
+/// <summary>
+/// Callback registered by <c>Dlg_SetResizingSubclass</c>
+/// </summary>
+/// <param name="Dialog">Handle to the dialog box</param>
+/// <param name="NewWidth">New width of client area</param>
+/// <param name="NewHeight">New height of client area</param>
+/// <param name="WindowPos">Not NULL when window changed by window-management functions</param>
+typedef VOID(CALLBACK* DLG_RESIZEDPROC)(HWND Dialog, LONG NewWidth, LONG NewHeight, PWINDOWPOS WindowPos);
 
 /// <summary>
 /// Subclasses a dialog box to help support of resizing
 /// </summary>
 /// <param name="Dialog">Handle to the dialog box</param>
-/// <param name="MinWidth">Minimum width of window, set to 0 will no limitation</param>
-/// <param name="MinHeight">Minimum height of window, set to 0 will no limitation</param>
+/// <param name="MinLimit">Use current size as minimum size of window, set to FALSE will no limitation</param>
 /// <param name="ResizedProc">Callback procedure will be invoked when the size of dialog box changed</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, no error code reports due to SetWindowSubclass does</returns>
-NTA_API BOOL NTAPI Dlg_SetResizingSubclass(HWND Dialog, LONG MinWidth, LONG MinHeight, DLG_RESIZEDPROC ResizedProc);
+NTA_API BOOL NTAPI Dlg_SetResizingSubclass(HWND Dialog, BOOL MinLimit, DLG_RESIZEDPROC ResizedProc);
 
 NTA_API BOOL NTAPI Dlg_SetTreeViewPropertySheetSubclass(HWND Dialog, HWND TreeView, PRECT SheetRect, _In_ PDLG_TREEVIEWPROPSHEETPAGE Sheets, UINT Count);
+
+/// <seealso cref="UI_MessageLoop"/>
+/// <remarks>Support dialogue messages and accelerators</remarks>
+NTA_API _Success_(return != FALSE) BOOL NTAPI Dlg_MessageLoop(_In_opt_ HWND Window, _In_ HWND Dialog, _In_opt_ HACCEL Accelerator, _Out_opt_ PUINT_PTR ExitCode);

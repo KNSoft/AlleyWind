@@ -10,9 +10,6 @@
 #define NTA_API
 #endif
 
-// Avoid "unused parameter" warnings
-#define UNUSED UNREFERENCED_PARAMETER
-
 #if _WIN64
 #define IS_WIN64 TRUE
 #else
@@ -38,6 +35,9 @@
 #define PURGE_HWND(hWnd) (hWnd)
 #endif
 
+// Reserves low 32-bit only
+#define PURGE_PTR32(p) ((PVOID)((ULONG_PTR)(p) & 0xFFFFFFFF))
+
 // Gets equality of two value after masked
 #define IS_EQUAL_MASKED(val1, val2, mask) (!(((val1) ^ (val2)) & (mask)))
 // Sets or removes a flag from a combination value
@@ -51,3 +51,9 @@
 
 // Moves pointer
 #define MOVE_PTR(address, offset, type) ((type *)((PBYTE)(address) + (LONG_PTR)(offset)))
+
+// Defines structure with variable length field
+#define DEFINE_ANYSIZE_STRUCT(var, structure, type, size) struct {\
+    structure Base;\
+    type Extra[(size) - 1];\
+} var

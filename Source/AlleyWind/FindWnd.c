@@ -8,15 +8,17 @@ I18N_CTLTEXT astFindWndTextCtl[] = {
     { IDC_FINDWND_RECT_TEXT, I18NIndex_Rectangle },
     { IDC_FINDWND_HANDLE_CHECK, I18NIndex_Handle },
     { IDC_FINDWND_CAPTURE_TEXT, I18NIndex_Capture },
-    { IDC_FINDWND_THOROUGHSEARCH_CHECK, I18NIndex_SearchChild },
+    { IDC_FINDWND_IGNORE_TEXT, I18NIndex_Ignore },
+    { IDC_FINDWND_IGNORECHILD_CHECK, I18NIndex_ChildLevel },
+    { IDC_FINDWND_IGNORETRANSPARENT_CHECK, I18NIndex_Transparent },
     { IDC_FINDWND_OK_BTN, I18NIndex_OK }
 };
 
 CRITICAL_SECTION    csFindWndCapture;
 DLG_SCREENSNAPSHOT  stFindWndCaptureScreenSnapshot = { CaptureWndProc, NULL, NULL, 0, WS_POPUP | WS_VISIBLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW };
 HWND                hFindWndTarget;
-BOOL                bFindWndThoroughSearch;
-LRESULT             lFindWndThoroughSearchState = BST_UNCHECKED;
+BOOL                bFindWndIgnoreChild, bFindWndIgnoreTransparent;
+LRESULT             lFindWndIgnoreChildState = BST_CHECKED, lFindWndIgnoreTransparentState = BST_CHECKED;
 BLENDFUNCTION       stFindWndCaptureBlendFunc = { AC_SRC_OVER, 0, 128, 0 };
 
 VOID AW_OpenFindWndDlg(HWND hDlg) {
@@ -98,7 +100,7 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         ClientToScreen(hWnd, &stRef.pt);
         // Search child window
         stRef.hCaptureWnd = hWnd;
-        if (bFindWndThoroughSearch) {
+        if (!bFindWndIgnoreChild) {
             while (TRUE) {
                 POINT pt;
                 pt.x = stRef.pt.x;
@@ -141,9 +143,10 @@ LRESULT CALLBACK CaptureWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-HWND FindWndOpenCaptureWindow(BOOL bThorough) {
+HWND FindWndOpenCaptureWindow(BOOL bIgnoreChild, BOOL bIgnoreTransparent) {
     RtlEnterCriticalSection(&csFindWndCapture);
-    bFindWndThoroughSearch = bThorough;
+    bFindWndIgnoreChild = bIgnoreChild;
+    bFindWndIgnoreTransparent = bIgnoreTransparent;
     hFindWndTarget = NULL;
     Dlg_ScreenSnapshot(&stFindWndCaptureScreenSnapshot);
     RtlLeaveCriticalSection(&csFindWndCapture);
@@ -196,7 +199,8 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
         I18N_InitCtlTexts(hDlg, astFindWndTextCtl);
         SendMessage(hDlg, WM_SETTEXT, 0, (LPARAM)I18N_GetString(I18NIndex_FindWindow));
         SendMessage(hDlg, WM_SETICON, ICON_BIG, (LPARAM)KNS_GetIcon());
-        UI_SetDlgButtonCheck(hDlg, IDC_FINDWND_THOROUGHSEARCH_CHECK, lFindWndThoroughSearchState);
+        UI_SetDlgButtonCheck(hDlg, IDC_FINDWND_IGNORECHILD_CHECK, lFindWndIgnoreChildState);
+        UI_SetDlgButtonCheck(hDlg, IDC_FINDWND_IGNORETRANSPARENT_CHECK, lFindWndIgnoreTransparentState);
     } else if (uMsg == WM_COMMAND) {
         if (wParam == MAKEWPARAM(IDC_FINDWND_CAPTURE_PIC, STN_CLICKED)) {
             HWND        hWnd;
@@ -205,7 +209,8 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             RECT        rcTemp;
             BOOL        bTemp;
             SetWindowPos(hDlg, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-            hWnd = FindWndOpenCaptureWindow(UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_THOROUGHSEARCH_CHECK) == BST_CHECKED);
+            hWnd = FindWndOpenCaptureWindow(UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_IGNORECHILD_CHECK) == BST_CHECKED,
+                UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_IGNORETRANSPARENT_CHECK) == BST_CHECKED);
             if (hWnd) {
                 FindWndCheckItem(hDlg, IDC_FINDWND_HANDLE_CHECK, TRUE, TRUE);
                 AW_SetPropCtlFormat(hDlg, IDC_FINDWND_HANDLE_EDIT, TRUE, TEXT("%08X"), (DWORD)(DWORD_PTR)hWnd);
@@ -221,8 +226,10 @@ INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
             wParam == MAKEWPARAM(IDC_FINDWND_CLASS_CHECK, BN_CLICKED) ||
             wParam == MAKEWPARAM(IDC_FINDWND_HANDLE_CHECK, BN_CLICKED)) {
             FindWndCheckItem(hDlg, LOWORD(wParam), FALSE, SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED);
-        } else if (wParam == MAKEWPARAM(IDC_FINDWND_THOROUGHSEARCH_CHECK, BN_CLICKED)) {
-            lFindWndThoroughSearchState = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0);
+        } else if (wParam == MAKEWPARAM(IDC_FINDWND_IGNORECHILD_CHECK, BN_CLICKED)) {
+            lFindWndIgnoreChildState = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0);
+        } else if (wParam == MAKEWPARAM(IDC_FINDWND_IGNORETRANSPARENT_CHECK, BN_CLICKED)) {
+            lFindWndIgnoreTransparentState = SendMessage((HWND)lParam, BM_GETCHECK, 0, 0);
         } else if (wParam == MAKEWPARAM(IDC_FINDWND_OK_BTN, BN_CLICKED)) {
             HWND    hWnd = AW_GetWndPropHWnd(hDlg);
             if (UI_GetDlgButtonCheck(hDlg, IDC_FINDWND_HANDLE_CHECK) == BST_CHECKED) {

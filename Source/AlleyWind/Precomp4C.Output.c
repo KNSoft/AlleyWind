@@ -9,7 +9,7 @@
 
 #include "3rdParty\include\NTAssassin\NTAssassin.h"
 
-I18N_ITEM Precomp4C_I18N_Lang_en_Items[151] = {
+I18N_ITEM Precomp4C_I18N_Lang_en_Items[154] = {
 	{0x642A6E98, TEXT("None")},
 	{0x004F13BC, TEXT("OK")},
 	{0xD192564E, TEXT("Apply")},
@@ -62,8 +62,11 @@ I18N_ITEM Precomp4C_I18N_Lang_en_Items[151] = {
 	{0x7E3763A0, TEXT("Small Icon")},
 	{0x3D604D0C, TEXT("Background Brush")},
 	{0x6F4A897C, TEXT("Window Bytes Size")},
+	{0x624A7629, TEXT("Find Window")},
 	{0x7A9C9E06, TEXT("Capture")},
-	{0x8BCB4854, TEXT("Search child")},
+	{0xDBCA7BD2, TEXT("Ignore")},
+	{0xD1BB57A8, TEXT("Child level")},
+	{0x40982A32, TEXT("Transparent")},
 	{0xECFF8B99, TEXT("Find")},
 	{0x74B0E346, TEXT("Caption")},
 	{0x28A33488, TEXT("Handle")},
@@ -81,11 +84,11 @@ I18N_ITEM Precomp4C_I18N_Lang_en_Items[151] = {
 	{0xECFD8B1C, TEXT("File")},
 	{0x7B545358, TEXT("Tool")},
 	{0x4812EEA1, TEXT("Help")},
-	{0xBE628359, TEXT("Reload")},
-	{0x187172D2, TEXT("Export Tree")},
+	{0x51DC47B8, TEXT("Reload	F5")},
+	{0xA01B527A, TEXT("Save Tree	Ctrl+S")},
 	{0xDE27A49E, TEXT("Options")},
-	{0xC5D6A23E, TEXT("Exit")},
-	{0x624A7629, TEXT("Find Window")},
+	{0xE332661D, TEXT("Exit	Alt+F4")},
+	{0x0A377B88, TEXT("Find Window	Ctrl+F")},
 	{0x45BDDE8D, TEXT("About")},
 	{0x81E4980E, TEXT("Homepage")},
 	{0xF2D7D6CA, TEXT("Text Files(*.txt)\0*.txt\0")},
@@ -162,9 +165,9 @@ I18N_ITEM Precomp4C_I18N_Lang_en_Items[151] = {
 	{0xC4558787, TEXT("Message")},
 	{0x94A2E010, TEXT("Window")}
 };
-I18N_LANGUAGE Precomp4C_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), NULL, FALSE, Precomp4C_I18N_Lang_en_Items };
+I18N_LANGUAGE Precomp4C_I18N_Lang_en = { {('en'), 0, 0}, 9, NULL, TEXT("English"), TEXT("Segoe UI"), FALSE, Precomp4C_I18N_Lang_en_Items };
 
-I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151] = {
+I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[154] = {
 	{0x642A6E98, TEXT("无")},
 	{0x004F13BC, TEXT("确定")},
 	{0xD192564E, TEXT("应用")},
@@ -217,8 +220,11 @@ I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151] = {
 	{0x7E3763A0, TEXT("小图标")},
 	{0x3D604D0C, TEXT("背景画刷")},
 	{0x6F4A897C, TEXT("窗口字节大小")},
+	{0x624A7629, TEXT("查找窗口")},
 	{0x7A9C9E06, TEXT("捕获")},
-	{0x8BCB4854, TEXT("查找子级")},
+	{0xDBCA7BD2, TEXT("忽略")},
+	{0xD1BB57A8, TEXT("子级")},
+	{0x40982A32, TEXT("透明")},
 	{0xECFF8B99, TEXT("查找")},
 	{0x74B0E346, TEXT("标题")},
 	{0x28A33488, TEXT("句柄")},
@@ -236,11 +242,11 @@ I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151] = {
 	{0xECFD8B1C, TEXT("文件")},
 	{0x7B545358, TEXT("工具")},
 	{0x4812EEA1, TEXT("帮助")},
-	{0xBE628359, TEXT("重新加载")},
-	{0x187172D2, TEXT("导出树")},
+	{0x51DC47B8, TEXT("重新加载	F5")},
+	{0xA01B527A, TEXT("保存树	Ctrl+S")},
 	{0xDE27A49E, TEXT("选项")},
-	{0xC5D6A23E, TEXT("退出")},
-	{0x624A7629, TEXT("查找窗口")},
+	{0xE332661D, TEXT("退出	Alt+F4")},
+	{0x0A377B88, TEXT("查找窗口	Ctrl+F")},
 	{0x45BDDE8D, TEXT("关于")},
 	{0x81E4980E, TEXT("主页")},
 	{0xF2D7D6CA, TEXT("文本文档(*.txt)\0*.txt\0")},

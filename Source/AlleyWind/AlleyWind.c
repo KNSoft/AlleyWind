@@ -8,6 +8,7 @@ KNS_INFO stKNSInfo = {
         RGB(255, 140, 0),
         IDI_APP,
         IDD_MAIN,
+        IDR_MAIN,
         MainDlgProc,
         IDC_MAINBANNER,
         0,
@@ -24,14 +25,15 @@ KNS_INFO stKNSInfo = {
 };
 
 DWORD Main() {
-    NTSTATUS    lStatus;
+    NTSTATUS    Status;
     HRESULT     hr;
     AWSettings_Init();
-    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-    if (hr == S_OK || hr == S_FALSE || hr == RPC_E_CHANGED_MODE) {
-        lStatus = (NTSTATUS)KNS_Startup(&stKNSInfo);
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+    if (SUCCEEDED(hr)) {
+        Status = (NTSTATUS)KNS_Startup(&stKNSInfo);
         CoUninitialize();
-    } else
-        lStatus = hr;
-    return NtTerminateProcess(CURRENT_PROCESS_HANDLE, lStatus);
+    } else {
+        Status = hr;
+    }
+    return NtTerminateProcess(CURRENT_PROCESS_HANDLE, Status);
 }

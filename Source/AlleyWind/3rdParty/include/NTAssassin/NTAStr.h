@@ -265,6 +265,8 @@ _Success_(return == TRUE) NTA_API BOOL NTAPI Str_RGBToHexExA(COLORREF Color, _Ou
 #define Str_RGBToHex Str_RGBToHexA
 #endif
 
+NTA_API DOUBLE NTAPI Str_SimplifySize(UINT64 Size, _Out_opt_ PCHAR Unit);
+
 // String Hash
 
 NTA_API DWORD NTAPI Str_HashW(_In_ PCWSTR String, STR_HASH_ALGORITHM HashAlgorithm);

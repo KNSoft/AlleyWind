@@ -6,9 +6,9 @@
 /// Rounds a value
 /// </summary>
 #define Math_RoundUInt(val) ((UINT)((val) + 0.5))
-#define Math_RoundInt(val) ((INT)((val) + 0.5))
+#define Math_RoundInt(val) ((INT)((val) + ((val) > 0 ? 0.5 : -0.5)))
 #define Math_RoundUIntPtr(val) ((INT_PTR)((val) + 0.5))
-#define Math_RoundIntPtr(val) ((INT_PTR)((val) + 0.5))
+#define Math_RoundIntPtr(val) ((INT_PTR)((val) + ((val) > 0 ? 0.5 : -0.5)))
 
 /// <summary>
 /// Generates a random
@@ -35,5 +35,3 @@ NTA_API ULONG NTAPI Math_RangedRandom(ULONG Min, ULONG Max);
 /// Gets the absolute difference between two numbers
 /// </summary>
 #define Math_AbsDiff(v1, v2) ((v1) > (v2) ? (v1) - (v2) : (v2) - (v1))
-
-NTA_API DOUBLE NTAPI Math_SimplifySize(UINT64 Size, PCHAR Unit);

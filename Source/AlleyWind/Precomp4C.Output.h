@@ -11,7 +11,7 @@
 
 #include "3rdParty\include\NTAssassin\NTAssassin.h"
 
-#define Precomp4C_I18N_ITEM_COUNT 151
+#define Precomp4C_I18N_ITEM_COUNT 154
 
 typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_None,
@@ -66,8 +66,11 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_SmallIcon,
 	I18NIndex_BackgroundBrush,
 	I18NIndex_WindowBytesSize,
+	I18NIndex_FindWindow,
 	I18NIndex_Capture,
-	I18NIndex_SearchChild,
+	I18NIndex_Ignore,
+	I18NIndex_ChildLevel,
+	I18NIndex_Transparent,
 	I18NIndex_Find,
 	I18NIndex_Caption,
 	I18NIndex_Handle,
@@ -85,11 +88,11 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_File,
 	I18NIndex_Tool,
 	I18NIndex_Help,
-	I18NIndex_Reload,
-	I18NIndex_ExportTree,
+	I18NIndex_MenuReload,
+	I18NIndex_MenuSaveTree,
 	I18NIndex_Options,
-	I18NIndex_Exit,
-	I18NIndex_FindWindow,
+	I18NIndex_MenuExit,
+	I18NIndex_MenuFindWindow,
 	I18NIndex_About,
 	I18NIndex_Homepage,
 	I18NIndex_ExportTreeFilter,
@@ -167,7 +170,7 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_Window
 } I18N_ITEM_INDEX, *PI18N_ITEM_INDEX;
 
-extern I18N_ITEM Precomp4C_I18N_Lang_en_Items[151];
-extern I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[151];
+extern I18N_ITEM Precomp4C_I18N_Lang_en_Items[154];
+extern I18N_ITEM Precomp4C_I18N_Lang_zh_Hans_Items[154];
 extern PI18N_LANGUAGE Precomp4C_I18N_Lang_Table[2];
 

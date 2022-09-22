@@ -3,23 +3,20 @@
 // Menu
 
 // File
-#define IDM_RELOAD 1
-#define IDM_EXPWNDTREE 2
 #define IDM_OPTIONS 3
 #define IDM_EXIT 4
 
 CTL_MENU stMenuFile[] = {
-    { MF_STRING, IDM_RELOAD, I18NIndex_Reload, NULL, 0 },
-    { MF_STRING, IDM_EXPWNDTREE, I18NIndex_ExportTree, NULL, 0 },
+    { MF_STRING, IDM_RELOAD, I18NIndex_MenuReload, NULL, 0 },
+    { MF_STRING, IDM_SAVETREE, I18NIndex_MenuSaveTree, NULL, 0 },
     //{ MF_STRING, IDM_OPTIONS, I18NIndex_Options, NULL, 0 },
-    { MF_STRING, IDM_EXIT, I18NIndex_Exit, NULL, 0 }
+    { MF_STRING, IDM_EXIT, I18NIndex_MenuExit, NULL, 0 }
 };
 
 // Tool
-#define IDM_FINDWND 10
 
 CTL_MENU stMenuTool[] = {
-    { MF_STRING, IDM_FINDWND, I18NIndex_FindWindow, NULL, 0 }
+    { MF_STRING, IDM_FINDWND, I18NIndex_MenuFindWindow, NULL, 0 }
 };
 
 // Help
@@ -210,8 +207,8 @@ BOOL AW_LocateWindowInTree(HWND hWnd) {
         return FALSE;
 }
 
-VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, BOOL FromMgmtFunc) {
-    RECT    rcClient;
+VOID CALLBACK MainDlgResizeProc(HWND Dialog, LONG NewWidth, LONG NewHeight, PWINDOWPOS WindowPos) {
+    RECT rcClient;
     if (GetClientRect(hBanner, &rcClient)) {
         SetWindowPos(hBanner, NULL, 0, 0, NewWidth, rcClient.bottom, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
         SetWindowPos(hTree, NULL, 0, 0, NewWidth, NewHeight - rcClient.bottom, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
@@ -251,9 +248,9 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         // Load window tree
         AW_LoadWindowTreeAsync(TRUE, NULL, NULL);
     } else if (uMsg == WM_COMMAND) {
-        if (wParam == MAKEWPARAM(IDM_RELOAD, 0)) {
+        if (LOWORD(wParam) == IDM_RELOAD) {
             AW_LoadWindowTreeAsync(TRUE, NULL, NULL);
-        } else if (wParam == MAKEWPARAM(IDM_EXPWNDTREE, 0)) {
+        } else if (LOWORD(wParam) == IDM_EXPWNDTREE) {
             HANDLE      hExpTreeFile;
             TCHAR       szExpTreeFileName[MAX_PATH];
             CHAR        szUTF8BOM[] = "\xEF\xBB\xBF";
@@ -268,7 +265,7 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                     KNS_LastStatusMsgBox(hDlg);
                 }
             }
-        } else if (wParam == MAKEWPARAM(IDM_FINDWND, 0)) {
+        } else if (LOWORD(wParam) == IDM_FINDWND) {
             AW_OpenFindWndDlg(hDlg);
         } else if (wParam == MAKEWPARAM(IDM_EXIT, 0)) {
             EndDialog(hDlg, 0);
@@ -313,8 +310,10 @@ INT_PTR WINAPI MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         WndPropRelationshipUninit();
         WndPropResourceUninit();
         WndPropOperationUninit();
-        EndDialog(hDlg, 0);
+        DestroyWindow(hDlg);
         SetWindowLongPtr(hDlg, DWLP_MSGRESULT, 0);
+    } else if (uMsg == WM_DESTROY) {
+        PostQuitMessage(0);
     } else
         return FALSE;
     return TRUE;

@@ -54,7 +54,7 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI Hijack_ExecShellcode(_In_ HANDLE P
 /// <param name="Timeout">Timeout in milliseconds</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
 /// <remarks>HIJACK_PROCESS_ACCESS access is required</remarks>
-NTA_API BOOL NTAPI Hijack_LoadProcAddr(_In_ HANDLE ProcessHandle, _In_z_ PCWSTR LibName, _In_opt_z_ PCSTR ProcName, _When_(ProcName != NULL, _Notnull_) PVOID64* ProcAddr, DWORD Timeout);
+_Success_(return != FALSE) NTA_API BOOL NTAPI Hijack_LoadProcAddr(_In_ HANDLE ProcessHandle, _In_z_ PCWSTR LibName, _In_opt_z_ PCSTR ProcName, _Out_opt_ _When_(ProcName != NULL, _Notnull_) PVOID64* ProcAddr, DWORD Timeout);
 
 /// <summary>
 /// Starts a thread and calls a procedure in remote process

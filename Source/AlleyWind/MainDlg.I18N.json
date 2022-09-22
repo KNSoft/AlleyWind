@@ -11,25 +11,25 @@
         "en": "Help",
         "zh-Hans": "帮助"
     },
-    "Reload": {
-        "en": "Reload",
-        "zh-Hans": "重新加载"
+    "MenuReload": {
+        "en": "Reload\tF5",
+        "zh-Hans": "重新加载\tF5"
     },
-    "ExportTree": {
-        "en": "Export Tree",
-        "zh-Hans": "导出树"
+    "MenuSaveTree": {
+        "en": "Save Tree\tCtrl+S",
+        "zh-Hans": "保存树\tCtrl+S"
     },
     "Options": {
         "en": "Options",
         "zh-Hans": "选项"
     },
-    "Exit": {
-        "en": "Exit",
-        "zh-Hans": "退出"
+    "MenuExit": {
+        "en": "Exit\tAlt+F4",
+        "zh-Hans": "退出\tAlt+F4"
     },
-    "FindWindow": {
-        "en": "Find Window",
-        "zh-Hans": "查找窗口"
+    "MenuFindWindow": {
+        "en": "Find Window\tCtrl+F",
+        "zh-Hans": "查找窗口\tCtrl+F"
     },
     "About": {
         "en": "About",

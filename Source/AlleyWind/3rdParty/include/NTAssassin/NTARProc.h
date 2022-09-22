@@ -19,7 +19,8 @@ typedef struct _RPROC_MAP {
 /// <param name="DllLdrEntry">Pointer to a LDR_DATA_TABLE_ENTRY structure represents each DLL</param>
 /// <param name="Param">User defined value passed to this callback</param>
 /// <returns>TRUE if continue enumeration, or FALSE to stop</returns>
-typedef BOOL(CALLBACK* RPROC_DLLENUMPROC)(_In_ HANDLE ProcessHandle, _In_ PLDR_DATA_TABLE_ENTRY DllLdrEntry, LPARAM Param);
+typedef BOOL(CALLBACK* RPROC_DLLENUMPROC64)(_In_ HANDLE ProcessHandle, _In_ PLDR_DATA_TABLE_ENTRY64 DllLdrEntry, LPARAM Param);
+typedef BOOL(CALLBACK* RPROC_DLLENUMPROC32)(_In_ HANDLE ProcessHandle, _In_ PLDR_DATA_TABLE_ENTRY32 DllLdrEntry, LPARAM Param);
 
 /// <summary>
 /// Enumerates DLL modules of remote process
@@ -28,7 +29,8 @@ typedef BOOL(CALLBACK* RPROC_DLLENUMPROC)(_In_ HANDLE ProcessHandle, _In_ PLDR_D
 /// <param name="DllEnumProc">Callback procedure to receive information of each DLL</param>
 /// <param name="Param">User defined value passed to the callback</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-NTA_API BOOL NTAPI RProc_EnumDlls(_In_ HANDLE ProcessHandle, _In_ RPROC_DLLENUMPROC DllEnumProc, LPARAM Param);
+NTA_API BOOL NTAPI RProc_EnumDlls64(_In_ HANDLE ProcessHandle, _In_ RPROC_DLLENUMPROC64 DllEnumProc, LPARAM Param);
+NTA_API BOOL NTAPI RProc_EnumDlls32(_In_ HANDLE ProcessHandle, _In_ RPROC_DLLENUMPROC32 DllEnumProc, LPARAM Param);
 
 /// <seealso cref="RtlCreateUserThread"/>
 _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_CreateThread(_In_ HANDLE ProcessHandle, _In_ LPTHREAD_START_ROUTINE StartAddress, _In_opt_ __drv_aliasesMem PVOID Param, BOOL CreateSuspended, _Out_opt_ PHANDLE ThreadHandle);
@@ -51,10 +53,10 @@ NTA_API HANDLE NTAPI RProc_OpenThread(DWORD DesiredAccess, DWORD ThreadId);
 /// </summary>
 /// <seealso cref="AdjustTokenPrivileges"/>
 /// <param name="ProcessHandle">Handle to the process</param>
-/// <param name="Privilege">Privilege to adjust, specify one of RPROC_LM_SE_NAMES value</param>
-/// <param name="EnableState">Set to TRUE to enable specified privilege, or FALSE to disable</param>
+/// <param name="Privilege">Privilege value to adjust, SE_XXX_PRIVILEGE</param>
+/// <param name="Attributes">Attribute of privilege, SE_PRIVILEGE_XXX, or 0 to disable the privilege</param>
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-NTA_API BOOL NTAPI RProc_AdjustPrivilege(HANDLE ProcessHandle, SE_PRIVILEGE Privilege, BOOL EnableState);
+NTA_API BOOL NTAPI RProc_AdjustPrivilege(_In_ HANDLE ProcessHandle, _In_ SE_PRIVILEGE Privilege, _In_ DWORD Attributes);
 
 /// <summary>
 /// Gets Win32 format full path of specified process
@@ -75,7 +77,7 @@ _Success_(return > 0) NTA_API UINT NTAPI RProc_GetFullImageNameEx(HANDLE Process
 /// <param name="OutputString">Pointer to the buffer to receive translated string</param>
 /// <param name="OutputStringCch">The size of the FilePath buffer in WCHARs</param>
 /// <returns>Number of characters written, NOT including null-terminates, or 0 if failed, error code storaged in last STATUS</returns>
-_Success_(return > 0) NTA_API UINT NTAPI RProc_TranslateAddressEx(HANDLE ProcessHandle, _In_ PVOID Address, _Out_writes_z_(OutputStringCch) PWSTR OutputString, _In_ UINT OutputStringCch);
+_Success_(return > 0) NTA_API UINT NTAPI RProc_TranslateAddressEx(HANDLE ProcessHandle, _In_ ULONGLONG Address, _Out_writes_z_(OutputStringCch) PWSTR OutputString, _In_ UINT OutputStringCch);
 #define RProc_TranslateAddress(ProcessHandle, Address, OutputString) RProc_TranslateAddressEx(ProcessHandle, Address, OutputString, ARRAYSIZE(OutputString))
 
 /// <summary>
@@ -118,5 +120,13 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_MemMap(HANDLE ProcessHandle,
 /// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
 NTA_API BOOL NTAPI RProc_MemUnmap(HANDLE ProcessHandle, _In_ PRPROC_MAP RemoteMemMap);
 
+_Success_(return != FALSE) NTA_API BOOL NTAPI RProc_GetWow64PEB(_In_ HANDLE hProcess, _Out_ PPEB32 * Wow64PEB);
+
 /// <seealso cref="IsWow64Process"/>
 _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_IsWow64(_In_ HANDLE hProcess, _Out_ PBOOL Wow64Process);
+
+/// <summary>
+/// Creates a new process
+/// </summary>
+/// <seealso cref="CreateProcessAsUser"/>
+HANDLE NTAPI RProc_Create(_In_opt_ HANDLE TokenHandle, _In_opt_ LPCWSTR ApplicationName, _Inout_opt_ LPWSTR CommandLine, _In_ BOOL InheritHandles);

@@ -14,6 +14,8 @@
 #pragma comment(lib, "UxTheme.lib")
 #pragma comment(lib, "winsta.lib")
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "UserEnv.lib")
+#pragma comment(lib, "Secur32.lib")
 
 // Always use ComCtl32.dll V6.0
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")

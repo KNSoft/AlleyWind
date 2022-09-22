@@ -2,6 +2,14 @@
 
 #include "NTADef.h"
 
+EXTERN_C_START
+
+// Csr*
+NTSYSAPI
+HANDLE
+NTAPI
+CsrGetProcessId();
+
 // Ldr*
 
 NTSYSAPI
@@ -198,6 +206,11 @@ RtlRandomEx(
     PULONG Seed
 );
 
+NTSYSAPI
+ULONG
+NTAPI
+RtlNtStatusToDosErrorNoTeb(IN NTSTATUS Status);
+
 // Nt*/Zw*
 
 NTSYSAPI
@@ -392,7 +405,8 @@ NtOpenProcessToken(
     _Out_ PHANDLE       TokenHandle
 );
 
-_Must_inspect_result_ __kernel_entry
+_Must_inspect_result_
+__kernel_entry
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -414,6 +428,48 @@ NtAdjustPrivilegesToken(
     _In_ ULONG BufferLength,
     _Out_writes_bytes_to_opt_(BufferLength, *ReturnLength) PTOKEN_PRIVILEGES PreviousState,
     _When_(PreviousState != NULL, _Out_) PULONG ReturnLength
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtDuplicateToken(
+  _In_ HANDLE ExistingTokenHandle,
+  _In_ ACCESS_MASK DesiredAccess,
+  _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+  _In_ BOOLEAN EffectiveOnly,
+  _In_ TOKEN_TYPE TokenType,
+  _Out_ PHANDLE NewTokenHandle
+);
+
+__kernel_entry
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtSetInformationToken(
+  _In_ HANDLE TokenHandle,
+  _In_ TOKEN_INFORMATION_CLASS TokenInformationClass,
+  _In_ PVOID TokenInformation,
+  _In_ ULONG TokenInformationLength
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtCreateToken(
+    _Out_ PHANDLE TokenHandle,
+    _In_ ACCESS_MASK DesiredAccess,
+    _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+    _In_ TOKEN_TYPE TokenType,
+    _In_ PLUID AuthenticationId,
+    _In_ PLARGE_INTEGER ExpirationTime,
+    _In_ PTOKEN_USER TokenUser,
+    _In_ PTOKEN_GROUPS TokenGroups,
+    _In_ PTOKEN_PRIVILEGES TokenPrivileges,
+    _In_opt_ PTOKEN_OWNER TokenOwner,
+    _In_ PTOKEN_PRIMARY_GROUP TokenPrimaryGroup,
+    _In_opt_ PTOKEN_DEFAULT_DACL TokenDefaultDacl,
+    _In_ PTOKEN_SOURCE TokenSource
 );
 
 NTSYSAPI
@@ -485,6 +541,17 @@ NtTerminateProcess(
     NTSTATUS ExitStatus
 );
 
+// Registry
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtOpenKey(
+    OUT PHANDLE KeyHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN POBJECT_ATTRIBUTES ObjectAttributes
+);
+
 NTSYSAPI
 NTSTATUS
 NTAPI
@@ -496,6 +563,18 @@ NtCreateKey(
     IN PUNICODE_STRING Class OPTIONAL,
     IN ULONG CreateOptions,
     OUT PULONG Disposition OPTIONAL
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtQueryValueKey(
+  _In_ HANDLE KeyHandle,
+  _In_ PUNICODE_STRING ValueName,
+  _In_ KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
+  _Out_opt_ PVOID KeyValueInformation,
+  _In_ ULONG Length,
+  _Out_ PULONG ResultLength
 );
 
 NTSYSAPI
@@ -577,7 +656,7 @@ BOOL
 NTAPI
 WinStationEnumerateW(
     HANDLE ServerHandle,
-    PSESSIONIDW *SessionIds,
+    PSESSIONID *SessionIds,
     PULONG Count
 );
 
@@ -587,3 +666,17 @@ NTAPI
 WinStationFreeMemory(
     PVOID Buffer
 );
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+WinStationQueryInformationW(
+  _In_opt_  HANDLE hServer,
+  _In_      ULONG LogonId,
+  _In_      WINSTATIONINFOCLASS WinStationInformationClass,
+  _Out_     PVOID pWinStationInformation,
+  _In_      ULONG WinStationInformationLength,
+  _Out_     PULONG pReturnLength
+);
+
+EXTERN_C_END

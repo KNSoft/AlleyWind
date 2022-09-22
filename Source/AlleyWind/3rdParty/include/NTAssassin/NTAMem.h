@@ -7,6 +7,7 @@
 /// Allocates heap memory
 /// </summary>
 /// <seealso cref="RtlAllocateHeap"/>
+/// <returns>Both of last error and last status will set if failed</returns>
 #define Mem_HeapAllocEx(Flags, Size) RtlAllocateHeap(NT_GetHeap(), Flags, Size)
 #define Mem_HeapAlloc(Size) RtlAllocateHeap(NT_GetHeap(), 0, Size)
 
