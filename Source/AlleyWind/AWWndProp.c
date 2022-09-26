@@ -122,9 +122,11 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         dwpOffset = 0;
         do {
             if (bUseHijack) {
+                stGLParams[1].Value = (INT)dwpOffset;
                 if (Hijack_CallProc(hProc, &stCallProc, stGLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)) &&
                     stCallProc.LastError == ERROR_SUCCESS) {
                     lBytes = (LONG_PTR)stCallProc.RetValue;
+                    NT_SetLastError(ERROR_SUCCESS);
                 } else {
                     lBytes = 0;
                     NT_SetLastError(ERROR_READ_FAULT);
