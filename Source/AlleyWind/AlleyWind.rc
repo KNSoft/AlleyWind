@@ -282,7 +282,7 @@ IDI_APP                 ICON                    "Resource\\App.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,20716
+ FILEVERSION 1,1,0,21006
  PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -298,9 +298,9 @@ BEGIN
     BEGIN
         BLOCK "040004b0"
         BEGIN
-            VALUE "CompanyName", "KNSoft(knsoft.org)"
+            VALUE "CompanyName", "KNSoft (knsoft.org)"
             VALUE "FileDescription", "AlleyWind"
-            VALUE "FileVersion", "1.1.0.20716"
+            VALUE "FileVersion", "1.1.0.21006"
             VALUE "InternalName", "AlleyWind.exe"
             VALUE "LegalCopyright", "Copyright (c) 2022 KNSoft"
             VALUE "OriginalFilename", "AlleyWind.exe"

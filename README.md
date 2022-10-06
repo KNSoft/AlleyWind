@@ -28,12 +28,12 @@ Window properties - Resource Tab: window resource
 <br>
 <br>
 ![avatar](Asset/Screenshots/5-RelationshipProp.png)
-Window properties - Resource Tab: window relationship to process, thread and other windows
+Window properties - Relationship Tab: window relationship to process, thread and other windows
 <br>
 <br>
 ![avatar](Asset/Screenshots/6-ClassProp.png)
-Window properties - Resource Tab: window class
+Window properties - Class Tab: window class
 <br>
 <br>
 ![avatar](Asset/Screenshots/7-OperationProp.png)
-Window properties - Resource Tab: operations for window
+Window properties - Operation Tab: operations for window
