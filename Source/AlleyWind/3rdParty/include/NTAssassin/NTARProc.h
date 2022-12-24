@@ -129,4 +129,4 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI RProc_IsWow64(_In_ HANDLE hProcess
 /// Creates a new process
 /// </summary>
 /// <seealso cref="CreateProcessAsUser"/>
-HANDLE NTAPI RProc_Create(_In_opt_ HANDLE TokenHandle, _In_opt_ LPCWSTR ApplicationName, _Inout_opt_ LPWSTR CommandLine, _In_ BOOL InheritHandles);
+_Check_return_ NTA_API HANDLE NTAPI RProc_Create(_In_opt_ HANDLE TokenHandle, _In_opt_ PCWSTR ApplicationName, _Inout_opt_ LPWSTR CommandLine, _In_ BOOL InheritHandles, _In_opt_ PCWSTR CurrentDirectory, _In_opt_ LPSTARTUPINFOW StartupInfo);

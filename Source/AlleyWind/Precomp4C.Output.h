@@ -152,7 +152,7 @@ typedef enum _I18N_ITEM_INDEX {
 	I18NIndex_ClientAreaImage,
 	I18NIndex_Copy,
 	I18NIndex_Save,
-	I18NIndex_SaveBitmapFilter,
+	I18NIndex_SaveImageFailed,
 	I18NIndex_InstanceHandle,
 	I18NIndex_FontHandle,
 	I18NIndex_MenuHandle,

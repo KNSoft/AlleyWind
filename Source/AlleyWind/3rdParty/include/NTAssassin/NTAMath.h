@@ -21,8 +21,8 @@ NTA_API ULONG NTAPI Math_Random();
 /// Generates a random within specified range
 /// </summary>
 /// <seealso cref="RtlRandomEx"/>
-/// <param name="Min">Minimum</param>
-/// <param name="Max">Maximum</param>
+/// <param name="Min">Minimum, within [0, MAXLONG-1]</param>
+/// <param name="Max">Maximum, within [Min, MAXLONG-1]</param>
 /// <returns>A random number within [Min, Max]</returns>
 NTA_API ULONG NTAPI Math_RangedRandom(ULONG Min, ULONG Max);
 

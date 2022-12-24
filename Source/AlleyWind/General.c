@@ -142,9 +142,9 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
             if (!UI_GetWindowLong(hWnd, FALSE, bStyle ? GWL_STYLE : GWL_EXSTYLE, &dwpStyle))
                 return FALSE;
             if (AW_DBEditValue(hDlg, hWnd, bStyle ? AWValueStyle : AWValueExStyle, (PDWORD)&dwpStyle)) {
-                NT_ClearLastError();
+                EH_ClearLastError();
                 SetWindowLongPtr(hWnd, bStyle ? GWL_STYLE : GWL_EXSTYLE, dwpStyle);
-                if (NT_LastErrorSucceed()) {
+                if (EH_LastErrorSucceed()) {
                     SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                     UI_Redraw(hWnd);
                 }

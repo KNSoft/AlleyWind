@@ -27,20 +27,20 @@ NTA_API DWORD NTAPI Con_Write(HANDLE ConHandle, _In_reads_bytes_opt_(Length) PVO
 /// <param name="ConHandle">Handle to the console</param>
 /// <param name="String">String to output</param>
 /// <returns>Number of bytes actually written, or 0 if failed, error code storaged in last STATUS</returns>
-NTA_API DWORD Con_WriteString(HANDLE ConHandle, _In_z_ PCSTR String);
+NTA_API DWORD NTAPI Con_WriteString(HANDLE ConHandle, _In_z_ PCSTR String);
 
 /// <summary>
 /// Output string to console and starts a new line
 /// </summary>
 /// <seealso cref="Con_WriteString"/>
-NTA_API DWORD Con_WriteLine(HANDLE ConHandle, _In_z_ PCSTR String);
+NTA_API DWORD NTAPI Con_WriteLine(HANDLE ConHandle, _In_z_ PCSTR String);
 
 /// <summary>
 /// Prints formatted output to the console
 /// <see>Con_Printf</see>
 /// </summary>
 /// <seealso cref="Con_Printf"/>
-NTA_API DWORD Con_VPrintf(HANDLE ConHandle, _In_z_ _Printf_format_string_ PCSTR Format, _In_ va_list ArgList);
+NTA_API DWORD NTAPI Con_VPrintf(HANDLE ConHandle, _In_z_ _Printf_format_string_ PCSTR Format, _In_ va_list ArgList);
 
 /// <summary>
 /// Prints formatted output to the console

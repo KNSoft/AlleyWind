@@ -192,9 +192,9 @@ BOOL WndPropOperationSetStyleByCheck(HWND hDlg, UINT uCheckID, BOOL bExStyle, LO
         SendMessage(hCheck, BM_SETCHECK, BST_UNCHECKED, 0);
         uCheck = BST_UNCHECKED;
     }
-    NT_ClearLastError();
+    EH_ClearLastError();
     lStyle = SetWindowLongPtr(hWnd, iIndex, COMBINE_FLAGS(lTemp, lStyle, uCheck == BST_CHECKED));
-    return lStyle || NT_LastErrorSucceed();
+    return lStyle || EH_LastErrorSucceed();
 }
 
 VOID WndPropOperationLayeredGet(HWND hDlg) {
@@ -299,7 +299,7 @@ INT_PTR WINAPI WndPropOperationDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPAR
         // Topmost
         WndPropOperationSetCheckByStyle(hDlg, IDC_WNDPROP_OPERATION_TOPMOST_CHECK, TRUE, WS_EX_TOPMOST);
         // Layered
-        Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN), CTL_COLORPICKER_NOCOLOR);
+        Ctl_SetColorPickerSubclass(GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_COLORKEY_BTN), CLR_INVALID);
         WndPropOperationLayeredGet(hDlg);
         // Visual Style
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_OPERATION_VISUALSTYLE_COMBOX);

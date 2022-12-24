@@ -120,11 +120,11 @@ BOOL CALLBACK InsertWindowToTree(HWND hWnd, PAW_ENUMCHILDREN lpstEnumChildren) {
         hParent = lpstEnumChildren->hParentNode;
     // Get window info
     AW_GetWindowText(hWnd, szCaption);
-    if (bFilter && (!bFindCaption || Str_Index_BF(szCaption, szFindCaptionName) != -1))
+    if (bFilter && (!bFindCaption || Str_Index(szCaption, szFindCaptionName) != -1))
         bCaptionMatched = TRUE;
     if (!GetClassName(hWnd, szClassName, ARRAYSIZE(szClassName)))
         szClassName[0] = '\0';
-    if (bFilter && (!bFindClassName || Str_Index_BF(szClassName, szFindClassName) != -1))
+    if (bFilter && (!bFindClassName || Str_Index(szClassName, szFindClassName) != -1))
         bClassMatched = TRUE;
     if (!bFilter || (bCaptionMatched && bClassMatched)) {
         // Format display string

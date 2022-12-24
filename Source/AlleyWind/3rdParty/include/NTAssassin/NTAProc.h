@@ -3,7 +3,13 @@
 #pragma once
 
 #include "NTADef.h"
+#include "NTANT.h"
 #include "NTARProc.h"
+
+/// <summary>
+/// Gets the Handle to the default heap
+/// </summary>
+#define Proc_GetHeap() ((HANDLE)NT_GetPEB()->ProcessHeap)
 
 /// <summary>
 /// Callback procedure to enumerate DLL modules
@@ -102,3 +108,11 @@ _Success_(return != FALSE) NTA_API BOOL NTAPI Proc_GetThreadExitCode(HANDLE Thre
 
 /// <seealso cref="IsWow64Process"/>
 #define Proc_IsWow64(Wow64Process) RProc_IsWow64(CURRENT_PROCESS_HANDLE, Wow64Process)
+
+#ifndef _WIN64
+#define Proc_DisableWow64FsRedirection(OldValue) RtlWow64EnableFsRedirectionEx(FALSE, OldValue)
+#define Proc_RevertWow64FsRedirection(OldValue) RtlWow64EnableFsRedirectionEx(OldValue, &(OldValue))
+#else
+#define Proc_DisableWow64FsRedirection(OldValue)
+#define Proc_RevertWow64FsRedirection(OldValue)
+#endif

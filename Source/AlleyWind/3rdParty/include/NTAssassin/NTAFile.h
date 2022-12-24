@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 typedef struct _FILE_MAP {
     HANDLE  FileHandle;
@@ -67,24 +67,7 @@ NTA_API _Success_(return != FALSE) BOOL NTAPI File_ReadOnlyMap(_In_z_ PCWSTR Fil
 NTA_API _Success_(return != FALSE) BOOL NTAPI File_WritableMap(_In_z_ PCWSTR FileName, HANDLE RootDirectory, _Out_ PFILE_MAP FileMap, BOOL UseCache, SIZE_T MaximumSize);
 
 /// <summary>
-/// Maps a file
-/// </summary>
-/// <seealso cref="NtCreateFile"/>
-/// <seealso cref="MapViewOfFile"/>
-/// <param name="FileName">Path to the file to map</param>
-/// <param name="RootDirectory">Handle to the directory as root of file</param>
-/// <param name="FileMap">Pointer to a FILE_MAP structure to receive map information</param>
-/// <param name="MaximumSize"></param>
-/// <param name="DesiredAccess"></param>
-/// <param name="ShareAccess"></param>
-/// <param name="CreateDisposition"></param>
-/// <param name="NoCache">Set to TRUE to disable cache when writing the map</param>
-/// <param name="InheritDisposition"></param>
-/// <returns>TRUE if succeeded, or FALSE if failed, error code storaged in last STATUS</returns>
-NTA_API _Success_(return != FALSE) BOOL NTAPI File_Map(_In_z_ PCWSTR FileName, HANDLE RootDirectory, _Out_ PFILE_MAP FileMap, ULONGLONG MaximumSize, ACCESS_MASK DesiredAccess, ULONG ShareAccess, ULONG CreateDisposition, BOOL NoCache, SECTION_INHERIT InheritDisposition);
-
-/// <summary>
-/// Unmaps a file mapped by "File_Map"
+/// Unmaps a file mapped by "File_XXXMap"
 /// </summary>
 /// <param name="FileMap">Pointer to a FILE_MAP structure contains map information</param>
 NTA_API VOID NTAPI File_Unmap(_In_ PFILE_MAP FileMap);

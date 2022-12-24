@@ -25,18 +25,21 @@ CTL_LISTCTL_COLUME aPropListCol[] = {
     {I18NIndex_Data, 180}
 };
 
-PTSTR pszExpImageFileExt = TEXT("bmp");
+PTSTR pszExpImageFileExt = TEXT("png");
 
-VOID WndPropResourceInit() {
+VOID WndPropResourceInit()
+{
     hWndPropResourceImage = CreatePopupMenu();
     Ctl_CreateMenu(stMenuImage, hWndPropResourceImage);
 }
 
-VOID WndPropResourceUninit() {
+VOID WndPropResourceUninit()
+{
     Ctl_DestroyMenu(stMenuImage, hWndPropResourceImage);
 }
 
-BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hData, ULONG_PTR lParam) {
+BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hData, ULONG_PTR lParam)
+{
     TCHAR   szBuffer[1024];
     LVITEM  stLVItem;
     INT     iCch;
@@ -58,14 +61,16 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     return TRUE;
 }
 
-VOID WndPropResourceGetFont(HWND hDlg, HWND hWnd) {
+VOID WndPropResourceGetFont(HWND hDlg, HWND hWnd)
+{
     DWORD_PTR   dwpTemp;
     LRESULT     lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwpTemp);
     AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwpTemp);
     UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwpTemp != 0);
 }
 
-INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
     if (uMsg == WM_INITDIALOG) {
         HWND        hWnd, hCtl;
         LRESULT     lResult;
@@ -138,11 +143,11 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     // Create new font
                     HIJACK_CALLPROCHEADER   stCFICallProc;
                     if (!Hijack_LoadProcAddr(
-                            hProc,
-                            L"gdi32.dll",
-                            "CreateFontIndirectW",
-                            (PVOID*)&stCFICallProc.Procedure,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
+                        hProc,
+                        L"gdi32.dll",
+                        "CreateFontIndirectW",
+                        (PVOID*)&stCFICallProc.Procedure,
+                        AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
                         )
                         goto Label_0;
                     HIJACK_CALLPROCPARAM    stCFIParams[] = {
@@ -151,20 +156,20 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
                     stCFICallProc.CallConvention = CC_STDCALL;
                     stCFICallProc.ParamCount = ARRAYSIZE(stCFIParams);
                     if (!Hijack_CallProc(
-                            hProc,
-                            &stCFICallProc,
-                            stCFIParams,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
-                        ) || !stCFICallProc.RetValue)
+                        hProc,
+                        &stCFICallProc,
+                        stCFIParams,
+                        AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)
+                    ) || !stCFICallProc.RetValue)
                         goto Label_0;
                     // Apply new font created
                     HIJACK_CALLPROCHEADER   stSMWCallProc;
                     if (!Hijack_LoadProcAddr(
-                            hProc,
-                            L"user32.dll",
-                            "SendMessageW",
-                            (PVOID*)&stSMWCallProc.Procedure,
-                            AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
+                        hProc,
+                        L"user32.dll",
+                        "SendMessageW",
+                        (PVOID*)&stSMWCallProc.Procedure,
+                        AWSettings_GetItemValueEx(AWSetting_ResponseTimeout))
                         )
                         goto Label_0;
                     HIJACK_CALLPROCPARAM    stSMWParams[] = {
@@ -194,31 +199,33 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         } else if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0) || wParam == MAKEWPARAM(IDM_IMAGE_COPY, 0)) {
             TCHAR           szExpImageFileName[MAX_PATH];
             HWND            hWnd;
-            UINT            uSize;
-            FILE_MAP        stFileMap;
             GDI_SNAPSHOT    stSnapshot;
+            BOOL            bSaveSucc = FALSE;
             hWnd = AW_GetWndPropHWnd(hDlg);
             if (GDI_CreateSnapshot(hWnd == GetDesktopWindow() ? NULL : hWnd, &stSnapshot)) {
                 SelectObject(stSnapshot.DC, stSnapshot.OriginalBitmap);
                 if (wParam == MAKEWPARAM(IDM_IMAGE_SAVE, 0)) {
-                    uSize = GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, NULL, 0);
-                    if (uSize) {
-                        szExpImageFileName[0] = '\0';
-                        if (Dlg_GetSaveFileName(hDlg, I18N_GetString(I18NIndex_SaveBitmapFilter), szExpImageFileName, pszExpImageFileExt)) {
-                            if (File_Map(szExpImageFileName, NULL, &stFileMap, uSize, FILE_READ_DATA | FILE_WRITE_DATA | SYNCHRONIZE, FILE_SHARE_READ, FILE_SUPERSEDE, FALSE, ViewUnmap)) {
-                                if (!GDI_WriteBitmap(stSnapshot.DC, stSnapshot.Bitmap, stFileMap.Map, uSize))
-                                    File_Dispose(stFileMap.FileHandle);
-                                File_Unmap(&stFileMap);
+                    szExpImageFileName[0] = '\0';
+                    if (Dlg_GetSaveFileName(hDlg, GDIP_SaveImageFilter, szExpImageFileName, pszExpImageFileExt)) {
+                        PGDIP_IMAGE pImage = GDIP_LoadImageFromBitmap(stSnapshot.Bitmap);
+                        if (pImage) {
+                            bSaveSucc = GDIP_SaveImageToFile(pImage, szExpImageFileName);
+                            if (bSaveSucc) {
+                                Shell_Locate(szExpImageFileName);
                             }
+                            GDIP_DisposeImage(pImage);
                         }
                     }
                 } else {
                     OpenClipboard(hDlg);
                     EmptyClipboard();
-                    SetClipboardData(CF_BITMAP, stSnapshot.Bitmap);
+                    bSaveSucc = SetClipboardData(CF_BITMAP, stSnapshot.Bitmap) != NULL;
                     CloseClipboard();
                 }
                 GDI_DeleteSnapshot(&stSnapshot);
+            }
+            if (!bSaveSucc) {
+                KNS_MsgBox(hWnd, I18N_GetString(I18NIndex_SaveImageFailed), NULL, MB_ICONERROR);
             }
         } else if (wParam == MAKEWPARAM(IDC_WNDPROP_RESOURCE_HOTKEY_EDIT, EN_CHANGE) && !UI_GetNoNotifyFlag((HWND)lParam)) {
             HWND        hWnd;

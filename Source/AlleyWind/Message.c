@@ -330,7 +330,7 @@ INT_PTR WINAPI WndPropMessageDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         if (pnmhdr->idFrom == IDC_WNDPROP_MSG_MSDN_LINK && pnmhdr->code == NM_CLICK) {
             INT_PTR iMsgIndex = UI_SendDlgItemMsg(hDlg, IDC_WNDPROP_MSG_MSG_COMBOX, CB_GETCURSEL, 0, 0);
             if (iMsgIndex != CB_ERR && DB_stMsgInfo[iMsgIndex].MSDNDocLink)
-                Shell_Exec(DB_stMsgInfo[iMsgIndex].MSDNDocLink, NULL, ShellExecOpen, SW_SHOWNORMAL, NULL);
+                Shell_Exec(DB_stMsgInfo[iMsgIndex].MSDNDocLink, NULL, L"open", SW_SHOWNORMAL, NULL);
         }
     } else
         return FALSE;

@@ -234,7 +234,7 @@ typedef struct _RTL_BALANCED_NODE64 {
         } DUMMYSTRUCTNAME;
     } DUMMYUNIONNAME;
 
-#define RTL_BALANCED_NODE_RESERVED_PARENT_MASK 3
+    #define RTL_BALANCED_NODE_RESERVED_PARENT_MASK 3
 
     union {
         UCHAR Red : 1;
@@ -252,7 +252,7 @@ typedef struct _RTL_BALANCED_NODE32 {
         } DUMMYSTRUCTNAME;
     } DUMMYUNIONNAME;
 
-#define RTL_BALANCED_NODE_RESERVED_PARENT_MASK 3
+    #define RTL_BALANCED_NODE_RESERVED_PARENT_MASK 3
 
     union {
         UCHAR Red : 1;
@@ -524,9 +524,9 @@ typedef struct _PEB {
             UCHAR IsLongPathAwareProcess : 1;
         };
     };
-#if _WIN64
+    #if _WIN64
     UCHAR Padding0[4];
-#endif
+    #endif
     HANDLE Mutant;
     HMODULE ImageBaseAddress;
     PPEB_LDR_DATA Ldr;
@@ -550,9 +550,9 @@ typedef struct _PEB {
             ULONG ReservedBits0 : 24;
         };
     };
-#if _WIN64
+    #if _WIN64
     UCHAR Padding1[4];
-#endif
+    #endif
     union {
         PVOID KernelCallbackTable;
         PVOID UserSharedInfoPtr;
@@ -561,9 +561,9 @@ typedef struct _PEB {
     ULONG AtlThunkSListPtr32;
     PVOID ApiSetMap;
     ULONG TlsExpansionCounter;
-#if _WIN64
+    #if _WIN64
     UCHAR Padding2[4];
-#endif
+    #endif
     PRTL_BITMAP TlsBitmap;
     ULONG TlsBitmapBits[2];
     PVOID ReadOnlySharedMemoryBase;
@@ -585,9 +585,9 @@ typedef struct _PEB {
     PVOID GdiSharedHandleTable;
     PVOID ProcessStarterHelper;
     ULONG GdiDCAttributeList;
-#if _WIN64
+    #if _WIN64
     UCHAR Padding3[4];
-#endif
+    #endif
     PRTL_CRITICAL_SECTION LoaderLock;
     ULONG OSMajorVersion;
     ULONG OSMinorVersion;
@@ -597,22 +597,22 @@ typedef struct _PEB {
     ULONG ImageSubsystem;
     ULONG ImageSubsystemMajorVersion;
     ULONG ImageSubsystemMinorVersion;
-#if _WIN64
+    #if _WIN64
     UCHAR Padding4[4];
-#endif
+    #endif
     ULONG_PTR ActiveProcessAffinityMask;
-#if _WIN64
+    #if _WIN64
     ULONG GdiHandleBuffer[60];
-#else
+    #else
     ULONG GdiHandleBuffer[34];
-#endif
+    #endif
     PVOID PostProcessInitRoutine;
     PRTL_BITMAP TlsExpansionBitmap;
     ULONG TlsExpansionBitmapBits[32];
     ULONG SessionId;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding5[4];
-#endif
+    #endif
     ULARGE_INTEGER AppCompatFlags;
     ULARGE_INTEGER AppCompatFlagsUser;
     PVOID pShimData;
@@ -634,11 +634,11 @@ typedef struct _PEB {
     USHORT UnusedNlsField;
     PVOID WerRegistrationData;
     PVOID WerShipAssertPtr;
-#ifdef _WIN64
+    #ifdef _WIN64
     PVOID EcCodeBitMap;
-#else
+    #else
     PVOID Spare;
-#endif
+    #endif
     PVOID pImageHeaderHash;
     union {
         ULONG TracingFlags;
@@ -649,9 +649,9 @@ typedef struct _PEB {
             ULONG SpareTracingBits : 29;
         };
     };
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding6[4];
-#endif
+    #endif
     ULONGLONG CsrServerReadOnlySharedMemoryBase;
     ULONG_PTR TppWorkerpListLock;
     LIST_ENTRY TppWorkerpList;
@@ -690,9 +690,9 @@ typedef struct _PEB64 {
             UCHAR IsLongPathAwareProcess : 1;
         };
     };
-#if _WIN64
+    #if _WIN64
     UCHAR Padding0[4];
-#endif
+    #endif
     VOID* PTR64 Mutant;
     VOID* PTR64 ImageBaseAddress;
     PEB_LDR_DATA64* PTR64 Ldr;
@@ -1055,9 +1055,9 @@ typedef struct _TEB_ACTIVE_FRAME32 TEB_ACTIVE_FRAME32, *PTEB_ACTIVE_FRAME32;
 
 struct _TEB_ACTIVE_FRAME {
     DWORD Flags;
-#if _WIN64
+    #if _WIN64
     UCHAR Padding[4];
-#endif
+    #endif
     struct TEB_ACTIVE_FRAME* Previous;
     PTEB_ACTIVE_FRAME_CONTEXT Context;
 };
@@ -1092,11 +1092,11 @@ typedef struct _TEB {
     ULONG CurrentLocale;
     ULONG FpSoftwareStatusRegister;
     PVOID ReservedForDebuggerInstrumentation[16];
-#ifdef _WIN64
+    #ifdef _WIN64
     PVOID SystemReserved1[30];
-#else
+    #else
     PVOID SystemReserved1[26];
-#endif
+    #endif
     CHAR PlaceholderCompatibilityMode;
     UCHAR PlaceholderHydrationAlwaysExplicit;
     CHAR PlaceholderReserved[10];
@@ -1104,23 +1104,23 @@ typedef struct _TEB {
     ACTIVATION_CONTEXT_STACK _ActivationStack;
     UCHAR WorkingOnBehalfTicket[8];
     LONG ExceptionCode;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding0[4];
-#endif
+    #endif
     PACTIVATION_CONTEXT_STACK ActivationContextStackPointer;
     PVOID InstrumentationCallbackSp;
     PVOID InstrumentationCallbackPreviousPc;
     PVOID InstrumentationCallbackPreviousSp;
-#ifdef _WIN64
+    #ifdef _WIN64
     ULONG TxFsContext;
     BOOLEAN InstrumentationCallbackDisabled;
     UCHAR UnalignedLoadStoreExceptions;
     UCHAR Padding1[2];
-#else
+    #else
     UCHAR InstrumentationCallbackDisabled;
     UCHAR SpareBytes[23];
     DWORD TxFsContext;
-#endif
+    #endif
     GDI_TEB_BATCH GdiTebBatch;
     CLIENT_ID RealClientId;
     PVOID GdiCachedProcessHandle;
@@ -1137,14 +1137,14 @@ typedef struct _TEB {
     PVOID glCurrentRC;
     PVOID glContext;
     ULONG LastStatusValue;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding2[4];
-#endif
+    #endif
     UNICODE_STRING StaticUnicodeString;
     WCHAR StaticUnicodeBuffer[261];
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding3[6];
-#endif
+    #endif
     PVOID DeallocationStack;
     PVOID TlsSlots[64];
     LIST_ENTRY TlsLinks;
@@ -1152,12 +1152,12 @@ typedef struct _TEB {
     PVOID ReservedForNtRpc;
     PVOID DbgSsReserved[2];
     ULONG HardErrorMode;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding4[4];
     PVOID Instrumentation[11];
-#else
+    #else
     PVOID Instrumentation[9];
-#endif
+    #endif
     GUID ActivityId;
     PVOID SubProcessTag;
     PVOID PerflibData;
@@ -1177,31 +1177,31 @@ typedef struct _TEB {
         };
     };
     ULONG GuaranteedStackBytes;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding5[4];
-#endif
+    #endif
     PVOID ReservedForPerf;
     PVOID ReservedForOle;
     ULONG WaitingOnLoaderLock;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding6[4];
-#endif
+    #endif
     PVOID SavedPriorityState;
     ULONG_PTR ReservedForCodeCoverage;
     PVOID ThreadPoolData;
     PVOID TlsExpansionSlots;
-#ifdef _WIN64
+    #ifdef _WIN64
     struct CHPEV2_CPUAREA_INFO* PTR64 ChpeV2CpuAreaInfo;
     PVOID Unused;
-#endif
+    #endif
     ULONG MuiGeneration;
     ULONG IsImpersonating;
     PVOID NlsCache;
     PVOID pShimData;
     ULONG HeapData;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding7[4];
-#endif
+    #endif
     PVOID CurrentTransactionHandle;
     PTEB_ACTIVE_FRAME ActiveFrame;
     PVOID FlsData;
@@ -1247,9 +1247,9 @@ typedef struct _TEB {
     GUID EffectiveContainerId;
     ULONGLONG LastSleepCounter;
     ULONG SpinCallCount;
-#ifdef _WIN64
+    #ifdef _WIN64
     UCHAR Padding8[4];
-#endif
+    #endif
     ULONGLONG ExtendedFeatureDisableMask;
 } TEB, *PTEB;
 

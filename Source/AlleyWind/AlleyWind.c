@@ -3,7 +3,7 @@
 KNS_INFO stKNSInfo = {
     KNS_NAME,
     TRUE,
-    { 1, 1, 0, 21006, KNS_VERSION_RC },
+    { 1, 1, 0, 21224, KNS_VERSION_GA },
     {
         RGB(255, 140, 0),
         IDI_APP,
@@ -24,16 +24,31 @@ KNS_INFO stKNSInfo = {
     }
 };
 
-DWORD Main() {
-    NTSTATUS    Status;
-    HRESULT     hr;
-    AWSettings_Init();
-    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-    if (SUCCEEDED(hr)) {
-        Status = (NTSTATUS)KNS_Startup(&stKNSInfo);
-        CoUninitialize();
-    } else {
-        Status = hr;
+DWORD Main()
+{
+    NTSTATUS Status;
+
+    /* Initialize */
+    ULONG_PTR ulpGdipToken;
+    if (!GDIP_Startup(&ulpGdipToken)) {
+        Status = STATUS_INSUFFICIENT_RESOURCES;
+        goto Exit_0;
     }
+
+    HRESULT hr;
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
+    if (FAILED(hr)) {
+        Status = hr;
+        goto Exit_1;
+    }
+
+    /* Run */
+    Status = (NTSTATUS)KNS_Startup(&stKNSInfo);
+
+    /* Exit */
+    CoUninitialize();
+Exit_1:
+    GDIP_Shutdown(ulpGdipToken);
+Exit_0:
     return NtTerminateProcess(CURRENT_PROCESS_HANDLE, Status);
 }

@@ -1,0 +1,5 @@
+﻿<Project>
+  <PropertyGroup>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+  </PropertyGroup>
+</Project>

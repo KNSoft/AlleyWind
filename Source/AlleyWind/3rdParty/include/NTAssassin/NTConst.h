@@ -12,10 +12,6 @@
 #define WM_COPYGLOBALDATA 0x49
 #endif
 
-// NTSTATUS
-#undef WIN32_NO_STATUS
-#include <ntstatus.h>
-
 // Patches C26454 warning
 
 #undef NM_FIRST
@@ -27,8 +23,5 @@
 #undef TVN_FIRST
 #define TVN_FIRST 0xFFFFFE70
 
-#undef LVN_ITEMCHANGING
-#define LVN_ITEMCHANGING 4294967196
-
-#undef LVN_ITEMCHANGED
-#define LVN_ITEMCHANGED 4294967195
+#undef LVN_FIRST
+#define LVN_FIRST 0xFFFFFF9C

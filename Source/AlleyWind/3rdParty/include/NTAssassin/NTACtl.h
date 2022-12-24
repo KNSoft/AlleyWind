@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 #include "NTADef.h"
+
 #include "NTACtl_ColorPicker.h"
 
-typedef struct _CTL_MENU CTL_MENU, * PCTL_MENU;
+typedef struct _CTL_MENU CTL_MENU, *PCTL_MENU;
 struct _CTL_MENU {
     UINT        Flags;
     UINT_PTR    ID;
@@ -35,7 +36,7 @@ typedef struct _CTL_LISTCTL_COLUME {
         PCWSTR      Title;
     };
     INT     Width;
-} CTL_LISTCTL_COLUME, * PCTL_LISTCTL_COLUME;
+} CTL_LISTCTL_COLUME, *PCTL_LISTCTL_COLUME;
 
 typedef struct _CTL_COMBOBOXCTL_ITEM {
     union {

@@ -1,19 +1,18 @@
 ﻿#pragma once
 
-#include "NTAOptions.h"
 #include "NTADef.h"
-#include "NTADepends.h"
 
 EXTERN_C_START
 
 #include "NTAOpCode.h"
-#include "NTAUCRT.h"
+#include "NTANT_UCRT.h"
 #include "NTANT.h"
+#include "NTAEH.h"
 #include "NTAData.h"
 #include "NTADbg.h"
 #include "NTAMath.h"
 #include "NTAStr.h"
-#include "NTAList.h"
+#include "NTAData_List.h"
 #include "NTAMem.h"
 #include "NTAPE.h"
 #include "NTAProc.h"
@@ -24,7 +23,6 @@ EXTERN_C_START
 #include "NTAGDI.h"
 #include "NTADlg.h"
 #include "NTAI18N.h"
-#include "NTAKNS.h"
 #include "NTAFile.h"
 #include "NTAIO.h"
 #include "NTATime.h"
@@ -35,5 +33,6 @@ EXTERN_C_START
 #include "NTAHook.h"
 #include "NTAShell.h"
 #include "NTAWS.h"
+#include "NTAKNS.h"
 
 EXTERN_C_END

@@ -1,14 +1,6 @@
 ﻿#pragma once
 
-#if NTA_DLL
-#ifdef NTA_EXPORTS
-#define NTA_API DECLSPEC_EXPORT
-#else
-#define NTA_API DECLSPEC_IMPORT
-#endif
-#else
-#define NTA_API
-#endif
+#define DECLSPEC_EXPORT __declspec(dllexport)
 
 #if _WIN64
 #define IS_WIN64 TRUE

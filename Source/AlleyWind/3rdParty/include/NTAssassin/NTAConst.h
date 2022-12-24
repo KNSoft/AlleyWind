@@ -5,6 +5,7 @@
 #define CODE_ALIGNMENT 0x10
 #define STRING_ALIGNMENT 0x4
 
+#define ASCII_CASE_MASK                         0b100000
 #define MAX_WORD_IN_DEC_CCH                     6                                   // Max WORD in decimal is 65535
 #define MAX_QWORD_IN_HEX_CCH                    17                                  
 #define MAX_CLASSNAME_CCH                       256
@@ -19,8 +20,6 @@
 #define CURRENT_PROCESS_TOKEN_HANDLE            ((HANDLE)-4)
 #define CURRENT_THREAD_TOKEN_HANDLE             ((HANDLE)-5)
 #define CURRENT_THREAD_EFFECTIVETOKEN_HANDLE    ((HANDLE)-6)
-#define CURRENT_PROCESS_ID                      (NT_GetTEBMemberDWORD(ClientId.UniqueProcess))
-#define CURRENT_THREAD_ID                       (NT_GetTEBMemberDWORD(ClientId.UniqueThread))
 #define FIXED_IMAGE_BASE32                      ((HINSTANCE)0x00400000)
 #define FIXED_IMAGE_BASE64                      ((HINSTANCE)0x0000000140000000)
 

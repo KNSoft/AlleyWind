@@ -60,11 +60,6 @@
 #define NT_GetKUSD() ((CONST PKUSER_SHARED_DATA)MM_SHARED_USER_DATA_VA)
 
 /// <summary>
-/// Gets the Handle to the default heap
-/// </summary>
-#define NT_GetHeap() ((HANDLE)NT_GetPEB()->ProcessHeap)
-
-/// <summary>
 /// Gets instance handle of current executable module
 /// </summary>
 #define NT_GetImageBase() (NT_GetPEB()->ImageBaseAddress)
@@ -74,21 +69,8 @@
 /// </summary>
 #define NT_GetCurDirHandle() (NT_GetPEB()->ProcessParameters->CurrentDirectory.Handle)
 
-/// <summary>
-/// Gets or sets the last error
-/// </summary>
-#define NT_ClearLastError() NT_SetTEBMemberDWORD(LastErrorValue, ERROR_SUCCESS)
-#define NT_GetLastError() NT_GetTEBMemberDWORD(LastErrorValue)
-#define NT_SetLastError(dwError) NT_SetTEBMemberDWORD(LastErrorValue, dwError)
-#define NT_LastErrorSucceed() (NT_GetTEBMemberDWORD(LastErrorValue) == ERROR_SUCCESS)
-
-/// <summary>
-/// Gets or sets the last status
-/// </summary>
-#define NT_ClearLastStatus() NT_SetTEBMemberDWORD(LastStatusValue, STATUS_SUCCESS)
-#define NT_GetLastStatus() NT_GetTEBMemberDWORD(LastStatusValue)
-#define NT_SetLastStatus(lStatus) NT_SetTEBMemberDWORD(LastStatusValue, lStatus)
-#define NT_LastStatusSucceed() (NT_SUCCESS(NT_GetTEBMemberDWORD(LastStatusValue)))
+#define NT_GetCurrentPID() (NT_GetTEBMemberDWORD(ClientId.UniqueProcess))
+#define NT_GetCurrentTID() (NT_GetTEBMemberDWORD(ClientId.UniqueThread))
 
 /// <summary>
 /// Gets PID of CSRSS
@@ -103,16 +85,9 @@ NTA_API DWORD NTAPI NT_GetLsaPid();
 #define NT_GetNtdllHandle() (CONTAINING_RECORD(NT_GetPEB()->Ldr->InInitializationOrderModuleList.Flink, LDR_DATA_TABLE_ENTRY, InInitializationOrderModuleList)->DllBase)
 
 /// <summary>
-/// Sets last win32 error according to given NT Status
-/// </summary>
-/// <param name="Status">NT Status</param>
-/// <returns>Win32 Error code corresponding to the given NT Status</returns>
-NTA_API DWORD NTAPI NT_SetLastNTError(NTSTATUS Status);
-
-/// <summary>
 /// Initializes OBJECT_ATTRIBUTES structure
 /// </summary>
-NTA_API VOID NTAPI NT_InitObject(_Out_ POBJECT_ATTRIBUTES Object, HANDLE RootDirectory, PUNICODE_STRING ObjectName, ULONG Attributes);
+#define NT_InitObject(Object, RootDirectory, ObjectName, Attributes) InitializeObjectAttributes(Object, ObjectName, Attributes, RootDirectory, NULL)
 
 /// <summary>
 /// Initializes OBJECT_ATTRIBUTES structure for a path
@@ -130,7 +105,7 @@ NTA_API HANDLE NTAPI NT_RegOpenKey(_In_ PUNICODE_STRING KeyPath, _In_ ACCESS_MAS
 /// <summary>
 /// Gets a DWORD value from registry key
 /// </summary>
-/// <seealso cref="NtOpenKey"/>
+/// <seealso cref="NtQueryValueKey"/>
 _Success_(return != FALSE) NTA_API BOOL NTAPI NT_RegGetDword(_In_ HANDLE KeyHandle, _In_ PUNICODE_STRING KeyName, _Out_ PDWORD Value);
 
 /// <seealso cref="RtlLengthSid"/>
@@ -242,4 +217,7 @@ NTA_API HANDLE NTAPI NT_CreateToken(_In_ TOKEN_TYPE Type, _In_opt_ HANDLE RefTok
 /// </summary>
 /// <seealso cref="NtQuerySystemInformation"/>
 /// <returns>Pointer to a new allocated buffer contains information, should be freed by <c>Mem_Free</c></returns>
-PVOID NTAPI NT_GetSystemInfo(_In_ SYSTEM_INFORMATION_CLASS SystemInformationClass);
+NTA_API PVOID NTAPI NT_GetSystemInfo(_In_ SYSTEM_INFORMATION_CLASS SystemInformationClass);
+
+/// <seealso cref="IsProcessorFeaturePresent"/>
+#define NT_TestCPUFeature(Feature) ((Feature) < PROCESSOR_FEATURE_MAX ? (BOOL)NT_GetKUSD()->ProcessorFeatures[(Feature)] : FALSE)

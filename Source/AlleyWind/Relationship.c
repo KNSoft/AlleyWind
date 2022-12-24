@@ -179,7 +179,9 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             HANDLE hProc = UI_OpenProc(PROCESS_QUERY_LIMITED_INFORMATION, AW_GetWndPropHWnd(hDlg));
             if (hProc) {
                 if (RProc_GetFullImageName(hProc, szPath)) {
-                    bSucc = Shell_Exec(szPath, NULL, wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0) ? ShellExecExplore : ShellExecProperties, SW_SHOWDEFAULT, NULL);
+                    bSucc = wParam == MAKEWPARAM(IDM_PROC_EXPLORE, 0) ?
+                        Shell_Locate(szPath) :
+                        Shell_Exec(szPath, NULL,  L"properties", SW_SHOWDEFAULT, NULL);
                 }
                 NtClose(hProc);
             }

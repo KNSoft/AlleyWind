@@ -13,7 +13,8 @@ I18N_CTLTEXT astWndPropClassTextCtl[] = {
     { IDC_WNDPROP_CLASS_CLSBYTE_TEXT, I18NIndex_ExtraBytes }
 };
 
-INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
     if (uMsg == WM_INITDIALOG) {
         HWND        hWnd, hCtl;
         TCHAR       szBuffer[1024];
@@ -88,9 +89,9 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
             if (!UI_GetWindowLong(hWnd, TRUE, GCL_STYLE, &dwpStyle))
                 return FALSE;
             if (AW_DBEditValue(hDlg, hWnd, AWValueClass, (PDWORD)&dwpStyle)) {
-                NT_ClearLastError();
+                EH_ClearLastError();
                 SetClassLongPtr(hWnd, GCL_STYLE, dwpStyle);
-                if (NT_LastErrorSucceed()) {
+                if (EH_LastErrorSucceed()) {
                     SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                     UI_Redraw(hWnd);
                 }

@@ -11,9 +11,9 @@
         "en": "Save",
         "zh-Hans": "保存"
     },
-    "SaveBitmapFilter": {
-        "en": "Bitmap Files(*.bmp)\u0000*.bmp\u0000",
-        "zh-Hans": "位图文件(*.bmp)\u0000*.bmp\u0000"
+    "SaveImageFailed": {
+        "en": "Save image failed",
+        "zh-Hans": "保存图像失败"
     },
     "InstanceHandle": {
         "en": "Instance Handle",

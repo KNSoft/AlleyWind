@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "NTAssassin.h"
+#include "NTADef.h"
 
 #define OPCODE_X86_NOP ((BYTE)0x90)
 #define OPCODE_X64_NOP ((BYTE)0x90)

@@ -1,7 +1,7 @@
 .vs
-/Win32
+/x86
 /x64
-/AlleyWind/Win32
+/AlleyWind/x86
 /AlleyWind/x64
 *.vcxproj.user
 *.aps

@@ -4,6 +4,8 @@
 #include "NTAssassin\NTAssassin.h"
 #include "Precomp4C.Output.h"
 
+#include <windowsx.h>
+#include <Tpcshrd.h>
 #include <Uxtheme.h>
 
 #include "DB_StyleEditor.h"
@@ -13,19 +15,7 @@
 #include "AWWndProp.h"
 #include "resource.h"
 
-#if _DEBUG
-#if _WIN64
-#pragma comment(lib, "x64\\Debug\\NTAssassin.lib")
-#else
-#pragma comment(lib, "x86\\Debug\\NTAssassin.lib")
-#endif
-#else
-#if _WIN64
-#pragma comment(lib, "x64\\Release\\NTAssassin.lib")
-#else
-#pragma comment(lib, "x86\\Release\\NTAssassin.lib")
-#endif
-#endif
+#pragma comment(lib, LIB_PATH_WITH_CONFIG("NTAssassin.lib"))
 
 #pragma comment(lib, "UxTheme.lib")
 

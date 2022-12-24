@@ -1,0 +1,20 @@
+<Project>
+    <!-- Import before Microsoft.Cpp.props -->
+    <PropertyGroup>
+        <ForceImportBeforeCppProps>$(MsbuildThisFileDirectory)\KNSoft.Before.Cpp.props</ForceImportBeforeCppProps>
+    </PropertyGroup>
+    <!-- Customize builds -->
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <ExceptionHandling>false</ExceptionHandling>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <!-- Import outer Directory.Build.props if exists -->
+    <PropertyGroup>
+        <OuterDirectoryBuildPropsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</OuterDirectoryBuildPropsPath>
+    </PropertyGroup>
+    <Import Project="$(OuterDirectoryBuildPropsPath)" Condition="'$(OuterDirectoryBuildPropsPath)' != ''"/>
+</Project>

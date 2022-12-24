@@ -65,8 +65,11 @@ NTA_API PGDIP_IMAGE NTAPI GDIP_LoadImageFromBuffer(_In_reads_bytes_(Size) PVOID 
 /// <param name="Image">Pointer to the image</param>
 /// <param name="FilePath">Path save to</param>
 /// <returns>TRUE if succeeded, or FALSE if failed</returns>
+NTA_API BOOL NTAPI GDIP_SaveImageToFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FileName);
 NTA_API BOOL NTAPI GDIP_SaveImageToBMPFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FilePath);
 NTA_API BOOL NTAPI GDIP_SaveImageToGIFFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FilePath);
 NTA_API BOOL NTAPI GDIP_SaveImageToPNGFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FilePath);
 NTA_API BOOL NTAPI GDIP_SaveImageToJPEGFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FilePath, INT Quality);
 NTA_API BOOL NTAPI GDIP_SaveImageToTIFFFile(PGDIP_IMAGE Image, _In_z_ PCWSTR FilePath, GDIP_TIFFENCODER_PARAMVALUE Compression, INT ColorDepth);
+
+EXTERN_C NTA_API PCWSTR GDIP_SaveImageFilter;

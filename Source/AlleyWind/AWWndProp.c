@@ -126,17 +126,17 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
                 if (Hijack_CallProc(hProc, &stCallProc, stGLParams, AWSettings_GetItemValueEx(AWSetting_ResponseTimeout)) &&
                     stCallProc.LastError == ERROR_SUCCESS) {
                     lBytes = (LONG_PTR)stCallProc.RetValue;
-                    NT_SetLastError(ERROR_SUCCESS);
+                    EH_SetLastError(ERROR_SUCCESS);
                 } else {
                     lBytes = 0;
-                    NT_SetLastError(ERROR_READ_FAULT);
+                    EH_SetLastError(ERROR_READ_FAULT);
                 }
                 if (b32Proc)
                     lBytes = (DWORD)lBytes;
             } else
                 UI_GetWindowLong(hWnd, bClassExtraBytes, (INT)dwpOffset, &lBytes);
             dwpNextOffset = dwpOffset + uWordSize;
-            if (!AW_WndPropExtraBytesEnumProc((DWORD)dwpOffset, lBytes, (UINT)(dwpNextOffset > dwpExtraSize ? dwpExtraSize - dwpOffset : uWordSize), lBytes ? ERROR_SUCCESS : NT_GetLastError(), lParam))
+            if (!AW_WndPropExtraBytesEnumProc((DWORD)dwpOffset, lBytes, (UINT)(dwpNextOffset > dwpExtraSize ? dwpExtraSize - dwpOffset : uWordSize), lBytes ? ERROR_SUCCESS : EH_GetLastError(), lParam))
                 return FALSE;
             dwpOffset = dwpNextOffset;
         } while (dwpOffset < dwpExtraSize);
@@ -146,5 +146,5 @@ BOOL AW_EnumExtraBytes(HWND hWnd, BOOL bClassExtraBytes, LPARAM lParam) {
         }
         return TRUE;
     } else
-        return NT_LastErrorSucceed();
+        return EH_LastErrorSucceed();
 }

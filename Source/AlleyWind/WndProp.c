@@ -9,7 +9,8 @@ CTL_PROPSHEETPAGE astWndPropSheetPage[] = {
     //{ I18NIndex_Message, NULL, IDD_WNDPROP_MESSAGE, WndPropMessageDlgProc }
 };
 
-INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
     if (uMsg == WM_INITDIALOG) {
         TCHAR   szCaption[MAX_PATH];
         INT     iCch;
@@ -36,6 +37,7 @@ INT_PTR WINAPI WndPropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
     return TRUE;
 }
 
-DWORD WINAPI OpenWndPropDlgThread(PVOID lParam) {
+DWORD WINAPI OpenWndPropDlgThread(PVOID lParam)
+{
     return (DWORD)DialogBoxParam(NT_GetImageBase(), MAKEINTRESOURCE(IDD_WNDPROP), NULL, WndPropDlgProc, (LPARAM)lParam);
 }

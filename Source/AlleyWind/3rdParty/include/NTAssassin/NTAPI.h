@@ -32,38 +32,6 @@ LdrGetProcedureAddress(
     OUT PVOID* ProcedureAddress
 );
 
-// Rtl*
-
-#undef RtlMoveMemory
-#undef RtlFillMemory
-#undef RtlZeroMemory
-
-NTSYSAPI
-PVOID
-NTAPI
-RtlMoveMemory(
-    PVOID   Destination,
-    PVOID   Source,
-    SIZE_T  Length
-);
-
-NTSYSAPI
-PVOID
-NTAPI
-RtlFillMemory(
-    PVOID   Destination,
-    SIZE_T  Length,
-    INT     Fill
-);
-
-NTSYSAPI
-PVOID
-NTAPI
-RtlZeroMemory(
-    PVOID   Destination,
-    SIZE_T  Length
-);
-
 NTSYSAPI
 PVOID
 NTAPI
@@ -120,6 +88,13 @@ RtlCreateUserThread(
 NTSYSAPI
 VOID
 NTAPI
+RtlExitUserThread(
+    _In_ NTSTATUS Status
+);
+
+NTSYSAPI
+VOID
+NTAPI
 RtlInitializeCriticalSection(
     _Out_ LPCRITICAL_SECTION lpCriticalSection
 );
@@ -136,6 +111,106 @@ VOID
 NTAPI
 RtlLeaveCriticalSection(
     _Inout_ LPCRITICAL_SECTION lpCriticalSection
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlDeleteCriticalSection(
+    _Inout_ LPCRITICAL_SECTION lpCriticalSection
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlInitializeSRWLock(
+    _Out_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlAcquireSRWLockExclusive(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlAcquireSRWLockShared(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlReleaseSRWLockExclusive(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlReleaseSRWLockShared(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+RtlTryAcquireSRWLockExclusive(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+BOOLEAN
+NTAPI
+RtlTryAcquireSRWLockShared(
+    _Inout_ PRTL_SRWLOCK SRWLock
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlRunOnceInitialize(
+  _Out_ PRTL_RUN_ONCE RunOnce
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlRunOnceExecuteOnce(
+  _Inout_ PRTL_RUN_ONCE         RunOnce,
+  _In_ PRTL_RUN_ONCE_INIT_FN    InitFn,
+  _Inout_opt_ PVOID             Parameter,
+  _Out_opt_ PVOID*              Context
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlRunOnceBeginInitialize(
+  _Inout_ PRTL_RUN_ONCE RunOnce,
+  _In_ ULONG            Flags,
+  _Out_opt_ PVOID*      Context
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlRunOnceComplete(
+  _Inout_ PRTL_RUN_ONCE RunOnce,
+  _In_ ULONG            Flags,
+  _In_opt_ PVOID        Context
+);
+
+NTSYSAPI
+VOID
+NTAPI
+RtlInitializeBitMap(
+    _Out_ PRTL_BITMAP BitMapHeader,
+    _In_opt_ __drv_aliasesMem PULONG BitMapBuffer,
+    _In_opt_ ULONG SizeOfBitMap
 );
 
 NTSYSAPI
@@ -210,6 +285,14 @@ NTSYSAPI
 ULONG
 NTAPI
 RtlNtStatusToDosErrorNoTeb(IN NTSTATUS Status);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+RtlWow64EnableFsRedirectionEx(
+    IN PVOID Wow64FsEnableRedirection,
+    OUT PVOID* OldFsRedirectionLevel
+);
 
 // Nt*/Zw*
 
@@ -389,6 +472,14 @@ NtUnmapViewOfSection(
 NTSYSAPI
 NTSTATUS
 NTAPI
+NtQueryPerformanceCounter(
+  _Out_     PLARGE_INTEGER PerformanceCounter,
+  _Out_opt_ PLARGE_INTEGER PerformanceFrequency
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
 NtOpenThread(
     _Out_ PHANDLE            ThreadHandle,
     _In_  ACCESS_MASK        DesiredAccess,
@@ -506,6 +597,12 @@ NtSetContextThread(
     IN PCONTEXT ThreadContext
 );
 
+NTSTATUS
+NTAPI
+NtSuspendThread(
+    _In_ HANDLE ThreadHandle,
+    _Out_opt_ PULONG SuspendCount
+);
 
 NTSTATUS
 NTAPI
@@ -608,6 +705,25 @@ NTSTATUS
 NTAPI
 NtUnloadDriver(
     IN PUNICODE_STRING DriverServiceName
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtCreateEvent(
+   _Out_ PHANDLE EventHandle,
+   _In_ ACCESS_MASK DesiredAccess,
+   _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+   _In_ EVENT_TYPE EventType,
+   _In_ BOOLEAN InitialState
+);
+
+NTSYSAPI
+NTSTATUS
+NTAPI
+NtSetEvent(
+    _In_ HANDLE EventHandle,
+    _Out_opt_ PLONG PreviousState
 );
 
 // User32

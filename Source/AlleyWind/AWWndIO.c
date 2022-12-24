@@ -36,7 +36,7 @@ DWORD WINAPI HighlightWindowThread(LPVOID lParam) {
     if (!hDC)
         return ERROR_INVALID_HANDLE;
     if (!GetClientRect(hWnd, &rcClient))
-        return NT_GetLastError();
+        return EH_GetLastError();
     do {
         GDI_FrameRect(hDC, &rcClient, -3, PATINVERT);
         Proc_DelayExec(100);

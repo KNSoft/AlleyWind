@@ -3,6 +3,7 @@
 #pragma once
 
 #include "NTADef.h"
+
 #include "NTAI18N.h"
 #include "NTADlg.h"
 
