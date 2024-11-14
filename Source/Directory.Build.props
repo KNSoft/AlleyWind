@@ -1,17 +1,71 @@
 <Project>
-    <!-- Import before Microsoft.Cpp.props -->
-    <PropertyGroup>
-        <ForceImportBeforeCppProps>$(MsbuildThisFileDirectory)\KNSoft.Before.Cpp.props</ForceImportBeforeCppProps>
-    </PropertyGroup>
     <!-- Customize builds -->
+    <PropertyGroup>
+        <ForceImportAfterCppDefaultProps>$(MsbuildThisFileDirectory)\Directory.Build.AfterCppDefault.props</ForceImportAfterCppDefaultProps>
+    </PropertyGroup>
+
     <ItemDefinitionGroup>
         <ClCompile>
-            <LanguageStandard>stdcpp20</LanguageStandard>
+            <WarningLevel>Level3</WarningLevel>
+            <LanguageStandard>stdcpplatest</LanguageStandard>
             <LanguageStandard_C>stdc17</LanguageStandard_C>
             <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-            <ExceptionHandling>false</ExceptionHandling>
+            <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
         </ClCompile>
     </ItemDefinitionGroup>
+
+    <!-- MSBuild variable to C/C++ macro -->
+    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'Application'">
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_EXE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'Utility'">
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_UTILITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_VCTOOLS_VERSION="$(VCToolsVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_PLATFORM_TARGET="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_DISPLAY_NAME="$(TargetPlatformDisplayName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+        </ClCompile>
+    </ItemDefinitionGroup>
+
+    <!-- Use static default libraries -->
+    <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+        <ClCompile>
+            <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+        <ClCompile>
+            <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+        </ClCompile>
+    </ItemDefinitionGroup>
+
+    <!-- Import $(MSBuildProjectName).Build.props if exists -->
+    <PropertyGroup>
+        <ProjectNameBuildPropsPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.props</ProjectNameBuildPropsPath>
+    </PropertyGroup>
+    <Import Project="$(ProjectNameBuildPropsPath)" Condition="Exists('$(ProjectNameBuildPropsPath)')"/>
+    
     <!-- Import outer Directory.Build.props if exists -->
     <PropertyGroup>
         <OuterDirectoryBuildPropsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</OuterDirectoryBuildPropsPath>

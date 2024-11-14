@@ -1,8 +1,8 @@
 .vs
-/x86
-/x64
-/AlleyWind/x86
-/AlleyWind/x64
-*.vcxproj.user
-*.aps
-/AlleyWind/Resource/*.fla
+*.user
+
+/packages
+/OutDir
+IntDir
+
+/*.nupkg

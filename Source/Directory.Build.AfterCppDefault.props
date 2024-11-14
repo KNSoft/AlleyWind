@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <OutDir>$(SolutionDir)OutDir\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>IntDir\$(PlatformTarget)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+</Project>
