@@ -8,24 +8,13 @@ WinMain(
     _In_ LPSTR lpCmdLine,
     _In_ int nShowCmd)
 {
-    NTSTATUS Status;
-    PVOID MainDlgRes;
-    INT_PTR DlgRet;
-    DPI_AWARENESS_CONTEXT DPIContext;
+    HRESULT hr;
 
-    Status = PE_AccessResource(hInstance,
-                               MAKEINTRESOURCEW(RT_DIALOG),
-                               MAKEINTRESOURCEW(IDD_MAIN),
-                               LANG_USER_DEFAULT,
-                               &MainDlgRes,
-                               NULL);
-    if (!NT_SUCCESS(Status))
+    hr = AW_OpenMainDialogBox();
+    if (FAILED(hr))
     {
-        return RtlNtStatusToDosErrorNoTeb(Status);
+        Err_HrMessageBox(NULL, _A2W(KNS_APP_NAME), hr);
     }
-
-    DPIContext = UI_EnableDPIAwareContext();
-    DlgRet = DialogBoxIndirectParamW((HINSTANCE)&__ImageBase, MainDlgRes, NULL, MainDlgProc, 0);
-    UI_RestoreDPIAwareContext(DPIContext);
-    return DlgRet != -1 ? (int)DlgRet : (int)NtGetLastError();
+    
+    return (int)hr;
 }

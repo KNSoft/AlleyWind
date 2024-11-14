@@ -5,20 +5,41 @@
     <ClCompile Include="UI\MainDlg.c">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\I18N.xml.g.c">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Resource.c">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="AlleyWind.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ClInclude Include="Resource\I18N.xml.g.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UI">
       <UniqueIdentifier>{ef5f4531-4e8e-4726-9a1a-1b4977c6df2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{966fef0d-3e25-4211-b1c3-3728db5331a8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\Resource.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Precomp4C_I18N Include="Resource\I18N.xml">
+      <Filter>Resource</Filter>
+    </Precomp4C_I18N>
   </ItemGroup>
 </Project>

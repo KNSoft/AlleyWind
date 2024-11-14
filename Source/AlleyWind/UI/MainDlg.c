@@ -1,5 +1,53 @@
 ﻿#include "../AlleyWind.inl"
 
+#pragma region Menu
+
+/* File */
+
+#define IDM_REFRESH 1
+#define IDM_SAVETREE 2
+
+static UI_MENU_ITEM g_astMenuFile[] = {
+    { MF_STRING, IDM_REFRESH, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
+    { MF_STRING, IDM_SAVETREE, Precomp4C_I18N_All_SaveTree_Ctrl_S, NULL, 0 , NULL },
+};
+
+/* Help */
+
+#define IDM_HOMEPAGE 20
+
+static UI_MENU_ITEM g_astMenuHelp[] = {
+    { MF_STRING, IDM_HOMEPAGE, Precomp4C_I18N_All_Homepage, NULL, 0, NULL },
+};
+
+/* Main */
+
+static UI_MENU_ITEM g_astDlgMenu[] = {
+    { MF_STRING, 0, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_astMenuFile), g_astMenuFile },
+    { MF_STRING, 0, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_astMenuHelp), g_astMenuHelp },
+};
+
+static
+HMENU
+CreateMainDlgMenu(
+    _In_ HWND Dialog)
+{
+    AW_InitMenu(g_astMenuFile);
+    AW_InitMenu(g_astMenuHelp);
+    AW_InitMenu(g_astDlgMenu);
+    return UI_CreateWindowMenuEx(Dialog, g_astDlgMenu, ARRAYSIZE(g_astDlgMenu));
+}
+
+static
+VOID
+DestroyMainDlgMenu(
+    _In_ HMENU Menu)
+{
+    UI_DestroyWindowMenuEx(Menu, g_astDlgMenu, ARRAYSIZE(g_astDlgMenu));
+}
+
+#pragma endregion
+
 typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 {
     HTREEITEM hParentNode;
@@ -8,6 +56,7 @@ typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 
 static UI_WINDOW_RESIZE_INFO g_stResizeInfo = { 0 };
 static HWND g_hTree = NULL;
+static HMENU g_hMenu = NULL;
 static LONG _Interlocked_operand_ volatile g_bUpdatingTree = FALSE;
 static HIMAGELIST g_himlTreeIcons = NULL;
 static HICON g_hIconWndDefault = NULL;
@@ -45,11 +94,7 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
     }
 
     /* Append node info and icon */
-    hIcon = NULL;
-    if (AW_SendMsgTO(hWnd, WM_GETICON, ICON_SMALL, 0, (PDWORD_PTR)&hIcon) == 0 || hIcon == NULL)
-    {
-        hIcon = (HICON)GetClassLongPtrW(hWnd, GCLP_HICON);
-    }
+    hIcon = AW_GetWindowIcon(hWnd);
     iImageIcon = (hIcon != NULL) ? ImageList_ReplaceIcon(g_himlTreeIcons, -1, hIcon) : -1;
     stTVIInsert.item.iImage = stTVIInsert.item.iSelectedImage = iImageIcon;
     stTVIInsert.hParent = hParentNode;
@@ -102,6 +147,7 @@ UpdateWindowTreeThread(
     return STATUS_SUCCESS;
 }
 
+static
 W32ERROR
 UpdateWindowTreeAsync(VOID)
 {
@@ -137,24 +183,37 @@ MainDlgResizeProc(
     }
 }
 
+static
 INT_PTR
 CALLBACK
 MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    if (uMsg == WM_INITDIALOG)
+    {
+        RECT rc;
+
+        /* Initialize tree-view global resources */
+        g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
+        g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
+        
+        /* Initialize menu before subclass procedures */
+        g_hMenu = CreateMainDlgMenu(hDlg);
+        if (GetClientRect(hDlg, &rc))
+        {
+            MainDlgResizeProc(hDlg, rc.right, rc.bottom, NULL);
+        }
+    }
+
     UI_DPIScaleDlgProc(hDlg, uMsg, wParam, lParam);
     UI_ResizeWndProc(hDlg, uMsg, wParam, lParam, TRUE, MainDlgResizeProc, &g_stResizeInfo);
 
     if (uMsg == WM_INITDIALOG)
     {
-        /* Initialize tree-view global resources */
-        g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
-        g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
-
         UpdateWindowTreeAsync();
-
         return FALSE;
     } else if (uMsg == WM_DPICHANGED)
     {
+        /* TODO: Update image list only, rather than update the whole tree */
         if (g_himlTreeIcons != NULL)
         {
             UpdateWindowTreeAsync();
@@ -162,8 +221,21 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     } else if (uMsg == WM_CLOSE)
     {
         EndDialog(hDlg, 0);
-        ImageList_Destroy(g_himlTreeIcons);
+        if (g_himlTreeIcons != NULL)
+        {
+            ImageList_Destroy(g_himlTreeIcons);
+        }
+        if (g_hMenu != NULL)
+        {
+            DestroyMainDlgMenu(g_hMenu);
+        }
         SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 0);
     }
     return 0;
+}
+
+HRESULT
+AW_OpenMainDialogBox(VOID)
+{
+    return AW_OpenDialog(MAKEINTRESOURCEW(IDD_MAIN), NULL, MainDlgProc, 0);
 }

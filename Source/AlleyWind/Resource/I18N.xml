@@ -1,0 +1,24 @@
+<I18N>
+  <Table Name="All">
+    <String Name="File">
+      <Value Locale="en">File</Value>
+      <Value Locale="zh-Hans">文件</Value>
+    </String>
+    <String Name="Help">
+      <Value Locale="en">Help</Value>
+      <Value Locale="zh-Hans">帮助</Value>
+    </String>
+    <String Name="Refresh_F5">
+      <Value Locale="en">Refresh	F5</Value>
+      <Value Locale="zh-Hans">刷新	F5</Value>
+    </String>
+    <String Name="SaveTree_Ctrl_S">
+      <Value Locale="en">Save Tree	Ctrl+S</Value>
+      <Value Locale="zh-Hans">保存树	Ctrl+S</Value>
+    </String>
+    <String Name="Homepage">
+      <Value Locale="en">Homepage</Value>
+      <Value Locale="zh-Hans">主页</Value>
+    </String>
+  </Table>
+</I18N>
