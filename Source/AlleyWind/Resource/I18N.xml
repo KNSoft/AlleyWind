@@ -20,5 +20,9 @@
       <Value Locale="en">Homepage</Value>
       <Value Locale="zh-Hans">主页</Value>
     </String>
+    <String Name="TextFileOfnFilter">
+      <Value Locale="en">Text Files(*.txt)&#x0;*.txt&#x0;</Value>
+      <Value Locale="zh-Hans">文本文档(*.txt)&#x0;*.txt&#x0;</Value>
+    </String>
   </Table>
 </I18N>

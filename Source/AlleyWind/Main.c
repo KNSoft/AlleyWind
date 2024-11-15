@@ -8,12 +8,20 @@ WinMain(
     _In_ LPSTR lpCmdLine,
     _In_ int nShowCmd)
 {
-    HRESULT hr;
+    HRESULT hr, hrCom;
+
+    /* COM initialization is optional currently */
+    hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
     hr = AW_OpenMainDialogBox();
     if (FAILED(hr))
     {
         Err_HrMessageBox(NULL, _A2W(KNS_APP_NAME), hr);
+    }
+
+    if (SUCCEEDED(hrCom))
+    {
+        CoUninitialize();
     }
     
     return (int)hr;

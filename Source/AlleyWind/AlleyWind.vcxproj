@@ -223,6 +223,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.inl" />
+    <ClInclude Include="KNSoft.AppInfo.h" />
     <ClInclude Include="Resource\I18N.xml.g.h" />
     <ClInclude Include="Resource\Resource.h" />
   </ItemGroup>

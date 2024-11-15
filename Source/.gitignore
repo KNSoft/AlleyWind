@@ -1,5 +1,6 @@
 .vs
 *.user
+*.aps
 
 /packages
 /OutDir

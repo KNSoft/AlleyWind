@@ -27,6 +27,11 @@ static UI_MENU_ITEM g_astDlgMenu[] = {
     { MF_STRING, 0, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_astMenuHelp), g_astMenuHelp },
 };
 
+static ACCEL g_astDlgAccel[] = {
+    { FVIRTKEY, VK_F5, IDM_REFRESH },
+    { FVIRTKEY | FCONTROL, 'S', IDM_SAVETREE},
+};
+
 static
 HMENU
 CreateMainDlgMenu(
@@ -57,9 +62,86 @@ typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 static UI_WINDOW_RESIZE_INFO g_stResizeInfo = { 0 };
 static HWND g_hTree = NULL;
 static HMENU g_hMenu = NULL;
+static HACCEL g_hAccel = NULL;
 static LONG _Interlocked_operand_ volatile g_bUpdatingTree = FALSE;
 static HIMAGELIST g_himlTreeIcons = NULL;
 static HICON g_hIconWndDefault = NULL;
+
+static
+_Function_class_(UI_ENUMTREEVIEWITEM_FN)
+LOGICAL
+CALLBACK
+ExportWindowTreeToFileEnumProc(
+    _In_ HWND TreeView,
+    _In_ HTREEITEM TreeItem,
+    _In_ UINT Level,
+    _In_opt_ PVOID Context)
+{
+    HANDLE  hFile;
+    TVITEMW stTVI;
+    WCHAR szUnicodeBuff[512];
+    CHAR szUTF8Buff[ARRAYSIZE(szUnicodeBuff) * 2];
+    UINT i;
+    ULONG uChWritten;
+
+    _Analysis_assume_(Context != NULL);
+    hFile = (HANDLE)Context;
+
+    stTVI.mask = TVIF_TEXT;
+    stTVI.hItem = TreeItem;
+    stTVI.cchTextMax = ARRAYSIZE(szUnicodeBuff) - Level;
+    for (i = 0; i < Level; i++)
+    {
+        szUnicodeBuff[i] = '\t';
+        stTVI.cchTextMax--;
+    }
+    stTVI.pszText = szUnicodeBuff + Level;
+    if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI))
+    {
+        _Analysis_assume_nullterminated_(szUnicodeBuff);
+        uChWritten = Str_W2U(szUTF8Buff, szUnicodeBuff);
+        szUTF8Buff[uChWritten] = '\r';
+        szUTF8Buff[uChWritten + 1] = '\n';
+        IO_WriteFile(hFile, NULL, szUTF8Buff, uChWritten + 2);
+    }
+
+    return TRUE;
+}
+
+static
+HRESULT
+ExportWindowTreeToFile(
+    _In_ PCWSTR FileName)
+{
+    HRESULT hr;
+    NTSTATUS Status;
+    HANDLE hFile;
+
+    Status = IO_CreateWin32File(&hFile,
+                                FileName,
+                                NULL,
+                                FILE_APPEND_DATA | SYNCHRONIZE,
+                                FILE_SHARE_READ,
+                                FILE_SUPERSEDE,
+                                FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT | FILE_SEQUENTIAL_ONLY);
+    if (!NT_SUCCESS(Status))
+    {
+        return HRESULT_FROM_NT(Status);
+    }
+
+    Status = IO_WriteFile(hFile, NULL, Str_Utf8_BOM, sizeof(Str_Utf8_BOM));
+    if (!NT_SUCCESS(Status))
+    {
+        hr = HRESULT_FROM_NT(Status);
+        goto _Exit;
+    }
+
+    hr = UI_EnumTreeViewItems(g_hTree, FALSE, ExportWindowTreeToFileEnumProc, (PVOID)hFile);
+
+_Exit:
+    NtClose(hFile);
+    return hr;
+}
 
 static
 BOOL
@@ -195,7 +277,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* Initialize tree-view global resources */
         g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
         g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
-        
+
         /* Initialize menu before subclass procedures */
         g_hMenu = CreateMainDlgMenu(hDlg);
         if (GetClientRect(hDlg, &rc))
@@ -218,9 +300,38 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             UpdateWindowTreeAsync();
         }
+    } else if (uMsg == WM_COMMAND)
+    {
+        if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
+        {
+            if (LOWORD(wParam) == IDM_REFRESH)
+            {
+                UpdateWindowTreeAsync();
+            } else if (LOWORD(wParam) == IDM_SAVETREE)
+            {
+                HRESULT hr;
+                WCHAR szFile[MAX_PATH];
+
+                szFile[0] = UNICODE_NULL;
+                if (UI_GetSaveFileName(hDlg, AW_GetString(TextFileOfnFilter), szFile, L"txt"))
+                {
+                    hr = ExportWindowTreeToFile(szFile);
+                    if (SUCCEEDED(hr))
+                    {
+                        Shell_LocateItem(szFile);
+                    } else
+                    {
+                        Err_HrMessageBox(hDlg, _A2W(KNS_APP_NAME), hr);
+                    }
+                }
+            } else if (wParam == MAKEWPARAM(IDM_HOMEPAGE, 0))
+            {
+                Shell_Exec(_A2W(KNS_APP_HOMEPAGE), NULL, L"open", SW_SHOWNORMAL, NULL);
+            }
+        }
     } else if (uMsg == WM_CLOSE)
     {
-        EndDialog(hDlg, 0);
+        DestroyWindow(hDlg);
         if (g_himlTreeIcons != NULL)
         {
             ImageList_Destroy(g_himlTreeIcons);
@@ -230,6 +341,9 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             DestroyMainDlgMenu(g_hMenu);
         }
         SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 0);
+    } else if (uMsg == WM_DESTROY)
+    {
+        PostQuitMessage(S_OK);
     }
     return 0;
 }
@@ -237,5 +351,13 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 HRESULT
 AW_OpenMainDialogBox(VOID)
 {
-    return AW_OpenDialog(MAKEINTRESOURCEW(IDD_MAIN), NULL, MainDlgProc, 0);
+    HRESULT hr;
+
+    g_hAccel = CreateAcceleratorTableW(g_astDlgAccel, ARRAYSIZE(g_astDlgAccel));
+    hr = AW_OpenDialog(NULL, MAKEINTRESOURCEW(IDD_MAIN), g_hAccel, MainDlgProc, 0);
+    if (g_hAccel != NULL)
+    {
+        DestroyAcceleratorTable(g_hAccel);
+    }
+    return hr;
 }

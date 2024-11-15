@@ -18,6 +18,7 @@ enum
     Precomp4C_I18N_All_Refresh_F5,
     Precomp4C_I18N_All_SaveTree_Ctrl_S,
     Precomp4C_I18N_All_Homepage,
+    Precomp4C_I18N_All_TextFileOfnFilter,
 };
 
 EXTERN_C PRECOMP4C_I18N_TABLE Precomp4C_I18N_Table_All;

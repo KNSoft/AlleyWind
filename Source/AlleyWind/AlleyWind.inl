@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#define KNS_APP_NAME "AlleyWind"
-
 #define OEMRESOURCE
 #define STRICT_TYPED_ITEMIDS
 #define MLE_API
@@ -9,6 +7,7 @@
 
 #include <KNSoft/NDK/NDK.h>
 
+#include "KNSoft.AppInfo.h"
 #include "Resource/Resource.h"
 #include "Resource/I18N.xml.g.h"
 
@@ -45,8 +44,9 @@ AW_InitMenuEx(
 FORCEINLINE
 HRESULT
 AW_OpenDialog(
-    _In_ LPCWSTR DlgResName,
     _In_opt_ HWND Owner,
+    _In_ LPCWSTR DlgResName,
+    _In_opt_ HACCEL Accelerator,
     _In_opt_ DLGPROC DlgProc,
     _In_opt_ LPARAM InitParam)
 {
@@ -64,7 +64,7 @@ AW_OpenDialog(
         return HRESULT_FROM_NT(Status);
     }
 
-    return KNS_DlgBox((HINSTANCE)&__ImageBase, DlgRes, Owner, DlgProc, InitParam);
+    return KNS_DlgBox((HINSTANCE)&__ImageBase, Owner, DlgRes, Accelerator, DlgProc, InitParam);
 }
 
 // TODO: Read configuration

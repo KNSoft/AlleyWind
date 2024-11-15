@@ -23,6 +23,7 @@
     <ClInclude Include="Resource\Resource.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="KNSoft.AppInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="UI">
