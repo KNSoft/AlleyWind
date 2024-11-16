@@ -11,6 +11,9 @@
     <ClCompile Include="Resource\Resource.c">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Database\ClassConstants.c">
+      <Filter>Database</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -31,6 +34,9 @@
     </Filter>
     <Filter Include="Resource">
       <UniqueIdentifier>{966fef0d-3e25-4211-b1c3-3728db5331a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Database">
+      <UniqueIdentifier>{8fc50052-d27e-44e2-8157-b14e2d1ad643}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

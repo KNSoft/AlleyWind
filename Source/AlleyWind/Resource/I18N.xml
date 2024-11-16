@@ -1,5 +1,7 @@
 <I18N>
   <Table Name="All">
+    
+    <!-- Menu -->
     <String Name="File">
       <Value Locale="en">File</Value>
       <Value Locale="zh-Hans">文件</Value>
@@ -23,6 +25,124 @@
     <String Name="TextFileOfnFilter">
       <Value Locale="en">Text Files(*.txt)&#x0;*.txt&#x0;</Value>
       <Value Locale="zh-Hans">文本文档(*.txt)&#x0;*.txt&#x0;</Value>
+    </String>
+    
+    <!-- Database - Classes -->
+    <String Name="Desktop">
+      <Value Locale="en">Desktop</Value>
+      <Value Locale="zh-Hans">桌面</Value>
+    </String>
+    <String Name="Dialog">
+      <Value Locale="en">Dialog</Value>
+      <Value Locale="zh-Hans">对话框</Value>
+    </String>
+    <String Name="Animation">
+      <Value Locale="en">Animation</Value>
+      <Value Locale="zh-Hans">动画</Value>
+    </String>
+    <String Name="DateTimePicker">
+      <Value Locale="en">Date and Time Picker</Value>
+      <Value Locale="zh-Hans">时间日期选取器</Value>
+    </String>
+    <String Name="HotKey">
+      <Value Locale="en">Hot Key</Value>
+      <Value Locale="zh-Hans">热键</Value>
+    </String>
+    <String Name="Calendar">
+      <Value Locale="en">Calendar</Value>
+      <Value Locale="zh-Hans">日历</Value>
+    </String>
+    <String Name="ProgressBar">
+      <Value Locale="en">Progress Bar</Value>
+      <Value Locale="zh-Hans">进度条</Value>
+    </String>
+    <String Name="ReBar">
+      <Value Locale="en">Band Bar</Value>
+      <Value Locale="zh-Hans">条带栏</Value>
+    </String>
+    <String Name="StatusBar">
+      <Value Locale="en">Status Bar</Value>
+      <Value Locale="zh-Hans">状态栏</Value>
+    </String>
+    <String Name="ToolBar">
+      <Value Locale="en">Tool Bar</Value>
+      <Value Locale="zh-Hans">工具栏</Value>
+    </String>
+    <String Name="ToolTips">
+      <Value Locale="en">Tool Tips</Value>
+      <Value Locale="zh-Hans">工具提示</Value>
+    </String>
+    <String Name="SliderBar">
+      <Value Locale="en">Slider Bar</Value>
+      <Value Locale="zh-Hans">滑动条</Value>
+    </String>
+    <String Name="UpDownControl">
+      <Value Locale="en">Up-down Control</Value>
+      <Value Locale="zh-Hans">数值调节钮控件</Value>
+    </String>
+    <String Name="Button">
+      <Value Locale="en">Button</Value>
+      <Value Locale="zh-Hans">按钮</Value>
+    </String>
+    <String Name="ComboBox">
+      <Value Locale="en">Combo Box</Value>
+      <Value Locale="zh-Hans">组合框</Value>
+    </String>
+    <String Name="ExtendedComboBox">
+      <Value Locale="en">Extended Combo Box</Value>
+      <Value Locale="zh-Hans">扩展组合框</Value>
+    </String>
+    <String Name="EditControl">
+      <Value Locale="en">Edit Control</Value>
+      <Value Locale="zh-Hans">编辑控件</Value>
+    </String>
+    <String Name="HeaderControl">
+      <Value Locale="en">Header Control</Value>
+      <Value Locale="zh-Hans">列头控件</Value>
+    </String>
+    <String Name="ListBox">
+      <Value Locale="en">List Box</Value>
+      <Value Locale="zh-Hans">列表框</Value>
+    </String>
+    <String Name="IPAddressControl">
+      <Value Locale="en">IP Address Control</Value>
+      <Value Locale="zh-Hans">IP地址控件</Value>
+    </String>
+    <String Name="Hyperlink">
+      <Value Locale="en">Hyperlink</Value>
+      <Value Locale="zh-Hans">超链接</Value>
+    </String>
+    <String Name="ListView">
+      <Value Locale="en">List View</Value>
+      <Value Locale="zh-Hans">列表视图</Value>
+    </String>
+    <String Name="NativeFont">
+      <Value Locale="en">Native Font</Value>
+      <Value Locale="zh-Hans">原生字体</Value>
+    </String>
+    <String Name="PageScroller">
+      <Value Locale="en">Page Scroller</Value>
+      <Value Locale="zh-Hans">页面滚动条</Value>
+    </String>
+    <String Name="ScrollBar">
+      <Value Locale="en">Scroll Bar</Value>
+      <Value Locale="zh-Hans">滚动条</Value>
+    </String>
+    <String Name="StaticControl">
+      <Value Locale="en">Static Control</Value>
+      <Value Locale="zh-Hans">静态控件</Value>
+    </String>
+    <String Name="TabControl">
+      <Value Locale="en">Tab Control</Value>
+      <Value Locale="zh-Hans">选项卡控件</Value>
+    </String>
+    <String Name="TreeView">
+      <Value Locale="en">Tree View</Value>
+      <Value Locale="zh-Hans">树形视图</Value>
+    </String>
+    <String Name="MDIClient">
+      <Value Locale="en">MDI Client</Value>
+      <Value Locale="zh-Hans">MDI客户端</Value>
     </String>
   </Table>
 </I18N>

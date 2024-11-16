@@ -150,6 +150,7 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
 {
     UPDATE_WNDTREE_ENUM_CHILDREN stEnumChildren, *lpstEnumChildren;
     WCHAR szCaption[MAX_WNDCAPTION_CCH], szClassName[MAX_CLASSNAME_CCH];
+    PCWSTR pszSysClassName;
     WCHAR szBuffer[sizeof(DWORD) * 2 + ARRAYSIZE(szCaption) + ARRAYSIZE(szClassName) + 16];
     HICON hIcon;
     INT iImageIcon, iCch;
@@ -157,6 +158,7 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
     ULONG ulDepth;
     TVINSERTSTRUCTW stTVIInsert = { 0, TVI_LAST, { TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_PARAM } };
 
+    hWnd = UI_TruncateHandle(hWnd);
     lpstEnumChildren = (PUPDATE_WNDTREE_ENUM_CHILDREN)lParam;
     ulDepth = lpstEnumChildren->ulDepth;
     hParentNode = lpstEnumChildren->hParentNode;
@@ -169,10 +171,17 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
     }
     if (szClassName[0] != UNICODE_NULL)
     {
-        iCch = Str_PrintfW(szBuffer, L"%08lX \"%s\" %s", (ULONG)(ULONG_PTR)hWnd, szCaption, szClassName);
+        pszSysClassName = AW_GetSysClassDisplayName(szClassName);
+        if (pszSysClassName != NULL)
+        {
+            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls (%ls)", (ULONG)(ULONG_PTR)hWnd, szCaption, szClassName, pszSysClassName);
+        } else
+        {
+            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls", (ULONG)(ULONG_PTR)hWnd, szCaption, szClassName);
+        }
     } else
     {
-        iCch = Str_PrintfW(szBuffer, L"%08X \"%s\"", (ULONG)(ULONG_PTR)hWnd, szCaption);
+        iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\"", (ULONG)(ULONG_PTR)hWnd, szCaption);
     }
 
     /* Append node info and icon */
@@ -181,7 +190,7 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
     stTVIInsert.item.iImage = stTVIInsert.item.iSelectedImage = iImageIcon;
     stTVIInsert.hParent = hParentNode;
     stTVIInsert.item.pszText = iCch > 0 ? szBuffer : NULL;
-    stTVIInsert.item.lParam = (LPARAM)UI_TruncateHandle(hWnd);
+    stTVIInsert.item.lParam = (LPARAM)hWnd;
     hTreeItem = (HTREEITEM)SendMessageW(g_hTree, TVM_INSERTITEMW, 0, (LPARAM)&stTVIInsert);
     if (ulDepth == 1)
     {
@@ -261,7 +270,13 @@ MainDlgResizeProc(
 {
     if (g_hTree != NULL)
     {
-        SetWindowPos(g_hTree, NULL, 0, 0, Width, Height, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+        SetWindowPos(g_hTree,
+                     NULL,
+                     0,
+                     0,
+                     Width,
+                     Height,
+                     SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
     }
 }
 
@@ -275,6 +290,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         RECT rc;
 
         /* Initialize tree-view global resources */
+        AW_InitClassDatabase();
         g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
         g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
 
@@ -331,7 +347,6 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     } else if (uMsg == WM_CLOSE)
     {
-        DestroyWindow(hDlg);
         if (g_himlTreeIcons != NULL)
         {
             ImageList_Destroy(g_himlTreeIcons);
@@ -341,6 +356,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             DestroyMainDlgMenu(g_hMenu);
         }
         SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 0);
+        DestroyWindow(hDlg);
     } else if (uMsg == WM_DESTROY)
     {
         PostQuitMessage(S_OK);

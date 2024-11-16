@@ -2,20 +2,21 @@
 
 #define OEMRESOURCE
 #define STRICT_TYPED_ITEMIDS
-#define MLE_API
 #define _USE_COMMCTL60
-
 #include <KNSoft/NDK/NDK.h>
 
 #include "KNSoft.AppInfo.h"
 #include "Resource/Resource.h"
 #include "Resource/I18N.xml.g.h"
 
+#define MLE_API
 #include <MakeLifeEasier.h>
 
 #pragma comment (lib, "Comctl32.lib")
 
 #define MAX_WNDCAPTION_CCH 128
+
+EXTERN_C_START
 
 PCWSTR
 AW_GetStringEx(
@@ -40,6 +41,9 @@ AW_InitMenuEx(
 }
 
 #define AW_InitMenu(Items) AW_InitMenuEx(Items, ARRAYSIZE(Items))
+
+VOID
+AW_InitClassDatabase(VOID);
 
 FORCEINLINE
 HRESULT
@@ -88,6 +92,12 @@ AW_GetWindowIcon(
     return hIcon;
 }
 
-EXTERN_C
+_Ret_maybenull_z_
+PCWSTR
+AW_GetSysClassDisplayName(
+    _In_ PCWSTR ClassName);
+
 HRESULT
 AW_OpenMainDialogBox(VOID);
+
+EXTERN_C_END

@@ -213,6 +213,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Database\ClassConstants.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="Resource\I18N.xml.g.c" />
     <ClCompile Include="Resource\Resource.c" />
