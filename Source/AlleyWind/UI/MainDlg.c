@@ -375,5 +375,6 @@ AW_OpenMainDialogBox(VOID)
     {
         DestroyAcceleratorTable(g_hAccel);
     }
+
     return hr;
 }

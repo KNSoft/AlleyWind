@@ -92,7 +92,7 @@ AW_GetWindowIcon(
     return hIcon;
 }
 
-_Ret_maybenull_z_
+_Ret_maybenull_
 PCWSTR
 AW_GetSysClassDisplayName(
     _In_ PCWSTR ClassName);
