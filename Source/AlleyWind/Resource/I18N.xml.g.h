@@ -14,11 +14,12 @@
 enum
 {
     Precomp4C_I18N_All_File,
-    Precomp4C_I18N_All_Help,
+    Precomp4C_I18N_All_RunAsAdmin,
     Precomp4C_I18N_All_Refresh_F5,
     Precomp4C_I18N_All_SaveTree_Ctrl_S,
-    Precomp4C_I18N_All_Homepage,
     Precomp4C_I18N_All_TextFileOfnFilter,
+    Precomp4C_I18N_All_Help,
+    Precomp4C_I18N_All_Homepage,
     Precomp4C_I18N_All_Desktop,
     Precomp4C_I18N_All_Dialog,
     Precomp4C_I18N_All_Animation,

@@ -6,6 +6,7 @@
 
 #define IDM_REFRESH 1
 #define IDM_SAVETREE 2
+#define IDM_RUNAS_ADMIN 3
 
 static UI_MENU_ITEM g_astMenuFile[] = {
     { MF_STRING, IDM_REFRESH, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
@@ -34,13 +35,44 @@ static ACCEL g_astDlgAccel[] = {
 
 static
 HMENU
-CreateMainDlgMenu(
+SetMainDlgMenu(
     _In_ HWND Dialog)
 {
-    AW_InitMenu(g_astMenuFile);
-    AW_InitMenu(g_astMenuHelp);
-    AW_InitMenu(g_astDlgMenu);
-    return UI_CreateWindowMenuEx(Dialog, g_astDlgMenu, ARRAYSIZE(g_astDlgMenu));
+    HMENU hMenu;
+    NTSTATUS Status;
+    HANDLE Token;
+
+    /* Create menu */
+    AW_InitMenuI18N(g_astMenuFile);
+    AW_InitMenuI18N(g_astMenuHelp);
+    AW_InitMenuI18N(g_astDlgMenu);
+    hMenu = UI_CreateWindowMenu(g_astDlgMenu);
+    if (hMenu == NULL)
+    {
+        return NULL;
+    }
+
+    /* Add runas sub-menu if privilege is limited */
+    Status = PS_OpenCurrentThreadToken(&Token);
+    if (!NT_SUCCESS(Status))
+    {
+        goto _Exit;
+    }
+
+    if (!NT_SUCCESS(PS_IsAdminToken(Token)))
+    {
+        InsertMenuW(g_astDlgMenu[0].Handle, 0, MF_BYPOSITION | MF_STRING, IDM_RUNAS_ADMIN, AW_GetString(RunAsAdmin));
+    }
+
+    NtClose(Token);
+
+_Exit:
+    if (!SetMenu(Dialog, hMenu))
+    {
+        UI_DestroyWindowMenu(hMenu, g_astDlgMenu);
+        hMenu = NULL;
+    }
+    return hMenu;
 }
 
 static
@@ -292,10 +324,11 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* Initialize tree-view global resources */
         AW_InitClassDatabase();
         g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
+        UI_SetWindowExplorerVisualStyle(g_hTree);
         g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
 
         /* Initialize menu before subclass procedures */
-        g_hMenu = CreateMainDlgMenu(hDlg);
+        g_hMenu = SetMainDlgMenu(hDlg);
         if (GetClientRect(hDlg, &rc))
         {
             MainDlgResizeProc(hDlg, rc.right, rc.bottom, NULL);
@@ -318,7 +351,27 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     } else if (uMsg == WM_COMMAND)
     {
-        if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
+        if (wParam == MAKEWPARAM(IDM_RUNAS_ADMIN, 0))
+        {
+            W32ERROR Ret;
+            PRTL_USER_PROCESS_PARAMETERS ProcParam = NtCurrentPeb()->ProcessParameters;
+            
+            Ret = Shell_Exec(ProcParam->ImagePathName.Buffer,
+                             NULL,
+                             L"runas",
+                             SW_SHOWNORMAL,
+                             NULL);
+            if (Ret == ERROR_SUCCESS)
+            {
+                SendMessageW(hDlg, WM_CLOSE, 0, 0);
+            } else
+            {
+                KNS_Win32ErrorMessageBox(hDlg, Ret);
+            }
+        } else if (wParam == MAKEWPARAM(IDM_HOMEPAGE, 0))
+        {
+            KNS_OpenHomepage();
+        } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
             if (LOWORD(wParam) == IDM_REFRESH)
             {
@@ -337,12 +390,9 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                         Shell_LocateItem(szFile);
                     } else
                     {
-                        Err_HrMessageBox(hDlg, _A2W(KNS_APP_NAME), hr);
+                        KNS_HrMessageBox(hDlg, hr);
                     }
                 }
-            } else if (wParam == MAKEWPARAM(IDM_HOMEPAGE, 0))
-            {
-                Shell_Exec(_A2W(KNS_APP_HOMEPAGE), NULL, L"open", SW_SHOWNORMAL, NULL);
             }
         }
     } else if (uMsg == WM_CLOSE)

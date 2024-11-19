@@ -6,9 +6,9 @@
       <Value Locale="en">File</Value>
       <Value Locale="zh-Hans">文件</Value>
     </String>
-    <String Name="Help">
-      <Value Locale="en">Help</Value>
-      <Value Locale="zh-Hans">帮助</Value>
+    <String Name="RunAsAdmin">
+      <Value Locale="en">Run As Administrator</Value>
+      <Value Locale="zh-Hans">以管理员身份运行</Value>
     </String>
     <String Name="Refresh_F5">
       <Value Locale="en">Refresh	F5</Value>
@@ -18,13 +18,17 @@
       <Value Locale="en">Save Tree	Ctrl+S</Value>
       <Value Locale="zh-Hans">保存树	Ctrl+S</Value>
     </String>
-    <String Name="Homepage">
-      <Value Locale="en">Homepage</Value>
-      <Value Locale="zh-Hans">主页</Value>
-    </String>
     <String Name="TextFileOfnFilter">
       <Value Locale="en">Text Files(*.txt)&#x0;*.txt&#x0;</Value>
       <Value Locale="zh-Hans">文本文档(*.txt)&#x0;*.txt&#x0;</Value>
+    </String>
+    <String Name="Help">
+      <Value Locale="en">Help</Value>
+      <Value Locale="zh-Hans">帮助</Value>
+    </String>
+    <String Name="Homepage">
+      <Value Locale="en">Homepage</Value>
+      <Value Locale="zh-Hans">主页</Value>
     </String>
     
     <!-- Database - Classes -->

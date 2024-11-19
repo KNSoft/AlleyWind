@@ -5,7 +5,6 @@
 #define _USE_COMMCTL60
 #include <KNSoft/NDK/NDK.h>
 
-#include "KNSoft.AppInfo.h"
 #include "Resource/Resource.h"
 #include "Resource/I18N.xml.g.h"
 
@@ -33,14 +32,14 @@ AW_InitI18NArrayEx(
 
 FORCEINLINE
 VOID
-AW_InitMenuEx(
+AW_InitMenuI18NEx(
     _In_reads_(Count) PUI_MENU_ITEM Items,
     _In_ UINT Count)
 {
     AW_InitI18NArrayEx(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
 }
 
-#define AW_InitMenu(Items) AW_InitMenuEx(Items, ARRAYSIZE(Items))
+#define AW_InitMenuI18N(Items) AW_InitMenuI18NEx(Items, ARRAYSIZE(Items))
 
 VOID
 AW_InitClassDatabase(VOID);
