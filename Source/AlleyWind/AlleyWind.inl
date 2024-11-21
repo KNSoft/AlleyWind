@@ -41,6 +41,15 @@ AW_InitMenuI18NEx(
 
 #define AW_InitMenuI18N(Items) AW_InitMenuI18NEx(Items, ARRAYSIZE(Items))
 
+extern HICON g_ResUACIcon;
+extern HBITMAP g_ResUACIconBitmap;
+
+VOID
+AW_InitStockResource(VOID);
+
+VOID
+AW_UninitStockResource(VOID);
+
 VOID
 AW_InitClassDatabase(VOID);
 

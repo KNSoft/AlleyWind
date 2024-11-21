@@ -4,13 +4,14 @@
 
 /* File */
 
-#define IDM_REFRESH 1
-#define IDM_SAVETREE 2
-#define IDM_RUNAS_ADMIN 3
+#define IDM_RUNAS_ADMIN 1
+#define IDM_REFRESH 2
+#define IDM_SAVETREE 3
 
 static UI_MENU_ITEM g_astMenuFile[] = {
-    { MF_STRING, IDM_REFRESH, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
-    { MF_STRING, IDM_SAVETREE, Precomp4C_I18N_All_SaveTree_Ctrl_S, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_RUNAS_ADMIN, NULL, Precomp4C_I18N_All_RunAsAdmin, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_REFRESH, NULL, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_SAVETREE, NULL, Precomp4C_I18N_All_SaveTree_Ctrl_S, NULL, 0 , NULL },
 };
 
 /* Help */
@@ -18,14 +19,14 @@ static UI_MENU_ITEM g_astMenuFile[] = {
 #define IDM_HOMEPAGE 20
 
 static UI_MENU_ITEM g_astMenuHelp[] = {
-    { MF_STRING, IDM_HOMEPAGE, Precomp4C_I18N_All_Homepage, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_HOMEPAGE, NULL, Precomp4C_I18N_All_Homepage, NULL, 0, NULL },
 };
 
 /* Main */
 
 static UI_MENU_ITEM g_astDlgMenu[] = {
-    { MF_STRING, 0, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_astMenuFile), g_astMenuFile },
-    { MF_STRING, 0, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_astMenuHelp), g_astMenuHelp },
+    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_astMenuFile), g_astMenuFile },
+    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_astMenuHelp), g_astMenuHelp },
 };
 
 static ACCEL g_astDlgAccel[] = {
@@ -42,7 +43,22 @@ SetMainDlgMenu(
     NTSTATUS Status;
     HANDLE Token;
 
-    /* Create menu */
+    /* Add runas sub-menu if privilege is limited */
+    Status = PS_OpenCurrentThreadToken(&Token);
+    if (!NT_SUCCESS(Status))
+    {
+        goto _CreateMenu;
+    }
+    if (!NT_SUCCESS(PS_IsAdminToken(Token)))
+    {
+        g_astMenuFile[0].Icon = g_ResUACIconBitmap;
+    } else
+    {
+        g_astMenuFile[0].Invalid = TRUE;
+    }
+    NtClose(Token);
+
+_CreateMenu:
     AW_InitMenuI18N(g_astMenuFile);
     AW_InitMenuI18N(g_astMenuHelp);
     AW_InitMenuI18N(g_astDlgMenu);
@@ -52,21 +68,6 @@ SetMainDlgMenu(
         return NULL;
     }
 
-    /* Add runas sub-menu if privilege is limited */
-    Status = PS_OpenCurrentThreadToken(&Token);
-    if (!NT_SUCCESS(Status))
-    {
-        goto _Exit;
-    }
-
-    if (!NT_SUCCESS(PS_IsAdminToken(Token)))
-    {
-        InsertMenuW(g_astDlgMenu[0].Handle, 0, MF_BYPOSITION | MF_STRING, IDM_RUNAS_ADMIN, AW_GetString(RunAsAdmin));
-    }
-
-    NtClose(Token);
-
-_Exit:
     if (!SetMenu(Dialog, hMenu))
     {
         UI_DestroyWindowMenu(hMenu, g_astDlgMenu);
@@ -354,9 +355,8 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (wParam == MAKEWPARAM(IDM_RUNAS_ADMIN, 0))
         {
             W32ERROR Ret;
-            PRTL_USER_PROCESS_PARAMETERS ProcParam = NtCurrentPeb()->ProcessParameters;
-            
-            Ret = Shell_Exec(ProcParam->ImagePathName.Buffer,
+
+            Ret = Shell_Exec(NtCurrentPeb()->ProcessParameters->ImagePathName.Buffer,
                              NULL,
                              L"runas",
                              SW_SHOWNORMAL,

@@ -18,11 +18,15 @@ wWinMain(
     /* COM initialization is optional currently */
     hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
+    AW_InitStockResource();
+
     hr = AW_OpenMainDialogBox();
     if (FAILED(hr))
     {
         KNS_HrMessageBox(NULL, hr);
     }
+
+    AW_UninitStockResource();
 
     if (SUCCEEDED(hrCom))
     {
