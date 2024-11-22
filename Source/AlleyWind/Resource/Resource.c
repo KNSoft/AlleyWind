@@ -23,8 +23,8 @@ AW_InitI18NArrayEx(
 
 #pragma endregion
 
-HICON g_ResUACIcon = NULL;
-HBITMAP g_ResUACIconBitmap = NULL;
+HICON g_ResUACShieldIcon = NULL;
+HBITMAP g_ResUACShieldIconBitmap = NULL;
 
 VOID
 AW_InitStockResource(VOID)
@@ -37,12 +37,12 @@ AW_InitStockResource(VOID)
     hr = SHGetStockIconInfo(SIID_SHIELD, SHGSI_ICON | SHGSI_SMALLICON, &sii);
     if (SUCCEEDED(hr))
     {
-        g_ResUACIcon = sii.hIcon;
-        g_ResUACIconBitmap = UI_CreateBitmapFromIcon(g_ResUACIcon, 0, 0);
-        if (g_ResUACIconBitmap == NULL)
+        g_ResUACShieldIcon = sii.hIcon;
+        g_ResUACShieldIconBitmap = UI_CreateBitmapFromIcon(g_ResUACShieldIcon, 0, 0);
+        if (g_ResUACShieldIconBitmap == NULL)
         {
-            DestroyIcon(g_ResUACIcon);
-            g_ResUACIcon = NULL;
+            DestroyIcon(g_ResUACShieldIcon);
+            g_ResUACShieldIcon = NULL;
         }
     }
 }
@@ -50,12 +50,12 @@ AW_InitStockResource(VOID)
 VOID
 AW_UninitStockResource(VOID)
 {
-    if (g_ResUACIconBitmap != NULL)
+    if (g_ResUACShieldIconBitmap != NULL)
     {
-        DeleteObject(g_ResUACIconBitmap);
+        DeleteObject(g_ResUACShieldIconBitmap);
     }
-    if (g_ResUACIcon != NULL)
+    if (g_ResUACShieldIcon != NULL)
     {
-        DestroyIcon(g_ResUACIcon);
+        DestroyIcon(g_ResUACShieldIcon);
     }
 }

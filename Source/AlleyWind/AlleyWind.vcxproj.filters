@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Main.c" />
-    <ClCompile Include="UI\MainDlg.c">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\I18N.xml.g.c">
       <Filter>Resource</Filter>
     </ClCompile>
@@ -14,17 +11,42 @@
     <ClCompile Include="Database\ClassConstants.c">
       <Filter>Database</Filter>
     </ClCompile>
+    <ClCompile Include="UI\MainDlg\MainDlg.c">
+      <Filter>UI\MainDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainDlg\Menu.c">
+      <Filter>UI\MainDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowUtil\WindowUtil.c">
+      <Filter>WindowUtil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="AlleyWind.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AlleyWind.inl" />
+    <ClInclude Include="AlleyWind.Core.inl" />
     <ClInclude Include="Resource\I18N.xml.g.h">
       <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Resource.h">
       <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MainDlg\Menu.h">
+      <Filter>UI\MainDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="Database\Database.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\ResMgr.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowUtil\WindowUtil.h">
+      <Filter>WindowUtil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +58,12 @@
     </Filter>
     <Filter Include="Database">
       <UniqueIdentifier>{8fc50052-d27e-44e2-8157-b14e2d1ad643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainDlg">
+      <UniqueIdentifier>{d770db64-979c-4067-a1bf-78e138741ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WindowUtil">
+      <UniqueIdentifier>{c76a10f2-4b62-40e7-b5f8-470b65211aa4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,90 +1,6 @@
-﻿#include "../AlleyWind.inl"
+﻿#include "../../AlleyWind.inl"
 
-#pragma region Menu
-
-/* File */
-
-#define IDM_RUNAS_ADMIN 1
-#define IDM_REFRESH 2
-#define IDM_SAVETREE 3
-
-static UI_MENU_ITEM g_astMenuFile[] = {
-    { FALSE, MF_STRING, IDM_RUNAS_ADMIN, NULL, Precomp4C_I18N_All_RunAsAdmin, NULL, 0 , NULL },
-    { FALSE, MF_STRING, IDM_REFRESH, NULL, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
-    { FALSE, MF_STRING, IDM_SAVETREE, NULL, Precomp4C_I18N_All_SaveTree_Ctrl_S, NULL, 0 , NULL },
-};
-
-/* Help */
-
-#define IDM_HOMEPAGE 20
-
-static UI_MENU_ITEM g_astMenuHelp[] = {
-    { FALSE, MF_STRING, IDM_HOMEPAGE, NULL, Precomp4C_I18N_All_Homepage, NULL, 0, NULL },
-};
-
-/* Main */
-
-static UI_MENU_ITEM g_astDlgMenu[] = {
-    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_astMenuFile), g_astMenuFile },
-    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_astMenuHelp), g_astMenuHelp },
-};
-
-static ACCEL g_astDlgAccel[] = {
-    { FVIRTKEY, VK_F5, IDM_REFRESH },
-    { FVIRTKEY | FCONTROL, 'S', IDM_SAVETREE},
-};
-
-static
-HMENU
-SetMainDlgMenu(
-    _In_ HWND Dialog)
-{
-    HMENU hMenu;
-    NTSTATUS Status;
-    HANDLE Token;
-
-    /* Add runas sub-menu if privilege is limited */
-    Status = PS_OpenCurrentThreadToken(&Token);
-    if (!NT_SUCCESS(Status))
-    {
-        goto _CreateMenu;
-    }
-    if (!NT_SUCCESS(PS_IsAdminToken(Token)))
-    {
-        g_astMenuFile[0].Icon = g_ResUACIconBitmap;
-    } else
-    {
-        g_astMenuFile[0].Invalid = TRUE;
-    }
-    NtClose(Token);
-
-_CreateMenu:
-    AW_InitMenuI18N(g_astMenuFile);
-    AW_InitMenuI18N(g_astMenuHelp);
-    AW_InitMenuI18N(g_astDlgMenu);
-    hMenu = UI_CreateWindowMenu(g_astDlgMenu);
-    if (hMenu == NULL)
-    {
-        return NULL;
-    }
-
-    if (!SetMenu(Dialog, hMenu))
-    {
-        UI_DestroyWindowMenu(hMenu, g_astDlgMenu);
-        hMenu = NULL;
-    }
-    return hMenu;
-}
-
-static
-VOID
-DestroyMainDlgMenu(
-    _In_ HMENU Menu)
-{
-    UI_DestroyWindowMenuEx(Menu, g_astDlgMenu, ARRAYSIZE(g_astDlgMenu));
-}
-
-#pragma endregion
+#include "Menu.h"
 
 typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 {
@@ -94,14 +10,14 @@ typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 
 static UI_WINDOW_RESIZE_INFO g_stResizeInfo = { 0 };
 static HWND g_hTree = NULL;
-static HMENU g_hMenu = NULL;
+static HMENU g_hMainMenu, g_hItemMenu;
 static HACCEL g_hAccel = NULL;
 static LONG _Interlocked_operand_ volatile g_bUpdatingTree = FALSE;
 static HIMAGELIST g_himlTreeIcons = NULL;
 static HICON g_hIconWndDefault = NULL;
 
 static
-_Function_class_(UI_ENUMTREEVIEWITEM_FN)
+_Function_class_(UI_TREEVIEW_ENUMITEM_FN)
 LOGICAL
 CALLBACK
 ExportWindowTreeToFileEnumProc(
@@ -169,7 +85,7 @@ ExportWindowTreeToFile(
         goto _Exit;
     }
 
-    hr = UI_EnumTreeViewItems(g_hTree, FALSE, ExportWindowTreeToFileEnumProc, (PVOID)hFile);
+    hr = UI_TreeViewEnumItems(g_hTree, FALSE, ExportWindowTreeToFileEnumProc, (PVOID)hFile);
 
 _Exit:
     NtClose(hFile);
@@ -253,6 +169,7 @@ UpdateWindowTreeThread(
     iTreeItemHeight = (INT)SendMessageW(g_hTree, TVM_GETITEMHEIGHT, 0, 0);
     if (g_himlTreeIcons != NULL)
     {
+        SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)NULL);
         ImageList_Destroy(g_himlTreeIcons);
     }
     g_himlTreeIcons = ImageList_Create(iTreeItemHeight,
@@ -328,8 +245,8 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         UI_SetWindowExplorerVisualStyle(g_hTree);
         g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
 
-        /* Initialize menu before subclass procedures */
-        g_hMenu = SetMainDlgMenu(hDlg);
+        /* Sets menu before subclass procedures */
+        SetMenu(hDlg, g_hMainMenu);
         if (GetClientRect(hDlg, &rc))
         {
             MainDlgResizeProc(hDlg, rc.right, rc.bottom, NULL);
@@ -352,12 +269,12 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     } else if (uMsg == WM_COMMAND)
     {
-        if (wParam == MAKEWPARAM(IDM_RUNAS_ADMIN, 0))
+        if (wParam == MAKEWPARAM(IDM_FILE_RUNAS_ADMIN, 0))
         {
             W32ERROR Ret;
 
             Ret = Shell_Exec(NtCurrentPeb()->ProcessParameters->ImagePathName.Buffer,
-                             CMDLINE_SWITCH_ELEVATEUIACCESS,
+                             CMDLINE_SWITCH_TRYELEVATEUIACCESS,
                              L"runas",
                              SW_SHOWNORMAL,
                              NULL);
@@ -368,15 +285,33 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 KNS_Win32ErrorMessageBox(hDlg, Ret);
             }
-        } else if (wParam == MAKEWPARAM(IDM_HOMEPAGE, 0))
+        } else if (wParam == MAKEWPARAM(IDM_HELP_HOMEPAGE, 0))
         {
             KNS_OpenHomepage();
+        } else if (wParam == MAKEWPARAM(IDM_ITEM_HIGHLIGHT, 0))
+        {
+            TVITEMW tvi;
+
+            tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
+            if (tvi.hItem != NULL)
+            {
+                tvi.mask = TVIF_PARAM;
+                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi) &&
+                    IsWindow((HWND)tvi.lParam))
+                {
+                    UI_FlashWindow((HWND)tvi.lParam);
+                }
+            }
+        } else if (wParam == MAKEWPARAM(IDM_ITEM_PROPERTIES, 0))
+        {
+            // TODO
+            KNS_HrMessageBox(hDlg, E_NOTIMPL);
         } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
-            if (LOWORD(wParam) == IDM_REFRESH)
+            if (LOWORD(wParam) == IDM_FILE_REFRESH)
             {
                 UpdateWindowTreeAsync();
-            } else if (LOWORD(wParam) == IDM_SAVETREE)
+            } else if (LOWORD(wParam) == IDM_FILE_SAVETREE)
             {
                 HRESULT hr;
                 WCHAR szFile[MAX_PATH];
@@ -395,20 +330,53 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 }
             }
         }
+    } else if (uMsg == WM_CONTEXTMENU && wParam == (WPARAM)g_hTree)
+    {
+        TVHITTESTINFO tvhti;
+        TVITEMW tvi;
+        INT X, Y;
+
+        tvhti.pt.x = X = GET_X_LPARAM(lParam);
+        tvhti.pt.y = Y = GET_Y_LPARAM(lParam);
+        if (ScreenToClient(g_hTree, &tvhti.pt))
+        {
+            tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_HITTEST, 0, (LPARAM)&tvhti);
+            if (tvi.hItem != NULL)
+            {
+                tvi.mask = TVIF_PARAM;
+                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
+                {
+                    SendMessageW(g_hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)tvi.hItem);
+                    if (tvi.lParam == (LPARAM)INVALID_HANDLE_VALUE)
+                    {
+                        // UI_PopupMenu(g_hSearchItemMenu, X, Y, hDlg);
+                    } else if (IsWindow((HWND)tvi.lParam))
+                    {
+                        UI_PopupMenu(g_hItemMenu, X, Y, hDlg);
+                    }
+                }
+            }
+        }
+        SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 0);
+    } else if (uMsg == WM_NOTIFY)
+    {
+        LPNMHDR pnmh = (LPNMHDR)lParam;
+        if (pnmh->hwndFrom == g_hTree)
+        {
+            LPNMTREEVIEWW pnmtv = (LPNMTREEVIEWW)lParam;
+            // e.g. if (pnmtv->hdr.code == TVN_SELCHANGED) ...
+        }
     } else if (uMsg == WM_CLOSE)
     {
-        if (g_himlTreeIcons != NULL)
-        {
-            ImageList_Destroy(g_himlTreeIcons);
-        }
-        if (g_hMenu != NULL)
-        {
-            DestroyMainDlgMenu(g_hMenu);
-        }
         SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 0);
         DestroyWindow(hDlg);
     } else if (uMsg == WM_DESTROY)
     {
+        if (g_himlTreeIcons != NULL)
+        {
+            SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)NULL);
+            ImageList_Destroy(g_himlTreeIcons);
+        }
         PostQuitMessage(S_OK);
     }
     return 0;
@@ -419,12 +387,14 @@ AW_OpenMainDialogBox(VOID)
 {
     HRESULT hr;
 
-    g_hAccel = CreateAcceleratorTableW(g_astDlgAccel, ARRAYSIZE(g_astDlgAccel));
+    MainDlgCreateMenu(&g_hMainMenu, &g_hItemMenu);
+    g_hAccel = MainDlgCreateAccelerator();
     hr = AW_OpenDialog(NULL, MAKEINTRESOURCEW(IDD_MAIN), g_hAccel, MainDlgProc, 0);
     if (g_hAccel != NULL)
     {
         DestroyAcceleratorTable(g_hAccel);
     }
+    MainDlgDestroyMenu(g_hMainMenu, g_hItemMenu);
 
     return hr;
 }

@@ -57,7 +57,7 @@ SelfRunAs(
 
 static
 int
-RunWithUIAccessElevation(VOID)
+TryElevateUIAccess(VOID)
 {
     HRESULT Ret;
     ULONG LsaProcessId, UIAccess = FALSE;
@@ -136,9 +136,9 @@ wWinMain(
 
     for (i = 0; i < ArgC; i++)
     {
-        if (Str_EqualW(ArgV[i], CMDLINE_SWITCH_ELEVATEUIACCESS))
+        if (Str_EqualW(ArgV[i], CMDLINE_SWITCH_TRYELEVATEUIACCESS))
         {
-            Ret = RunWithUIAccessElevation();
+            Ret = TryElevateUIAccess();
             goto _Exit;
         }
     }

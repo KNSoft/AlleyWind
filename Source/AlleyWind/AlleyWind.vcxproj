@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.props" Condition="Exists('..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.props')" />
+  <Import Project="..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props" Condition="Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
       <Configuration>Debug</Configuration>
@@ -217,15 +217,23 @@
     <ClCompile Include="Main.c" />
     <ClCompile Include="Resource\I18N.xml.g.c" />
     <ClCompile Include="Resource\Resource.c" />
-    <ClCompile Include="UI\MainDlg.c" />
+    <ClCompile Include="UI\MainDlg\MainDlg.c" />
+    <ClCompile Include="UI\MainDlg\Menu.c" />
+    <ClCompile Include="WindowUtil\WindowUtil.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AlleyWind.inl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AlleyWind.inl" />
+    <ClInclude Include="AlleyWind.Core.inl" />
+    <ClInclude Include="Database\Database.h" />
     <ClInclude Include="Resource\I18N.xml.g.h" />
+    <ClInclude Include="Resource\ResMgr.h" />
     <ClInclude Include="Resource\Resource.h" />
+    <ClInclude Include="UI\MainDlg\Menu.h" />
+    <ClInclude Include="UI\UI.h" />
+    <ClInclude Include="WindowUtil\WindowUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <Precomp4C_I18N Include="Resource\I18N.xml" />
@@ -235,15 +243,15 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.targets" Condition="Exists('..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.targets')" />
     <Import Project="..\packages\KNSoft.NDK.1.2.9-beta\build\KNSoft.NDK.targets" Condition="Exists('..\packages\KNSoft.NDK.1.2.9-beta\build\KNSoft.NDK.targets')" />
+    <Import Project="..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets" Condition="Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.props'))" />
-    <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.14-alpha\build\KNSoft.Precomp4C.targets'))" />
     <Error Condition="!Exists('..\packages\KNSoft.NDK.1.2.9-beta\build\KNSoft.NDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.NDK.1.2.9-beta\build\KNSoft.NDK.targets'))" />
+    <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props'))" />
+    <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets'))" />
   </Target>
 </Project>

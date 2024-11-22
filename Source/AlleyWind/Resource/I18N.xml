@@ -1,7 +1,7 @@
 <I18N>
   <Table Name="All">
-    
-    <!-- Menu -->
+
+    <!-- Main dialog - Main menu -->
     <String Name="File">
       <Value Locale="en">File</Value>
       <Value Locale="zh-Hans">文件</Value>
@@ -29,6 +29,16 @@
     <String Name="Homepage">
       <Value Locale="en">Homepage</Value>
       <Value Locale="zh-Hans">主页</Value>
+    </String>
+
+    <!-- Main dialog - Item menu -->
+    <String Name="Highlight">
+      <Value Locale="en">Highlight</Value>
+      <Value Locale="zh-Hans">高亮</Value>
+    </String>
+    <String Name="Properties">
+      <Value Locale="en">Properties</Value>
+      <Value Locale="zh-Hans">属性</Value>
     </String>
     
     <!-- Database - Classes -->

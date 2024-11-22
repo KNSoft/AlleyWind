@@ -20,6 +20,8 @@ enum
     Precomp4C_I18N_All_TextFileOfnFilter,
     Precomp4C_I18N_All_Help,
     Precomp4C_I18N_All_Homepage,
+    Precomp4C_I18N_All_Highlight,
+    Precomp4C_I18N_All_Properties,
     Precomp4C_I18N_All_Desktop,
     Precomp4C_I18N_All_Dialog,
     Precomp4C_I18N_All_Animation,
