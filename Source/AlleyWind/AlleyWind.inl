@@ -13,6 +13,8 @@
 
 #pragma comment (lib, "Comctl32.lib")
 
+#define CMDLINE_SWITCH_ELEVATEUIACCESS L"-ElevateUIAccess"
+
 #define MAX_WNDCAPTION_CCH 128
 
 EXTERN_C_START

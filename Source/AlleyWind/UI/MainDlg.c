@@ -357,7 +357,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             W32ERROR Ret;
 
             Ret = Shell_Exec(NtCurrentPeb()->ProcessParameters->ImagePathName.Buffer,
-                             NULL,
+                             CMDLINE_SWITCH_ELEVATEUIACCESS,
                              L"runas",
                              SW_SHOWNORMAL,
                              NULL);
