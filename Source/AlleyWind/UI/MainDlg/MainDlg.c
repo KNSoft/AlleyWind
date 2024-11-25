@@ -335,6 +335,8 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         TVHITTESTINFO tvhti;
         TVITEMW tvi;
         INT X, Y;
+        HWND Window;
+        MENUITEMINFOW mii;
 
         tvhti.pt.x = X = GET_X_LPARAM(lParam);
         tvhti.pt.y = Y = GET_Y_LPARAM(lParam);
@@ -346,13 +348,20 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 tvi.mask = TVIF_PARAM;
                 if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
                 {
+                    Window = (HWND)tvi.lParam;
                     SendMessageW(g_hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)tvi.hItem);
-                    if (tvi.lParam == (LPARAM)INVALID_HANDLE_VALUE)
+                    if (Window == (LPARAM)INVALID_HANDLE_VALUE)
                     {
                         // UI_PopupMenu(g_hSearchItemMenu, X, Y, hDlg);
-                    } else if (IsWindow((HWND)tvi.lParam))
+                    } else if (IsWindow(Window))
                     {
-                        UI_PopupMenu(g_hItemMenu, X, Y, hDlg);
+                        mii.cbSize = sizeof(mii);
+                        mii.fMask = MIIM_STATE;
+                        mii.fState = IsWindowVisible(Window) ? MFS_ENABLED : MFS_DISABLED;
+                        if (SetMenuItemInfoW(g_hItemMenu, 0, TRUE, &mii))
+                        {
+                            UI_PopupMenu(g_hItemMenu, X, Y, hDlg);
+                        }
                     }
                 }
             }
