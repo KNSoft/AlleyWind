@@ -1,3 +1,12 @@
+# V2 is working in progress! ~10%
+In [Dev_V2 branch](https://github.com/KNSoft/AlleyWind/tree/Dev_V2), with overall improvement:
+- UIAccess support
+- Improved DPI scaling
+- More features
+  - Support "Always On Top"
+  - ...
+- ...
+
 # AlleyWind
 AlleyWind is an advanced Win32-based and open-source utility manages windows running on system. Likes ``Spy++`` but provides more features, especially modify properties of window.
 
