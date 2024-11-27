@@ -50,6 +50,36 @@
       <Value Locale="en">Properties</Value>
       <Value Locale="zh-Hans">属性</Value>
     </String>
+
+    <!-- Properties dialog -->
+    <String Name="WindowPropertiesFormat">
+      <Value Locale="en">Window %08lX Properties</Value>
+      <Value Locale="zh-Hans">窗口 %08lX 属性</Value>
+    </String>
+    <String Name="Refresh">
+      <Value Locale="en">Refresh</Value>
+      <Value Locale="zh-Hans">刷新</Value>
+    </String>
+    <String Name="General">
+      <Value Locale="en">General</Value>
+      <Value Locale="zh-Hans">常规</Value>
+    </String>
+    <String Name="Resource">
+      <Value Locale="en">Resource</Value>
+      <Value Locale="zh-Hans">资源</Value>
+    </String>
+    <String Name="Relationship">
+      <Value Locale="en">Relationship</Value>
+      <Value Locale="zh-Hans">关系</Value>
+    </String>
+    <String Name="Class">
+      <Value Locale="en">Class</Value>
+      <Value Locale="zh-Hans">类</Value>
+    </String>
+    <String Name="Operation">
+      <Value Locale="en">Operation</Value>
+      <Value Locale="zh-Hans">操作</Value>
+    </String>
     
     <!-- Database - Classes -->
     <String Name="Desktop">

@@ -123,14 +123,14 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
         pszSysClassName = AW_GetSysClassDisplayName(szClassName);
         if (pszSysClassName != NULL)
         {
-            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls (%ls)", (ULONG)(ULONG_PTR)hWnd, szCaption, szClassName, pszSysClassName);
+            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls (%ls)", UI_TruncateHandle32(hWnd), szCaption, szClassName, pszSysClassName);
         } else
         {
-            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls", (ULONG)(ULONG_PTR)hWnd, szCaption, szClassName);
+            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls", UI_TruncateHandle32(hWnd), szCaption, szClassName);
         }
     } else
     {
-        iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\"", (ULONG)(ULONG_PTR)hWnd, szCaption);
+        iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\"", UI_TruncateHandle32(hWnd), szCaption);
     }
 
     /* Append node info and icon */
@@ -177,11 +177,11 @@ UpdateWindowTreeThread(
                                        ILC_MASK | ILC_COLOR32 | ILC_HIGHQUALITYSCALE,
                                        0,
                                        1);
-    SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)g_himlTreeIcons);
     if (g_himlTreeIcons != NULL)
     {
         ImageList_ReplaceIcon(g_himlTreeIcons, -1, g_hIconWndDefault);
     }
+    SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)g_himlTreeIcons);
     InsertWindowToTree(GetDesktopWindow(), (LPARAM)&stEnumChildren);
 
     g_bUpdatingTree = FALSE;
@@ -209,6 +209,48 @@ UpdateWindowTreeAsync(VOID)
 }
 
 static
+_Success_(return != NULL)
+_Ret_maybenull_
+HWND
+GetSelectedItemRefWindow(VOID)
+{
+    TVITEMW tvi;
+
+    tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
+    if (tvi.hItem == NULL)
+    {
+        return NULL;
+    }
+
+    tvi.mask = TVIF_PARAM;
+    if (!SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
+    {
+        return NULL;
+    }
+
+    return IsWindow((HWND)tvi.lParam) ? (HWND)tvi.lParam : NULL;
+}
+
+static
+VOID
+OpenPropDlgForSelectedItemRefWindow(
+    _In_ HWND Dialog)
+{
+    NTSTATUS Status;
+    HWND Window;
+
+    Window = GetSelectedItemRefWindow();
+    if (Window != NULL)
+    {
+        Status = AW_OpenPropDialogBoxAsync(Window);
+        if (!NT_SUCCESS(Status))
+        {
+            KNS_NtStatusMessageBox(Dialog, Status);
+        }
+    }
+}
+
+static
 _Function_class_(UI_WINDOW_RESIZE_FN)
 VOID
 CALLBACK
@@ -231,44 +273,6 @@ MainDlgResizeProc(
 }
 
 static
-ULONG
-AppendTitleText(
-    _Out_writes_(TextCch) PWSTR Text,
-    _In_ ULONG TextCch,
-    _In_ PCWSTR TextAppend)
-{
-    ULONG u, Cch = 0;
-
-    if (TextCch <= 2)
-    {
-        goto _Exit;
-    }
-    Text[Cch++] = L' ';
-    Text[Cch++] = L'(';
-
-    u = (ULONG)Str_CopyExW(Text + Cch, TextCch - Cch, TextAppend);
-    if (u == 0 || u >= TextCch - Cch)
-    {
-        goto _Exit;
-    }
-    Cch += u;
-    if (Cch + 2 > TextCch)
-    {
-        goto _Exit;
-    }
-    Text[Cch++] = L')';
-    // FIXME: Seems like a false positive, `Cch` won't greater than `TextCch`
-#pragma warning(disable: __WARNING_WRITE_OVERRUN)
-    Text[Cch] = UNICODE_NULL;
-#pragma warning(default: __WARNING_WRITE_OVERRUN)
-    return Cch;
-
-_Exit:
-    Text[0] = UNICODE_NULL;
-    return 0;
-}
-
-static
 INT_PTR
 CALLBACK
 MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -277,30 +281,17 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         RECT rc;
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
-        ULONG Cch;
 
         /* Set title */
         C_ASSERT(ARRAYSIZE(szTitle) > _STR_CCH_LEN(KNSOFT_APP_NAME));
         wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
-        Cch = _STR_CCH_LEN(KNSOFT_APP_NAME);
-        if (g_IsRunAsAdmin)
-        {
-            Cch += AppendTitleText(szTitle + Cch,
-                                   ARRAYSIZE(szTitle) - Cch,
-                                   AW_GetString(Administrator));
-        }
-        if (g_HasUIAccess)
-        {
-            AppendTitleText(szTitle + Cch,
-                            ARRAYSIZE(szTitle) - Cch,
-                            L"UIAccess");
-        }
+        AW_PostFixTitleText(szTitle + _STR_CCH_LEN(KNSOFT_APP_NAME),
+                            ARRAYSIZE(szTitle) - _STR_CCH_LEN(KNSOFT_APP_NAME));
         UI_SetWindowTextW(hDlg, szTitle);
 
         UI_EnableWindowPeek(hDlg, FALSE);
 
         /* Initialize tree-view global resources */
-        AW_InitClassDatabase();
         g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
         UI_SetWindowExplorerVisualStyle(g_hTree);
         g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
@@ -365,34 +356,25 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             KNS_OpenHomepage();
         } else if (wParam == MAKEWPARAM(IDM_ITEM_HIGHLIGHT, 0))
         {
-            TVITEMW tvi;
-            HWND Window;
+            HWND Window, RootWindow;
 
-            tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
-            if (tvi.hItem != NULL)
+            Window = GetSelectedItemRefWindow();
+            if (Window != NULL)
             {
-                tvi.mask = TVIF_PARAM;
-                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
+                RootWindow = GetAncestor(Window, GA_ROOT);
+                BringWindowToTop(RootWindow);
+                if (!IsIconic(RootWindow))
                 {
-                    Window = (HWND)tvi.lParam;
-                    if (IsWindow(Window))
-                    {
-                        BringWindowToTop(Window);
-                        if (!IsIconic(Window))
-                        {
-                            UI_FlashWindow(Window);
-                        } else
-                        {
-                            FlashWindow(Window, TRUE);
-                        }
-
-                    }
+                    UI_FlashWindow(Window);
+                } else
+                {
+                    FlashWindow(Window, TRUE);
                 }
+                SetActiveWindow(hDlg);
             }
         } else if (wParam == MAKEWPARAM(IDM_ITEM_PROPERTIES, 0))
         {
-            // TODO
-            KNS_HrMessageBox(hDlg, E_NOTIMPL);
+            OpenPropDlgForSelectedItemRefWindow(hDlg);
         } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
             if (LOWORD(wParam) == IDM_FILE_REFRESH)
@@ -460,7 +442,10 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (pnmh->hwndFrom == g_hTree)
         {
             LPNMTREEVIEWW pnmtv = (LPNMTREEVIEWW)lParam;
-            // e.g. if (pnmtv->hdr.code == TVN_SELCHANGED) ...
+            if (pnmtv->hdr.code == NM_DBLCLK)
+            {
+                OpenPropDlgForSelectedItemRefWindow(hDlg);
+            }
         }
     } else if (uMsg == WM_CLOSE)
     {
@@ -485,7 +470,11 @@ AW_OpenMainDialogBox(VOID)
 
     MainDlgCreateMenu(&g_hMainMenu, &g_hItemMenu);
     g_hAccel = MainDlgCreateAccelerator();
-    hr = AW_OpenDialog(NULL, MAKEINTRESOURCEW(IDD_MAIN), g_hAccel, MainDlgProc, 0);
+    hr = AW_CreateDialog(NULL, NULL, MAKEINTRESOURCEW(IDD_MAIN), MainDlgProc, 0);
+    if (SUCCEEDED(hr))
+    {
+        hr = KNS_DlgMessageLoop(g_hAccel);
+    }
     if (g_hAccel != NULL)
     {
         DestroyAcceleratorTable(g_hAccel);

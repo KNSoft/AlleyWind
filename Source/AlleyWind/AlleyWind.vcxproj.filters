@@ -20,6 +20,12 @@
     <ClCompile Include="WindowUtil\WindowUtil.c">
       <Filter>WindowUtil</Filter>
     </ClCompile>
+    <ClCompile Include="UI\PropDlg\PropDlg.c">
+      <Filter>UI\PropDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI.c">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -64,6 +70,9 @@
     </Filter>
     <Filter Include="WindowUtil">
       <UniqueIdentifier>{c76a10f2-4b62-40e7-b5f8-470b65211aa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\PropDlg">
+      <UniqueIdentifier>{2c01fb70-52ff-4527-8e9d-ac275862ec3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

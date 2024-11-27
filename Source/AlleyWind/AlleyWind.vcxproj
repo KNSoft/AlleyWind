@@ -219,6 +219,8 @@
     <ClCompile Include="Resource\Resource.c" />
     <ClCompile Include="UI\MainDlg\MainDlg.c" />
     <ClCompile Include="UI\MainDlg\Menu.c" />
+    <ClCompile Include="UI\PropDlg\PropDlg.c" />
+    <ClCompile Include="UI\UI.c" />
     <ClCompile Include="WindowUtil\WindowUtil.c" />
   </ItemGroup>
   <ItemGroup>
@@ -244,7 +246,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets" Condition="Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets')" />
-    <Import Project="..\packages\KNSoft.NDK.1.2.10-beta\build\KNSoft.NDK.targets" Condition="Exists('..\packages\KNSoft.NDK.1.2.10-beta\build\KNSoft.NDK.targets')" />
+    <Import Project="..\packages\KNSoft.NDK.1.2.11-beta\build\KNSoft.NDK.targets" Condition="Exists('..\packages\KNSoft.NDK.1.2.11-beta\build\KNSoft.NDK.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -252,6 +254,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.props'))" />
     <Error Condition="!Exists('..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.Precomp4C.1.0.15-alpha\build\KNSoft.Precomp4C.targets'))" />
-    <Error Condition="!Exists('..\packages\KNSoft.NDK.1.2.10-beta\build\KNSoft.NDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.NDK.1.2.10-beta\build\KNSoft.NDK.targets'))" />
+    <Error Condition="!Exists('..\packages\KNSoft.NDK.1.2.11-beta\build\KNSoft.NDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\KNSoft.NDK.1.2.11-beta\build\KNSoft.NDK.targets'))" />
   </Target>
 </Project>

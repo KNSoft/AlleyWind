@@ -19,6 +19,7 @@ RunMainProgram(VOID)
     /* COM initialization is optional currently */
     hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
+    AW_InitClassDatabase();
     AW_InitStockResource();
     hr = AW_OpenMainDialogBox();
     if (FAILED(hr))
@@ -36,27 +37,6 @@ RunMainProgram(VOID)
 }
 
 static
-W32ERROR
-SelfRunAs(
-    _In_opt_ HANDLE Token)
-{
-    W32ERROR Ret;
-    PROCESS_INFORMATION pi;
-
-    Ret = PS_CreateProcess(Token,
-                           NtCurrentPeb()->ProcessParameters->ImagePathName.Buffer,
-                           NULL,
-                           FALSE,
-                           NULL,
-                           NULL,
-                           &pi);
-    NtClose(pi.hThread);
-    NtClose(pi.hProcess);
-
-    return Ret;
-}
-
-static
 HRESULT
 TryElevateUIAccess(VOID)
 {
@@ -65,6 +45,7 @@ TryElevateUIAccess(VOID)
     ULONG LsaProcessId, UIAccess = FALSE;
     HANDLE LsaToken, ProcessToken;
     W32ERROR W32Ret;
+    PROCESS_INFORMATION pi;
 
     /* Impersonate LSA */
     Status = Sys_LsaGetProcessId(&LsaProcessId);
@@ -98,7 +79,15 @@ TryElevateUIAccess(VOID)
         Ret = HRESULT_FROM_NT(Status);
         goto _Exit_2;
     }
-    W32Ret = SelfRunAs(ProcessToken);
+    W32Ret = PS_CreateProcess(ProcessToken,
+                              NtCurrentPeb()->ProcessParameters->ImagePathName.Buffer,
+                              NULL,
+                              FALSE,
+                              NULL,
+                              NULL,
+                              &pi);
+    NtClose(pi.hThread);
+    NtClose(pi.hProcess);
     Ret = W32Ret == ERROR_SUCCESS ? S_OK : HRESULT_FROM_WIN32(W32Ret);
 
 _Exit_2:
