@@ -231,6 +231,44 @@ MainDlgResizeProc(
 }
 
 static
+ULONG
+AppendTitleText(
+    _Out_writes_(TextCch) PWSTR Text,
+    _In_ ULONG TextCch,
+    _In_ PCWSTR TextAppend)
+{
+    ULONG u, Cch = 0;
+
+    if (TextCch <= 2)
+    {
+        goto _Exit;
+    }
+    Text[Cch++] = L' ';
+    Text[Cch++] = L'(';
+
+    u = (ULONG)Str_CopyExW(Text + Cch, TextCch - Cch, TextAppend);
+    if (u == 0 || u >= TextCch - Cch)
+    {
+        goto _Exit;
+    }
+    Cch += u;
+    if (Cch + 2 > TextCch)
+    {
+        goto _Exit;
+    }
+    Text[Cch++] = L')';
+    // FIXME: Seems like a false positive, `Cch` won't greater than `TextCch`
+#pragma warning(disable: __WARNING_WRITE_OVERRUN)
+    Text[Cch] = UNICODE_NULL;
+#pragma warning(default: __WARNING_WRITE_OVERRUN)
+    return Cch;
+
+_Exit:
+    Text[0] = UNICODE_NULL;
+    return 0;
+}
+
+static
 INT_PTR
 CALLBACK
 MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -238,6 +276,28 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (uMsg == WM_INITDIALOG)
     {
         RECT rc;
+        WCHAR szTitle[MAX_WNDCAPTION_CCH];
+        ULONG Cch;
+
+        /* Set title */
+        C_ASSERT(ARRAYSIZE(szTitle) > _STR_CCH_LEN(KNSOFT_APP_NAME));
+        wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
+        Cch = _STR_CCH_LEN(KNSOFT_APP_NAME);
+        if (g_IsRunAsAdmin)
+        {
+            Cch += AppendTitleText(szTitle + Cch,
+                                   ARRAYSIZE(szTitle) - Cch,
+                                   AW_GetString(Administrator));
+        }
+        if (g_HasUIAccess)
+        {
+            AppendTitleText(szTitle + Cch,
+                            ARRAYSIZE(szTitle) - Cch,
+                            L"UIAccess");
+        }
+        UI_SetWindowTextW(hDlg, szTitle);
+
+        UI_EnableWindowPeek(hDlg, FALSE);
 
         /* Initialize tree-view global resources */
         AW_InitClassDatabase();
@@ -285,21 +345,48 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 KNS_Win32ErrorMessageBox(hDlg, Ret);
             }
+        } else if (wParam == MAKEWPARAM(IDM_FILE_ALWAYS_ON_TOP, 0))
+        {
+            HRESULT hr;
+
+            hr = UI_ToggleMenuCheckItem(g_astMainMenu[Menu_MainDlg_File].Handle, Menu_MainDlg_File_AlwaysOnTop, TRUE);
+            if (SUCCEEDED(hr))
+            {
+                SetWindowPos(hDlg,
+                             hr == S_OK ? HWND_TOPMOST : HWND_NOTOPMOST,
+                             0,
+                             0,
+                             0,
+                             0,
+                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+            }
         } else if (wParam == MAKEWPARAM(IDM_HELP_HOMEPAGE, 0))
         {
             KNS_OpenHomepage();
         } else if (wParam == MAKEWPARAM(IDM_ITEM_HIGHLIGHT, 0))
         {
             TVITEMW tvi;
+            HWND Window;
 
             tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
             if (tvi.hItem != NULL)
             {
                 tvi.mask = TVIF_PARAM;
-                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi) &&
-                    IsWindow((HWND)tvi.lParam))
+                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
                 {
-                    UI_FlashWindow((HWND)tvi.lParam);
+                    Window = (HWND)tvi.lParam;
+                    if (IsWindow(Window))
+                    {
+                        BringWindowToTop(Window);
+                        if (!IsIconic(Window))
+                        {
+                            UI_FlashWindow(Window);
+                        } else
+                        {
+                            FlashWindow(Window, TRUE);
+                        }
+
+                    }
                 }
             }
         } else if (wParam == MAKEWPARAM(IDM_ITEM_PROPERTIES, 0))
@@ -350,15 +437,15 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     Window = (HWND)tvi.lParam;
                     SendMessageW(g_hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)tvi.hItem);
-                    if (Window == (LPARAM)INVALID_HANDLE_VALUE)
+                    if (Window == INVALID_HANDLE_VALUE)
                     {
-                        // UI_PopupMenu(g_hSearchItemMenu, X, Y, hDlg);
+                        // TODO: UI_PopupMenu(g_hSearchItemMenu, X, Y, hDlg);
                     } else if (IsWindow(Window))
                     {
                         mii.cbSize = sizeof(mii);
                         mii.fMask = MIIM_STATE;
                         mii.fState = IsWindowVisible(Window) ? MFS_ENABLED : MFS_DISABLED;
-                        if (SetMenuItemInfoW(g_hItemMenu, 0, TRUE, &mii))
+                        if (SetMenuItemInfoW(g_hItemMenu, Menu_MainDlg_Item_Highlight, TRUE, &mii))
                         {
                             UI_PopupMenu(g_hItemMenu, X, Y, hDlg);
                         }

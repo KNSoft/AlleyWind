@@ -1,6 +1,12 @@
 <I18N>
   <Table Name="All">
-
+    
+    <!-- Main dialog -->
+    <String Name="Administrator">
+      <Value Locale="en">Administrator</Value>
+      <Value Locale="zh-Hans">管理员</Value>
+    </String>
+    
     <!-- Main dialog - Main menu -->
     <String Name="File">
       <Value Locale="en">File</Value>
@@ -9,6 +15,10 @@
     <String Name="RunAsAdmin">
       <Value Locale="en">Run As Administrator</Value>
       <Value Locale="zh-Hans">以管理员身份运行</Value>
+    </String>
+    <String Name="AlwaysOnTop">
+      <Value Locale="en">Always On Top</Value>
+      <Value Locale="zh-Hans">始终置顶</Value>
     </String>
     <String Name="Refresh_F5">
       <Value Locale="en">Refresh	F5</Value>
