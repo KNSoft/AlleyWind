@@ -25,12 +25,15 @@ AW_InitI18NArrayEx(
 
 HICON g_ResUACShieldIcon = NULL;
 HBITMAP g_ResUACShieldIconBitmap = NULL;
+PCWSTR g_NAText = NULL;
 
 VOID
 AW_InitStockResource(VOID)
 {
     HRESULT hr;
     SHSTOCKICONINFO sii;
+
+    g_NAText = AW_GetString(NA);
 
     /* UAC shield icon */
     sii.cbSize = sizeof(sii);

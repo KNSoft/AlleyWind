@@ -26,6 +26,9 @@
     <ClCompile Include="UI\UI.c">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="UI\PropDlg\General.c">
+      <Filter>UI\PropDlg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

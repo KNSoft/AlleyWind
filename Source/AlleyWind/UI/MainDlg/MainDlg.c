@@ -26,7 +26,7 @@ ExportWindowTreeToFileEnumProc(
     _In_ UINT Level,
     _In_opt_ PVOID Context)
 {
-    HANDLE  hFile;
+    HANDLE hFile;
     TVITEMW stTVI;
     WCHAR szUnicodeBuff[512];
     CHAR szUTF8Buff[ARRAYSIZE(szUnicodeBuff) * 2];

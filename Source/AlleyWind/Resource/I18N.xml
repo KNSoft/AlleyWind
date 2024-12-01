@@ -1,5 +1,10 @@
 <I18N>
   <Table Name="All">
+
+    <String Name="NA">
+      <Value Locale="en">(N/A)</Value>
+      <Value Locale="zh-Hans">（不可用）</Value>
+    </String>
     
     <!-- Main dialog -->
     <String Name="Administrator">
@@ -79,6 +84,24 @@
     <String Name="Operation">
       <Value Locale="en">Operation</Value>
       <Value Locale="zh-Hans">操作</Value>
+    </String>
+    
+    <!-- Properties dialog - General tab -->
+    <String Name="Caption">
+      <Value Locale="en">Caption</Value>
+      <Value Locale="zh-Hans">标题</Value>
+    </String>
+    <String Name="Handle">
+      <Value Locale="en">Handle</Value>
+      <Value Locale="zh-Hans">句柄</Value>
+    </String>
+    <String Name="ControlId">
+      <Value Locale="en">Control ID</Value>
+      <Value Locale="zh-Hans">控件ID</Value>
+    </String>
+    <String Name="WindowProcedure">
+      <Value Locale="en">Window Procedure</Value>
+      <Value Locale="zh-Hans">窗口过程</Value>
     </String>
     
     <!-- Database - Classes -->

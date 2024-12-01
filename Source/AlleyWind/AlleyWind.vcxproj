@@ -219,6 +219,7 @@
     <ClCompile Include="Resource\Resource.c" />
     <ClCompile Include="UI\MainDlg\MainDlg.c" />
     <ClCompile Include="UI\MainDlg\Menu.c" />
+    <ClCompile Include="UI\PropDlg\General.c" />
     <ClCompile Include="UI\PropDlg\PropDlg.c" />
     <ClCompile Include="UI\UI.c" />
     <ClCompile Include="WindowUtil\WindowUtil.c" />

@@ -5,18 +5,26 @@ AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_REFRESH, Precomp4C_I18N_All_Refresh },
 };
 
+INT_PTR
+CALLBACK
+GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 /* TODO */
 static
 INT_PTR
 CALLBACK
 EmptyPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    if (uMsg == WM_CTLCOLORDLG)
+    {
+        return (INT_PTR)(HBRUSH)GetStockObject(BLACK_BRUSH);
+    }
     return FALSE;
 }
 
 static
 AW_I18N_PROPSHEET_PAGE g_astPspSource[] = {
-    { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
+    { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc, 0 },
     { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
     { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
     { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
@@ -32,25 +40,29 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     UI_PropSheetWndProc(hDlg, uMsg, wParam, lParam, IDC_PROP_TAB);
     if (uMsg == WM_INITDIALOG)
     {
-        HWND RefWindow;
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
-        ULONG Cch;
+        ULONG Cch, i;
         UI_PROPSHEET_PAGE Psp[ARRAYSIZE(g_astPspSource)];
 
-        RefWindow = (HWND)lParam;
+        AW_InitDlgItemI18N(hDlg, g_astI18NItems);
 
         /* Set title */
-        Cch = Str_PrintfW(szTitle, AW_GetString(WindowPropertiesFormat), UI_TruncateHandle32(RefWindow));
+        Cch = Str_PrintfW(szTitle, AW_GetString(WindowPropertiesFormat), (ULONG)lParam);
         AW_PostFixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
         UI_SetWindowTextW(hDlg, szTitle);
 
         /* Create property sheet */
-        AW_InitDlgItemI18N(hDlg, g_astI18NItems);
+        for (i = 0; i < ARRAYSIZE(g_astPspSource); i++)
+        {
+            g_astPspSource[i].InitParam = lParam;
+        }
         AW_InitPropSheetPageI18NEx(hDlg,
                                    g_astPspSource,
                                    Psp,
                                    ARRAYSIZE(g_astPspSource));
         UI_InitPropSheet(hDlg, IDC_PROP_TAB, Psp);
+
+        return TRUE;
     } else if (uMsg == WM_COMMAND)
     {
         if (wParam == MAKEWPARAM(IDC_PROP_REFRESH, 0))
