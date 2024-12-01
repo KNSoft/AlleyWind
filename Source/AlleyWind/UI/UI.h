@@ -9,6 +9,17 @@ AW_PostFixTitleText(
     _Out_writes_(TextCch) PWSTR Text,
     _In_ ULONG TextCch);
 
+PCWSTR
+AW_FormatNA(
+    PWSTR Text,
+    _In_ ULONG TextCch,
+    _In_ PCWSTR Info);
+
+PCWSTR
+AW_FormatNAFromLastError(
+    PWCHAR Text,
+    _In_ ULONG TextCch);
+
 HRESULT
 AW_OpenMainDialogBox(VOID);
 

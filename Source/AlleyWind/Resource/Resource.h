@@ -16,6 +16,10 @@
 #define IDC_PROP_CTLID_EDIT             1009
 #define IDC_PROP_WNDPROC_TEXT           1010
 #define IDC_PROP_WNDPROC_EDIT           1011
+#define IDC_PROP_INSTANCE_HANDLE_TEXT   1012
+#define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
+#define IDC_PROP_SYSCLASS_TEXT          1014
+#define IDC_PROP_SYSCLASS_EDIT          1015
 
 // Next default values for new objects
 // 

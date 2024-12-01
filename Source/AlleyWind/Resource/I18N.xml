@@ -5,6 +5,14 @@
       <Value Locale="en">(N/A)</Value>
       <Value Locale="zh-Hans">（不可用）</Value>
     </String>
+    <String Name="NAFormat">
+      <Value Locale="en">(N/A: %ls)</Value>
+      <Value Locale="zh-Hans">（不可用：%ls）</Value>
+    </String>
+    <String Name="TopLevelWindow">
+      <Value Locale="en">TopLevelWindow</Value>
+      <Value Locale="zh-Hans">顶层窗口</Value>
+    </String>
     
     <!-- Main dialog -->
     <String Name="Administrator">
@@ -94,6 +102,14 @@
     <String Name="Handle">
       <Value Locale="en">Handle</Value>
       <Value Locale="zh-Hans">句柄</Value>
+    </String>
+    <String Name="InstanceHandle">
+      <Value Locale="en">Instance Handle</Value>
+      <Value Locale="zh-Hans">实例句柄</Value>
+    </String>
+    <String Name="SystemClass">
+      <Value Locale="en">System Class</Value>
+      <Value Locale="zh-Hans">系统类</Value>
     </String>
     <String Name="ControlId">
       <Value Locale="en">Control ID</Value>

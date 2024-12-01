@@ -4,6 +4,8 @@ static
 AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_All_Caption },
     { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_All_Handle },
+    { IDC_PROP_INSTANCE_HANDLE_TEXT, Precomp4C_I18N_All_InstanceHandle },
+    { IDC_PROP_SYSCLASS_TEXT, Precomp4C_I18N_All_SystemClass },
     { IDC_PROP_CTLID_TEXT, Precomp4C_I18N_All_ControlId },
     { IDC_PROP_WNDPROC_TEXT, Precomp4C_I18N_All_WindowProcedure },
 };
@@ -14,11 +16,14 @@ UpdatePropInfo(
     _In_ HWND Dialog,
     _In_ HWND RefWindow)
 {
-    WCHAR szBuffer[MAX_WNDCAPTION_CCH];
+    WCHAR szBuffer[max(MAX_WNDCAPTION_CCH, MAX_CLASSNAME_CCH)], szBuffer2[32];
     HWND hCtl;
     DWORD_PTR dwpResult;
-    INT iCtrlId;
-    PVOID pWndProc;
+    PCWSTR pszTemp;
+    INT iTemp;
+    PVOID pTemp;
+    ULONG uTemp;
+    BOOL bTemp;
 
     /* Caption */
     if (AW_SendMsgTO(RefWindow, WM_GETTEXT, ARRAYSIZE(szBuffer), (LPARAM)szBuffer, &dwpResult) != 0 &&
@@ -32,42 +37,75 @@ UpdatePropInfo(
     UI_SetDlgItemTextW(Dialog, IDC_PROP_CAPTION_EDIT, szBuffer);
 
     /* Handle */
-    hCtl = GetDlgItem(Dialog, IDC_PROP_HANDLE_EDIT);
     Str_PrintfW(szBuffer, L"%08lX", UI_TruncateHandle32(RefWindow));
-    UI_SetWindowTextW(hCtl, szBuffer[0] != UNICODE_NULL ? szBuffer : g_NAText);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_HANDLE_EDIT, szBuffer[0] != UNICODE_NULL ? szBuffer : g_NAText);
+
+    /* Instance Handle */
+    pTemp = (PVOID)GetWindowLongPtrW(RefWindow, GWLP_HINSTANCE);
+    if (pTemp != NULL)
+    {
+        Str_PrintfW(szBuffer, L"%p", pTemp);
+        pszTemp = szBuffer;
+    } else
+    {
+        pszTemp = AW_FormatNAFromLastError(szBuffer, ARRAYSIZE(szBuffer));
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_INSTANCE_HANDLE_EDIT, pszTemp);
+
+    /* System Class */
+    if (GetClassNameW(RefWindow, szBuffer, ARRAYSIZE(szBuffer)) != 0)
+    {
+        pszTemp = AW_GetSysClassDisplayName(szBuffer);
+        if (pszTemp == NULL)
+        {
+            pszTemp = g_NAText;
+        }
+    } else
+    {
+        pszTemp = AW_FormatNAFromLastError(szBuffer, ARRAYSIZE(szBuffer));
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_SYSCLASS_EDIT, pszTemp);
 
     /* Control ID */
+    bTemp = TRUE;
     hCtl = GetDlgItem(Dialog, IDC_PROP_CTLID_EDIT);
-    if (!IsTopLevelWindow(RefWindow))
+    if (IsTopLevelWindow(RefWindow))
     {
-        iCtrlId = GetDlgCtrlID(RefWindow);
-        if (!Str_FromIntW(iCtrlId, szBuffer))
-        {
-            szBuffer[0] = UNICODE_NULL;
-        }
-        UI_SetWindowTextW(hCtl, szBuffer);
-        if (iCtrlId != 0)
-        {
-            goto _End_ControlId;
-        }
+        pszTemp = AW_FormatNA(szBuffer, ARRAYSIZE(szBuffer), AW_GetString(TopLevelWindow));
     } else
     {
-        UI_SetWindowTextW(hCtl, g_NAText);
+        iTemp = GetDlgCtrlID(RefWindow);
+        if (iTemp == 0)
+        {
+            pszTemp = AW_FormatNAFromLastError(szBuffer, ARRAYSIZE(szBuffer));
+        } else
+        {
+            pszTemp = Str_FromIntW(iTemp, szBuffer) ? szBuffer : g_NAText;
+            bTemp = FALSE;
+        }
     }
-    EnableWindow(hCtl, FALSE);
-_End_ControlId:
+    UI_SetWindowTextW(hCtl, pszTemp);
+    SendMessageW(hCtl, EM_SETREADONLY, bTemp, 0);
 
     /* Window Procedure */
-    hCtl = GetDlgItem(Dialog, IDC_PROP_WNDPROC_EDIT);
-    pWndProc = (PVOID)GetWindowLongPtrW(RefWindow, GWLP_WNDPROC);
-    if (pWndProc != NULL)
+    pTemp = (PVOID)GetWindowLongPtrW(RefWindow, GWLP_WNDPROC);
+    if (pTemp != NULL)
     {
-        Str_PrintfW(szBuffer, L"%p (%ls)", pWndProc, IsWindowUnicode(RefWindow) ? L"Unicode" : L"ANSI");
-        UI_SetWindowTextW(hCtl, szBuffer);
+        Str_PrintfW(szBuffer2, L"%p", pTemp);
+        pszTemp = szBuffer2;
     } else
     {
-        UI_SetWindowTextW(hCtl, g_NAText);
+        pszTemp = AW_FormatNAFromLastError(szBuffer2, ARRAYSIZE(szBuffer2));
     }
+    uTemp = Str_PrintfW(szBuffer, L"%ls (%ls)", pszTemp, IsWindowUnicode(RefWindow) ? L"Unicode" : L"ANSI");
+    if (uTemp > 0 && uTemp < ARRAYSIZE(szBuffer))
+    {
+        pszTemp = szBuffer;
+    } else
+    {
+        pszTemp = g_NAText;
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_EDIT, pszTemp);
 }
 
 INT_PTR

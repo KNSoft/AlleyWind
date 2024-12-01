@@ -14,6 +14,8 @@
 enum
 {
     Precomp4C_I18N_All_NA,
+    Precomp4C_I18N_All_NAFormat,
+    Precomp4C_I18N_All_TopLevelWindow,
     Precomp4C_I18N_All_Administrator,
     Precomp4C_I18N_All_File,
     Precomp4C_I18N_All_RunAsAdmin,
@@ -34,6 +36,8 @@ enum
     Precomp4C_I18N_All_Operation,
     Precomp4C_I18N_All_Caption,
     Precomp4C_I18N_All_Handle,
+    Precomp4C_I18N_All_InstanceHandle,
+    Precomp4C_I18N_All_SystemClass,
     Precomp4C_I18N_All_ControlId,
     Precomp4C_I18N_All_WindowProcedure,
     Precomp4C_I18N_All_Desktop,

@@ -130,6 +130,7 @@ AW_InitPropSheetPageI18NEx(
 /* Stock resource */
 
 extern PCWSTR g_NAText;
+extern PCWSTR g_NAFormatText;
 extern HICON g_ResUACShieldIcon;
 extern HBITMAP g_ResUACShieldIconBitmap;
 
