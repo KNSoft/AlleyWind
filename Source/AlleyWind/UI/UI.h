@@ -9,16 +9,41 @@ AW_PostFixTitleText(
     _Out_writes_(TextCch) PWSTR Text,
     _In_ ULONG TextCch);
 
+FORCEINLINE
 PCWSTR
 AW_FormatNA(
     PWSTR Text,
     _In_ ULONG TextCch,
-    _In_ PCWSTR Info);
+    _In_ PCWSTR Info)
+{
+    return Str_TestCchRet(Str_PrintfExW(Text, TextCch, g_NAFormatText, Info), TextCch) ? Text : g_NAText;
+}
 
+FORCEINLINE
+PCWSTR
+AW_FormatNAFromWin32Error(
+    PWCHAR Text,
+    _In_ ULONG TextCch,
+    _In_ ULONG Win32Error)
+{
+    PCWSTR psz;
+
+    psz = Err_GetWin32ErrorInfo(Win32Error);
+    if (psz == NULL)
+    {
+        return g_NAText;
+    }
+    return AW_FormatNA(Text, TextCch, psz);
+}
+
+FORCEINLINE
 PCWSTR
 AW_FormatNAFromLastError(
     PWCHAR Text,
-    _In_ ULONG TextCch);
+    _In_ ULONG TextCch)
+{
+    return AW_FormatNAFromWin32Error(Text, TextCch, NtGetLastError());
+}
 
 HRESULT
 AW_OpenMainDialogBox(VOID);

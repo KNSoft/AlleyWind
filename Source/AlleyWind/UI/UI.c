@@ -57,36 +57,3 @@ AW_PostFixTitleText(
     Text[Cch] = UNICODE_NULL;
     return Cch;
 }
-
-PCWSTR
-AW_FormatNA(
-    PWSTR Text,
-    _In_ ULONG TextCch,
-    _In_ PCWSTR Info)
-{
-    ULONG u;
-
-    u = Str_PrintfExW(Text, TextCch, g_NAFormatText, Info);
-    return u > 0 && u < TextCch ? Text : g_NAText;
-}
-
-PCWSTR
-AW_FormatNAFromLastError(
-    PWCHAR Text,
-    _In_ ULONG TextCch)
-{
-    ULONG Error;
-    PCWSTR psz;
-
-    Error = NtGetLastError();
-    if (Error == ERROR_SUCCESS)
-    {
-        return g_NAText;
-    }
-    psz = Err_GetWin32ErrorInfo(Error);
-    if (psz == NULL)
-    {
-        return g_NAText;
-    }
-    return AW_FormatNA(Text, TextCch, psz);
-}

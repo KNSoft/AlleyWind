@@ -1,4 +1,4 @@
-//{{NO_DEPENDENCIES}}
+﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by Resource.rc
 //
@@ -20,6 +20,10 @@
 #define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
 #define IDC_PROP_SYSCLASS_TEXT          1014
 #define IDC_PROP_SYSCLASS_EDIT          1015
+#define IDC_PROP_STYLE_TEXT             1016
+#define IDC_PROP_STYLE_EDIT             1017
+#define IDC_PROP_EXSTYLE_TEXT           1018
+#define IDC_PROP_EXSTYLE_EDIT           1019
 
 // Next default values for new objects
 // 

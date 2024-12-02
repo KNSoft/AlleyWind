@@ -9,9 +9,9 @@
       <Value Locale="en">(N/A: %ls)</Value>
       <Value Locale="zh-Hans">（不可用：%ls）</Value>
     </String>
-    <String Name="TopLevelWindow">
-      <Value Locale="en">TopLevelWindow</Value>
-      <Value Locale="zh-Hans">顶层窗口</Value>
+    <String Name="NonChildWindow">
+      <Value Locale="en">Non-child Window</Value>
+      <Value Locale="zh-Hans">非子窗口</Value>
     </String>
     
     <!-- Main dialog -->
@@ -118,6 +118,14 @@
     <String Name="WindowProcedure">
       <Value Locale="en">Window Procedure</Value>
       <Value Locale="zh-Hans">窗口过程</Value>
+    </String>
+    <String Name="Style">
+      <Value Locale="en">Style</Value>
+      <Value Locale="zh-Hans">样式</Value>
+    </String>
+    <String Name="ExtendedStyle">
+      <Value Locale="en">Extended Style</Value>
+      <Value Locale="zh-Hans">扩展样式</Value>
     </String>
     
     <!-- Database - Classes -->

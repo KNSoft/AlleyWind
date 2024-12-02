@@ -3,6 +3,7 @@
 #include "AlleyWind.Core.inl"
 
 #include "WindowUtil/WindowUtil.h"
+#include "WindowUtil/WindowProp.h"
 #include "Database/Database.h"
 #include "Resource/ResMgr.h"
 #include "UI/UI.h"
@@ -13,10 +14,9 @@
 
 #define CMDLINE_SWITCH_TRYELEVATEUIACCESS L"-TryElevateUIAccess"
 
-#define MAX_WNDCAPTION_CCH MAX_CLASSNAME_CCH
-
 EXTERN_C_START
 
+extern HWND g_hMainDlg;
 extern LOGICAL g_IsRunAsAdmin;
 extern LOGICAL g_HasUIAccess;
 

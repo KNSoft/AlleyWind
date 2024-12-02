@@ -29,6 +29,9 @@
     <ClCompile Include="UI\PropDlg\General.c">
       <Filter>UI\PropDlg</Filter>
     </ClCompile>
+    <ClCompile Include="WindowUtil\WindowProp.c">
+      <Filter>WindowUtil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -55,6 +58,9 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="WindowUtil\WindowUtil.h">
+      <Filter>WindowUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowUtil\WindowProp.h">
       <Filter>WindowUtil</Filter>
     </ClInclude>
   </ItemGroup>

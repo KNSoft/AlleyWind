@@ -47,7 +47,9 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         AW_InitDlgItemI18N(hDlg, g_astI18NItems);
 
         /* Set title */
-        Cch = Str_PrintfW(szTitle, AW_GetString(WindowPropertiesFormat), (ULONG)lParam);
+        Cch = Str_PrintfW(szTitle,
+                          AW_GetString(WindowPropertiesFormat),
+                          (ULONG)(ULONG_PTR)(((PAW_WINDOW_PROP)lParam)->Handle));
         AW_PostFixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
         UI_SetWindowTextW(hDlg, szTitle);
 
@@ -85,13 +87,28 @@ AW_OpenPropDialogBoxSync(
     _In_ HWND RefWindow)
 {
     HRESULT hr;
+    PAW_WINDOW_PROP Prop;
+    W32ERROR Error;
 
-    hr = AW_CreateDialog(NULL, NULL, MAKEINTRESOURCEW(IDD_PROP), PropDlgProc, (LPARAM)RefWindow);
+    if (!Mem_AllocPtr(Prop))
+    {
+        return E_OUTOFMEMORY;
+    }
+    Error = AW_GetWindowProp(RefWindow, Prop);
+    if (Error != ERROR_SUCCESS)
+    {
+        hr = HRESULT_FROM_WIN32(Error);
+        goto _Exit;
+    }
+
+    hr = AW_CreateDialog(NULL, NULL, MAKEINTRESOURCEW(IDD_PROP), PropDlgProc, (LPARAM)Prop);
     if (SUCCEEDED(hr))
     {
         hr = KNS_DlgMessageLoop(NULL);
     }
 
+_Exit:
+    Mem_Free(Prop);
     return hr;
 }
 
