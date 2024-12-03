@@ -26,11 +26,17 @@
     <ClCompile Include="UI\UI.c">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="UI\PropDlg\General.c">
+    <ClCompile Include="UI\PropDlg\PageGeneral.c">
       <Filter>UI\PropDlg</Filter>
     </ClCompile>
     <ClCompile Include="WindowUtil\WindowProp.c">
       <Filter>WindowUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PropDlg\PageResource.c">
+      <Filter>UI\PropDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PropDlg\PageRelation.c">
+      <Filter>UI\PropDlg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

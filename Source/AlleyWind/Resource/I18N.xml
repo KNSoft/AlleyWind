@@ -111,10 +111,6 @@
       <Value Locale="en">System Class</Value>
       <Value Locale="zh-Hans">系统类</Value>
     </String>
-    <String Name="ControlId">
-      <Value Locale="en">Control ID</Value>
-      <Value Locale="zh-Hans">控件ID</Value>
-    </String>
     <String Name="WindowProcedure">
       <Value Locale="en">Window Procedure</Value>
       <Value Locale="zh-Hans">窗口过程</Value>
@@ -126,6 +122,32 @@
     <String Name="ExtendedStyle">
       <Value Locale="en">Extended Style</Value>
       <Value Locale="zh-Hans">扩展样式</Value>
+    </String>
+    <String Name="RectangleFormat">
+      <Value Locale="en">LT(%ld, %ld)-RB(%ld, %ld) [%ldx%ld]</Value>
+      <Value Locale="zh-Hans">左上(%ld, %ld)-右下(%ld, %ld) [%ldx%ld]</Value>
+    </String>
+    <String Name="ScreenRectangle">
+      <Value Locale="en">Screen Rectangle</Value>
+      <Value Locale="zh-Hans">屏幕矩形</Value>
+    </String>
+    <String Name="ClientRectangle">
+      <Value Locale="en">Client Rectangle</Value>
+      <Value Locale="zh-Hans">客户矩形</Value>
+    </String>
+    <String Name="RelativeRectangle">
+      <Value Locale="en">Relative Rectangle</Value>
+      <Value Locale="zh-Hans">相对矩形</Value>
+    </String>
+
+    <!-- Properties dialog - Relation tab -->
+    <String Name="Process">
+      <Value Locale="en">Process</Value>
+      <Value Locale="zh-Hans">进程</Value>
+    </String>
+    <String Name="Thread">
+      <Value Locale="en">Thread</Value>
+      <Value Locale="zh-Hans">线程</Value>
     </String>
     
     <!-- Database - Classes -->

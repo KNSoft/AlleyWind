@@ -12,27 +12,45 @@ typedef struct _AW_WINDOW_PROP
 
     LOGICAL TopLevelWindow;
 
-    W32ERROR CaptionValid;
+    ULONG CaptionValid;
     _Null_terminated_ WCHAR Caption[MAX_WNDCAPTION_CCH]; // UNICODE_NULL if invalid
-    
-    W32ERROR ClassNameValid;
+
+    ULONG ClassNameValid;
     _Null_terminated_ WCHAR ClassName[MAX_CLASSNAME_CCH]; // UNICODE_NULL if invalid
-    
-    W32ERROR StyleValid;
+
+    ULONG StyleValid;
     ULONG Style; // 0 if invalid
 
-    W32ERROR ExStyleValid;
+    ULONG ExStyleValid;
     ULONG ExStyle; // 0 if invalid
 
-    W32ERROR WndProcValid;
+    ULONG WndProcValid;
     PVOID WndProc; // NULL if invalid
 
-    W32ERROR InstanceHandleValid;
+    ULONG InstanceHandleValid;
     HINSTANCE InstanceHandle; // NULL if invalid
 
-    /* !TopLevelWindow only */
-    W32ERROR IdentifierValid; // ERROR_INVALID_PARAMETER if TopLevelWindow / Non-child window
+    /* ERROR_INVALID_PARAMETER if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)) */
+    ULONG IdentifierValid;
     INT_PTR Identifier; // 0 if invalid
+
+    HRESULT ScreenRectValid;
+    RECT ScreenRect; // { 0 } if invalid
+
+    /*
+     * ULONG(Win32 ERROR) with Client Rect if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)),
+     * HRESULT with Relative Rect otherwise
+     */
+    ULONG Rect2Valid;
+    RECT Rect2;
+
+    ULONG ThreadProcessIdValid;
+    ULONG ProcessId; // 0 if invalid
+    ULONG ThreadId; // 0 if invalid
+
+    /* Require ProcessId valid */
+    NTSTATUS ProcessImagePathValid;
+    WCHAR ProcessImagePath[MAX_PATH]; // UNICODE_NULL if invalid
 
 } AW_WINDOW_PROP, *PAW_WINDOW_PROP;
 

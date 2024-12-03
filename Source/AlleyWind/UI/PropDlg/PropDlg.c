@@ -9,6 +9,14 @@ INT_PTR
 CALLBACK
 GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+INT_PTR
+CALLBACK
+ResourcePspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+INT_PTR
+CALLBACK
+RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 /* TODO */
 static
 INT_PTR
@@ -25,8 +33,8 @@ EmptyPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static
 AW_I18N_PROPSHEET_PAGE g_astPspSource[] = {
     { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc, 0 },
-    { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
-    { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
+    { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), ResourcePspProc, 0 },
+    { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_RELATION), RelationPspProc, 0 },
     { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
     { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
 };

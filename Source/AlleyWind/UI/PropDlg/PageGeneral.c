@@ -6,33 +6,11 @@ AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_All_Handle },
     { IDC_PROP_INSTANCE_HANDLE_TEXT, Precomp4C_I18N_All_InstanceHandle },
     { IDC_PROP_SYSCLASS_TEXT, Precomp4C_I18N_All_SystemClass },
-    { IDC_PROP_CTLID_TEXT, Precomp4C_I18N_All_ControlId },
     { IDC_PROP_WNDPROC_TEXT, Precomp4C_I18N_All_WindowProcedure },
     { IDC_PROP_STYLE_TEXT, Precomp4C_I18N_All_Style },
     { IDC_PROP_EXSTYLE_TEXT, Precomp4C_I18N_All_ExtendedStyle },
+    { IDC_PROP_SCREEN_RECT_TEXT, Precomp4C_I18N_All_ScreenRectangle },
 };
-
-static
-VOID
-UpdateStyleProp(
-    _In_ HWND EditControl,
-    _In_ ULONG Value,
-    _In_ ULONG LastError,
-    PWCHAR Buffer,
-    _In_ ULONG BufferCch)
-{
-    PCWSTR psz;
-
-    if (LastError == ERROR_SUCCESS)
-    {
-        psz = Str_TestCchRet(Str_PrintfExW(Buffer, BufferCch, L"%08lX", Value), BufferCch) ? Buffer : g_NAText;
-    } else
-    {
-        psz = AW_FormatNAFromWin32Error(Buffer, BufferCch, LastError);
-    }
-    UI_SetWindowTextW(EditControl, psz);
-    SendMessageW(EditControl, EM_SETREADONLY, LastError != ERROR_SUCCESS, 0);
-}
 
 static
 VOID
@@ -45,6 +23,7 @@ UpdatePropInfo(
     PCWSTR pszTemp;
     BOOL bTemp;
     ULONG uTemp, uTemp2;
+    INT iTemp;
 
     /* Caption */
     hCtl = GetDlgItem(Dialog, IDC_PROP_CAPTION_EDIT);
@@ -147,16 +126,86 @@ _End_WndProc:
     UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_EDIT, szBuffer);
 
     /* Style & Extended-style */
-    UpdateStyleProp(GetDlgItem(Dialog, IDC_PROP_STYLE_EDIT),
-                    Prop->Style,
-                    Prop->StyleValid,
-                    szBuffer,
-                    ARRAYSIZE(szBuffer));
-    UpdateStyleProp(GetDlgItem(Dialog, IDC_PROP_EXSTYLE_EDIT),
-                    Prop->ExStyle,
-                    Prop->ExStyleValid,
-                    szBuffer,
-                    ARRAYSIZE(szBuffer));
+    if (Prop->StyleValid == ERROR_SUCCESS)
+    {
+        pszTemp = Str_TestCchRet(Str_PrintfExW(szBuffer,
+                                               ARRAYSIZE(szBuffer),
+                                               L"%08lX",
+                                               Prop->Style), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
+    } else
+    {
+        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, pszTemp);
+    if (Prop->ExStyleValid == ERROR_SUCCESS)
+    {
+        pszTemp = Str_TestCchRet(Str_PrintfExW(szBuffer,
+                                               ARRAYSIZE(szBuffer),
+                                               L"%08lX",
+                                               Prop->ExStyle), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
+    } else
+    {
+        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_EXSTYLE_EDIT, pszTemp);
+
+    /* Rectangles */
+    if (SUCCEEDED(Prop->ScreenRectValid))
+    {
+        Str_PrintfW(szBuffer,
+                    AW_GetString(RectangleFormat),
+                    Prop->ScreenRect.left,
+                    Prop->ScreenRect.top,
+                    Prop->ScreenRect.right,
+                    Prop->ScreenRect.bottom,
+                    Prop->ScreenRect.right - Prop->ScreenRect.left,
+                    Prop->ScreenRect.bottom - Prop->ScreenRect.top);
+        pszTemp = szBuffer;
+    } else
+    {
+        pszTemp = AW_FormatNAFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_SCREEN_RECT_EDIT, pszTemp);
+
+    if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
+    {
+        iTemp = Precomp4C_I18N_All_ClientRectangle;
+        if (Prop->Rect2Valid == ERROR_SUCCESS)
+        {
+            Str_PrintfW(szBuffer,
+                        AW_GetString(RectangleFormat),
+                        Prop->Rect2.left,
+                        Prop->Rect2.top,
+                        Prop->Rect2.right,
+                        Prop->Rect2.bottom,
+                        Prop->Rect2.right - Prop->Rect2.left,
+                        Prop->Rect2.bottom - Prop->Rect2.top);
+            pszTemp = szBuffer;
+        } else
+        {
+            pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+        }
+    } else
+    {
+        iTemp = Precomp4C_I18N_All_RelativeRectangle;
+        if (SUCCEEDED(Prop->Rect2Valid))
+        {
+            Str_PrintfW(szBuffer,
+                        AW_GetString(RectangleFormat),
+                        Prop->Rect2.left,
+                        Prop->Rect2.top,
+                        Prop->Rect2.right,
+                        Prop->Rect2.bottom,
+                        Prop->Rect2.right - Prop->Rect2.left,
+                        Prop->Rect2.bottom - Prop->Rect2.top);
+            pszTemp = szBuffer;
+        } else
+        {
+            pszTemp = AW_FormatNAFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+        }
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_TEXT, AW_GetStringEx(iTemp));
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_EDIT, pszTemp);
 }
 
 INT_PTR

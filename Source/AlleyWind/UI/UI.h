@@ -38,11 +38,36 @@ AW_FormatNAFromWin32Error(
 
 FORCEINLINE
 PCWSTR
-AW_FormatNAFromLastError(
+AW_FormatNAFromHr(
     PWCHAR Text,
-    _In_ ULONG TextCch)
+    _In_ ULONG TextCch,
+    _In_ HRESULT Hr)
 {
-    return AW_FormatNAFromWin32Error(Text, TextCch, NtGetLastError());
+    PCWSTR psz;
+
+    psz = Err_GetHrInfo(Hr);
+    if (psz == NULL)
+    {
+        return g_NAText;
+    }
+    return AW_FormatNA(Text, TextCch, psz);
+}
+
+FORCEINLINE
+PCWSTR
+AW_FormatNAFromNtStatus(
+    PWCHAR Text,
+    _In_ ULONG TextCch,
+    _In_ NTSTATUS Status)
+{
+    PCWSTR psz;
+
+    psz = Err_GetNtStatusInfo(Status);
+    if (psz == NULL)
+    {
+        return g_NAText;
+    }
+    return AW_FormatNA(Text, TextCch, psz);
 }
 
 HRESULT
