@@ -60,14 +60,37 @@ AW_CreateDialog(
     if (Window == NULL)
     {
         return HRESULT_FROM_WIN32(NtGetLastError());
-    } else
-    {
-        if (Dialog != NULL)
-        {
-            *Dialog = Window;
-        }
-        return S_OK;
     }
+
+    if (Dialog != NULL)
+    {
+        *Dialog = Window;
+    }
+    return S_OK;
+}
+
+FORCEINLINE
+HRESULT
+AW_OpenModelDialog(
+    _In_opt_ HWND Owner,
+    _In_ PCWSTR DlgResName,
+    _In_opt_ DLGPROC DlgProc,
+    _In_opt_ LPARAM InitParam)
+{
+    NTSTATUS Status;
+    PVOID DlgRes;
+
+    Status = PE_AccessResource((HINSTANCE)&__ImageBase,
+                               MAKEINTRESOURCEW(RT_DIALOG),
+                               DlgResName,
+                               LANG_USER_DEFAULT,
+                               &DlgRes,
+                               NULL);
+    if (!NT_SUCCESS(Status))
+    {
+        return HRESULT_FROM_NT(Status);
+    }
+    return KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase, Owner, DlgRes, DlgProc, InitParam);
 }
 
 typedef struct _AW_I18N_DLGITEM

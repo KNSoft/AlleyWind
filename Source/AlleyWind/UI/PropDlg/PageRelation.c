@@ -18,6 +18,7 @@ UpdatePropInfo(
 
     if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
     {
+        /* Process Id and Path */
         uTemp = Str_PrintfW(szBuffer, L"(%lu)", Prop->ProcessId);
         if (ARRAYSIZE(szBuffer) - uTemp <= 2)
         {
@@ -47,6 +48,10 @@ UpdatePropInfo(
         }
 _End_Write_Process_Path:
         UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCESS_EDIT, szBuffer);
+
+        /* Thread Id and Address */
+        Str_PrintfW(szBuffer, L"(%lu)", Prop->ThreadId);
+        UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, szBuffer);
     } else
     {
         pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ThreadProcessIdValid);

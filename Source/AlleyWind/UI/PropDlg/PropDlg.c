@@ -109,11 +109,7 @@ AW_OpenPropDialogBoxSync(
         goto _Exit;
     }
 
-    hr = AW_CreateDialog(NULL, NULL, MAKEINTRESOURCEW(IDD_PROP), PropDlgProc, (LPARAM)Prop);
-    if (SUCCEEDED(hr))
-    {
-        hr = KNS_DlgMessageLoop(NULL);
-    }
+    hr = AW_OpenModelDialog(NULL, MAKEINTRESOURCEW(IDD_PROP), PropDlgProc, (LPARAM)Prop);
 
 _Exit:
     Mem_Free(Prop);
