@@ -14,8 +14,10 @@
 enum
 {
     Precomp4C_I18N_All_NA,
-    Precomp4C_I18N_All_NAFormat,
-    Precomp4C_I18N_All_NonChildWindow,
+    Precomp4C_I18N_All_NAFormatString,
+    Precomp4C_I18N_All_NAFormatCode,
+    Precomp4C_I18N_All_NANonChildWindow,
+    Precomp4C_I18N_All_NARequire64Bit,
     Precomp4C_I18N_All_Administrator,
     Precomp4C_I18N_All_File,
     Precomp4C_I18N_All_RunAsAdmin,

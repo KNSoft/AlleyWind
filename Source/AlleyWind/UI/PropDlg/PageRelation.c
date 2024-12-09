@@ -40,7 +40,7 @@ UpdatePropInfo(
             pszTemp = Err_GetNtStatusInfo(Prop->ProcessImagePathValid);
             if (pszTemp != NULL)
             {
-                Str_PrintfExW(szBuffer + uTemp, ARRAYSIZE(szBuffer) - uTemp, g_NAFormatText, pszTemp);
+                Str_PrintfExW(szBuffer + uTemp, ARRAYSIZE(szBuffer) - uTemp, g_NAFormatStringText, pszTemp);
             } else
             {
                 Str_CopyExW(szBuffer + uTemp, ARRAYSIZE(szBuffer) - uTemp, g_NAText);
@@ -54,7 +54,7 @@ _End_Write_Process_Path:
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, szBuffer);
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ThreadProcessIdValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ThreadProcessIdValid);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCESS_EDIT, pszTemp);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, pszTemp);
     }

@@ -5,13 +5,21 @@
       <Value Locale="en">(N/A)</Value>
       <Value Locale="zh-Hans">（不可用）</Value>
     </String>
-    <String Name="NAFormat">
+    <String Name="NAFormatString">
       <Value Locale="en">(N/A: %ls)</Value>
       <Value Locale="zh-Hans">（不可用：%ls）</Value>
     </String>
-    <String Name="NonChildWindow">
-      <Value Locale="en">Non-child Window</Value>
-      <Value Locale="zh-Hans">非子窗口</Value>
+    <String Name="NAFormatCode">
+      <Value Locale="en">(N/A: 0x%08lX)</Value>
+      <Value Locale="zh-Hans">（不可用：0x%08lX）</Value>
+    </String>
+    <String Name="NANonChildWindow">
+      <Value Locale="en">(N/A: Non-child Window)</Value>
+      <Value Locale="zh-Hans">（不可用：非子窗口）</Value>
+    </String>
+    <String Name="NARequire64Bit">
+      <Value Locale="en">(N/A: Require 64-bit main program)</Value>
+      <Value Locale="zh-Hans">（不可用：需要64位主程序）</Value>
     </String>
     
     <!-- Main dialog -->

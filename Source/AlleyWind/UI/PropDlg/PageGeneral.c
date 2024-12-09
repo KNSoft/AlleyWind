@@ -32,7 +32,7 @@ UpdatePropInfo(
         pszTemp = Prop->Caption;
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
     }
     UI_SetWindowTextW(hCtl, pszTemp);
     SendMessageW(hCtl, EM_SETREADONLY, Prop->CaptionValid != ERROR_SUCCESS, 0);
@@ -44,11 +44,11 @@ UpdatePropInfo(
     /* Instance Handle */
     if (Prop->InstanceHandleValid == ERROR_SUCCESS)
     {
-        Str_PrintfW(szBuffer, L"%p", Prop->InstanceHandle);
-        pszTemp = szBuffer;
+        uTemp = AW_FormatAddress(szBuffer, ARRAYSIZE(szBuffer), Prop, Prop->InstanceHandle);
+        pszTemp = uTemp > 0 ? szBuffer : g_NAText;
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_INSTANCE_HANDLE_EDIT, pszTemp);
 
@@ -58,7 +58,7 @@ UpdatePropInfo(
         pszTemp = AW_GetSysClassDisplayName(Prop->ClassName);
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_SYSCLASS_EDIT, pszTemp);
 
@@ -71,10 +71,10 @@ UpdatePropInfo(
         bTemp = FALSE;
     } else if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
     {
-        pszTemp = AW_FormatNA(szBuffer, ARRAYSIZE(szBuffer), AW_GetString(NonChildWindow));
+        pszTemp = AW_GetString(NANonChildWindow);
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
     }
     UI_SetWindowTextW(hCtl, pszTemp);
     SendMessageW(hCtl, EM_SETREADONLY, bTemp, 0);
@@ -85,10 +85,10 @@ UpdatePropInfo(
         pszTemp = Err_GetWin32ErrorInfo(Prop->WndProcValid);
         if (pszTemp != NULL)
         {
-            uTemp = Str_PrintfW(szBuffer, g_NAFormatText, pszTemp);
+            uTemp = Str_PrintfW(szBuffer, g_NAFormatStringText, pszTemp);
             if (Str_TestCchRet(uTemp, ARRAYSIZE(szBuffer)))
             {
-                goto _Get_Window_Unicode;
+                goto _Get_Window_AorW;
             }
         }
         uTemp2 = (ULONG)Str_CopyW(szBuffer, g_NAText);
@@ -99,12 +99,19 @@ UpdatePropInfo(
     } else
     {
         uTemp = Str_PrintfW(szBuffer, L"%p", Prop->WndProc);
+        if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
+        {
+            uTemp += AW_FormatAddress(szBuffer,
+                                      ARRAYSIZE(szBuffer),
+                                      Prop,
+                                      Prop->WndProc);
+        }
         if (!Str_TestCchRet(uTemp, ARRAYSIZE(szBuffer)))
         {
             uTemp = 0;
         }
     }
-_Get_Window_Unicode:
+_Get_Window_AorW:
     if (ARRAYSIZE(szBuffer) - uTemp <= 2)
     {
         goto _End_WndProc;
@@ -134,7 +141,7 @@ _End_WndProc:
                                                Prop->Style), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, pszTemp);
     if (Prop->ExStyleValid == ERROR_SUCCESS)
@@ -145,7 +152,7 @@ _End_WndProc:
                                                Prop->ExStyle), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
     } else
     {
-        pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
+        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_EXSTYLE_EDIT, pszTemp);
 
@@ -163,7 +170,7 @@ _End_WndProc:
         pszTemp = szBuffer;
     } else
     {
-        pszTemp = AW_FormatNAFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
+        pszTemp = AW_GetNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_SCREEN_RECT_EDIT, pszTemp);
 
@@ -183,7 +190,7 @@ _End_WndProc:
             pszTemp = szBuffer;
         } else
         {
-            pszTemp = AW_FormatNAFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+            pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
         }
     } else
     {
@@ -201,7 +208,7 @@ _End_WndProc:
             pszTemp = szBuffer;
         } else
         {
-            pszTemp = AW_FormatNAFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+            pszTemp = AW_GetNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
         }
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_TEXT, AW_GetStringEx(iTemp));

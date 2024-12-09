@@ -2,10 +2,10 @@
 
 #include "AlleyWind.Core.inl"
 
-#include "WindowUtil/WindowUtil.h"
-#include "WindowUtil/WindowProp.h"
-#include "Database/Database.h"
 #include "Resource/ResMgr.h"
+#include "Util/StringFormat.h"
+#include "Util/WinProp.h"
+#include "Database/Database.h"
 #include "UI/UI.h"
 
 #pragma comment (lib, "Comctl32.lib")

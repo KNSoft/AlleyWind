@@ -17,9 +17,6 @@
     <ClCompile Include="UI\MainDlg\Menu.c">
       <Filter>UI\MainDlg</Filter>
     </ClCompile>
-    <ClCompile Include="WindowUtil\WindowUtil.c">
-      <Filter>WindowUtil</Filter>
-    </ClCompile>
     <ClCompile Include="UI\PropDlg\PropDlg.c">
       <Filter>UI\PropDlg</Filter>
     </ClCompile>
@@ -29,14 +26,17 @@
     <ClCompile Include="UI\PropDlg\PageGeneral.c">
       <Filter>UI\PropDlg</Filter>
     </ClCompile>
-    <ClCompile Include="WindowUtil\WindowProp.c">
-      <Filter>WindowUtil</Filter>
-    </ClCompile>
     <ClCompile Include="UI\PropDlg\PageResource.c">
       <Filter>UI\PropDlg</Filter>
     </ClCompile>
     <ClCompile Include="UI\PropDlg\PageRelation.c">
       <Filter>UI\PropDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\WinProp.c">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\StringFormat.c">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,11 +63,11 @@
     <ClInclude Include="UI\UI.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="WindowUtil\WindowUtil.h">
-      <Filter>WindowUtil</Filter>
+    <ClInclude Include="Util\WinProp.h">
+      <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="WindowUtil\WindowProp.h">
-      <Filter>WindowUtil</Filter>
+    <ClInclude Include="Util\StringFormat.h">
+      <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,11 +83,11 @@
     <Filter Include="UI\MainDlg">
       <UniqueIdentifier>{d770db64-979c-4067-a1bf-78e138741ffe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="WindowUtil">
-      <UniqueIdentifier>{c76a10f2-4b62-40e7-b5f8-470b65211aa4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI\PropDlg">
       <UniqueIdentifier>{2c01fb70-52ff-4527-8e9d-ac275862ec3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{08eee5c5-5a2a-4f60-b759-84f2ad774703}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
