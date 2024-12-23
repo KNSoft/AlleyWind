@@ -21,7 +21,10 @@
 #define IDC_PROP_CTLID_EDIT             1009
 #define IDC_PROP_THREAD_EDIT            1009
 #define IDC_PROP_WNDPROC_TEXT           1010
+#define IDC_PROP_MONITOR_TEXT           1010
 #define IDC_PROP_WNDPROC_EDIT           1011
+#define IDC_PROP_THREAD_EDIT2           1011
+#define IDC_PROP_MONITOR_EDIT           1011
 #define IDC_PROP_INSTANCE_HANDLE_TEXT   1012
 #define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
 #define IDC_PROP_SYSCLASS_TEXT          1014
@@ -34,6 +37,7 @@
 #define IDC_PROP_SCREEN_RECT_EDIT       1021
 #define IDC_PROP_RECT2_TEXT             1022
 #define IDC_PROP_RECT2_EDIT             1023
+#define IDC_PROP_PROCUNICODE_TEXT       1024
 
 // Next default values for new objects
 // 

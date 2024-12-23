@@ -5,56 +5,75 @@
 EXTERN_C_START
 
 FORCEINLINE
-PWSTR
-AW_GetNAInfoString(
-    PWSTR Buffer,
+_Success_(return > 0)
+ULONG
+AW_WriteNAInfoString(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
     _In_ ULONG BufferCch,
     _In_ PCWSTR Info)
 {
-    return Str_TestCchRet(Str_PrintfExW(Buffer, BufferCch, g_NAFormatStringText, Info), BufferCch) ? Buffer : (PWSTR)g_NAText;
+    ULONG u;
+
+    u = Str_PrintfExW(Buffer, BufferCch, g_NAFormatStringText, Info);
+    if (u == 0)
+    {
+        u = Str_CopyExW(Buffer, BufferCch, g_NAText);
+    }
+    return u;
 }
 
 FORCEINLINE
-PWSTR
-AW_GetNACodeString(
-    PWSTR Buffer,
+_Success_(return > 0)
+ULONG
+AW_WriteNACodeString(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
     _In_ ULONG BufferCch,
     _In_ ULONG Code)
 {
-    return Str_TestCchRet(Str_PrintfExW(Buffer, BufferCch, g_NAFormatCodeText, Code), BufferCch) ? Buffer : (PWSTR)g_NAText;
+    ULONG u;
+
+    u = Str_PrintfExW(Buffer, BufferCch, g_NAFormatCodeText, Code);
+    if (u == 0)
+    {
+        u = Str_CopyExW(Buffer, BufferCch, g_NAText);
+    }
+    return u;
 }
 
 FORCEINLINE
-PWSTR
-AW_GetNAStringFromWin32Error(
-    PWCHAR Text,
-    _In_ ULONG TextCch,
+_Success_(return > 0)
+ULONG
+AW_WriteNAStringFromWin32Error(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
+    _In_ ULONG BufferCch,
     _In_ ULONG Win32Error)
 {
     PCWSTR psz = Err_GetWin32ErrorInfo(Win32Error);
-    return psz != NULL ? AW_GetNAInfoString(Text, TextCch, psz) : AW_GetNACodeString(Text, TextCch, Win32Error);
+    return psz != NULL ? AW_WriteNAInfoString(Buffer, BufferCch, psz) : AW_WriteNACodeString(Buffer, BufferCch, Win32Error);
 }
 
 FORCEINLINE
-PWSTR
-AW_GetNAStringFromHr(
-    PWCHAR Text,
-    _In_ ULONG TextCch,
+_Success_(return > 0)
+ULONG
+AW_WriteNAStringFromHr(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
+    _In_ ULONG BufferCch,
     _In_ HRESULT Hr)
 {
     PCWSTR psz = Err_GetHrInfo(Hr);
-    return psz != NULL ? AW_GetNAInfoString(Text, TextCch, psz) : AW_GetNACodeString(Text, TextCch, Hr);
+    return psz != NULL ? AW_WriteNAInfoString(Buffer, BufferCch, psz) : AW_WriteNACodeString(Buffer, BufferCch, Hr);
 }
 
 FORCEINLINE
-PWSTR
-AW_GetNAStringFromNtStatus(
-    PWCHAR Text,
-    _In_ ULONG TextCch,
+_Success_(return > 0)
+ULONG
+AW_WriteNAStringFromNtStatus(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
+    _In_ ULONG BufferCch,
     _In_ NTSTATUS Status)
 {
     PCWSTR psz = Err_GetNtStatusInfo(Status);
-    return psz != NULL ? AW_GetNAInfoString(Text, TextCch, psz) : AW_GetNACodeString(Text, TextCch, Status);
+    return psz != NULL ? AW_WriteNAInfoString(Buffer, BufferCch, psz) : AW_WriteNACodeString(Buffer, BufferCch, Status);
 }
 
 EXTERN_C_END

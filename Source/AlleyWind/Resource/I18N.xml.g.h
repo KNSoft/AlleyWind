@@ -49,6 +49,7 @@ enum
     Precomp4C_I18N_All_RelativeRectangle,
     Precomp4C_I18N_All_Process,
     Precomp4C_I18N_All_Thread,
+    Precomp4C_I18N_All_Monitor,
     Precomp4C_I18N_All_Desktop,
     Precomp4C_I18N_All_Dialog,
     Precomp4C_I18N_All_Animation,

@@ -23,10 +23,6 @@ INT_PTR
 CALLBACK
 EmptyPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_CTLCOLORDLG)
-    {
-        return (INT_PTR)(HBRUSH)GetStockObject(BLACK_BRUSH);
-    }
     return FALSE;
 }
 
@@ -35,8 +31,8 @@ AW_I18N_PROPSHEET_PAGE g_astPspSource[] = {
     { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc, 0 },
     { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), ResourcePspProc, 0 },
     { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_RELATION), RelationPspProc, 0 },
-    { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
-    { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_GENERAL), EmptyPspProc, 0 },
+    { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc, 0 },
+    { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc, 0 },
 };
 
 static

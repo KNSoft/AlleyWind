@@ -16,7 +16,7 @@ AppendTitleText(
     Text[Cch++] = L' ';
     Text[Cch++] = L'(';
 
-    u = (ULONG)Str_CopyExW(Text + Cch, TextCch - Cch, TextAppend);
+    u = Str_CopyExW(Text + Cch, TextCch - Cch, TextAppend);
     if (u == 0 || u >= TextCch - Cch)
     {
         goto _Exit;
@@ -56,4 +56,45 @@ AW_PostFixTitleText(
 
     Text[Cch] = UNICODE_NULL;
     return Cch;
+}
+
+_Success_(return > 0)
+ULONG
+AW_WriteAddressDisplayString(
+    _In_ PAW_WINDOW_PROP Prop,
+    _In_ ULONGLONG Address,
+    _In_ NTSTATUS Status,
+    _In_ PWSTR DisplayString,
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
+    _In_ ULONG BufferCch)
+{
+    ULONG Cch, CchLast, u;
+
+    if (NT_SUCCESS(Status))
+    {
+        return Str_CopyExW(Buffer, BufferCch, DisplayString);
+    }
+
+    /* Write address at first */
+    Cch = AW_WritePropAddress(Prop, Address, Buffer, BufferCch);
+    if (Cch == 0 || Cch + 2 > BufferCch)
+    {
+        return Str_CopyExW(Buffer, BufferCch, g_NAText);
+    }
+    CchLast = Cch;
+    Buffer[Cch++] = L' ';
+
+    /* Write error information */
+    if (Status == STATUS_INVALID_IMAGE_WIN_64)
+    {
+        u = Str_CopyExW(Buffer + Cch, BufferCch - Cch, AW_GetString(NARequire64Bit));
+    } else
+    {
+        goto _Truncate;
+    }
+    return Cch + u;
+
+_Truncate:
+    Buffer[CchLast] = UNICODE_NULL;
+    return CchLast;
 }

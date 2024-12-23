@@ -157,6 +157,10 @@
       <Value Locale="en">Thread</Value>
       <Value Locale="zh-Hans">线程</Value>
     </String>
+    <String Name="Monitor">
+      <Value Locale="en">Monitor</Value>
+      <Value Locale="zh-Hans">显示器</Value>
+    </String>
     
     <!-- Database - Classes -->
     <String Name="Desktop">

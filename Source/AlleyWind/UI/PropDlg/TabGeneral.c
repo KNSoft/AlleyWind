@@ -22,7 +22,6 @@ UpdatePropInfo(
     HWND hCtl;
     PCWSTR pszTemp;
     BOOL bTemp;
-    ULONG uTemp, uTemp2;
     INT iTemp;
 
     /* Caption */
@@ -32,7 +31,8 @@ UpdatePropInfo(
         pszTemp = Prop->Caption;
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
+        pszTemp = szBuffer;
     }
     UI_SetWindowTextW(hCtl, pszTemp);
     SendMessageW(hCtl, EM_SETREADONLY, Prop->CaptionValid != ERROR_SUCCESS, 0);
@@ -44,13 +44,17 @@ UpdatePropInfo(
     /* Instance Handle */
     if (Prop->InstanceHandleValid == ERROR_SUCCESS)
     {
-        uTemp = AW_FormatAddress(szBuffer, ARRAYSIZE(szBuffer), Prop, Prop->InstanceHandle);
-        pszTemp = uTemp > 0 ? szBuffer : g_NAText;
+        AW_WriteAddressDisplayString(Prop,
+                                     Prop->InstanceHandle,
+                                     Prop->InstanceHandleDisplayNameValid,
+                                     Prop->InstanceHandleDisplayName,
+                                     szBuffer,
+                                     ARRAYSIZE(szBuffer));
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
     }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_INSTANCE_HANDLE_EDIT, pszTemp);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_INSTANCE_HANDLE_EDIT, szBuffer);
 
     /* System Class */
     if (Prop->ClassNameValid == ERROR_SUCCESS)
@@ -58,7 +62,8 @@ UpdatePropInfo(
         pszTemp = AW_GetSysClassDisplayName(Prop->ClassName);
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
+        pszTemp = szBuffer;
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_SYSCLASS_EDIT, pszTemp);
 
@@ -67,14 +72,15 @@ UpdatePropInfo(
     bTemp = TRUE;
     if (Prop->IdentifierValid == ERROR_SUCCESS)
     {
-        pszTemp = Str_FromIntW(Prop->Identifier, szBuffer) ? szBuffer : NULL;
+        pszTemp = Str_FromIntW(Prop->Identifier, szBuffer) > 0 ? szBuffer : NULL;
         bTemp = FALSE;
     } else if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
     {
         pszTemp = AW_GetString(NANonChildWindow);
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
+        pszTemp = szBuffer;
     }
     UI_SetWindowTextW(hCtl, pszTemp);
     SendMessageW(hCtl, EM_SETREADONLY, bTemp, 0);
@@ -82,79 +88,36 @@ UpdatePropInfo(
     /* Window Procedure */
     if (Prop->WndProcValid != ERROR_SUCCESS)
     {
-        pszTemp = Err_GetWin32ErrorInfo(Prop->WndProcValid);
-        if (pszTemp != NULL)
-        {
-            uTemp = Str_PrintfW(szBuffer, g_NAFormatStringText, pszTemp);
-            if (Str_TestCchRet(uTemp, ARRAYSIZE(szBuffer)))
-            {
-                goto _Get_Window_AorW;
-            }
-        }
-        uTemp2 = (ULONG)Str_CopyW(szBuffer, g_NAText);
-        if (Str_TestCchRet(uTemp2, ARRAYSIZE(szBuffer)))
-        {
-            uTemp += uTemp2;
-        }
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->WndProcValid);
     } else
     {
-        uTemp = Str_PrintfW(szBuffer, L"%p", Prop->WndProc);
-        if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
-        {
-            uTemp += AW_FormatAddress(szBuffer,
-                                      ARRAYSIZE(szBuffer),
-                                      Prop,
-                                      Prop->WndProc);
-        }
-        if (!Str_TestCchRet(uTemp, ARRAYSIZE(szBuffer)))
-        {
-            uTemp = 0;
-        }
+        AW_WriteAddressDisplayString(Prop,
+                                     Prop->WndProc,
+                                     Prop->WndProcDisplayNameValid,
+                                     Prop->WndProcDisplayName,
+                                     szBuffer,
+                                     ARRAYSIZE(szBuffer));
     }
-_Get_Window_AorW:
-    if (ARRAYSIZE(szBuffer) - uTemp <= 2)
-    {
-        goto _End_WndProc;
-    }
-    uTemp2 = uTemp;
-    szBuffer[uTemp++] = L' ';
-    szBuffer[uTemp++] = L'(';
-    uTemp += (ULONG)Str_CopyExW(szBuffer + uTemp,
-                                ARRAYSIZE(szBuffer) - uTemp,
-                                IsWindowUnicode(Prop->Handle) ? L"Unicode" : L"ANSI");
-    if (ARRAYSIZE(szBuffer) - uTemp <= 2)
-    {
-        szBuffer[uTemp2] = UNICODE_NULL;
-        goto _End_WndProc;
-    }
-    szBuffer[uTemp++] = L')';
-    szBuffer[uTemp] = UNICODE_NULL;
-_End_WndProc:
     UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_EDIT, szBuffer);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCUNICODE_TEXT, Prop->Unicode ? L"Unicode" : L"ANSI");
 
     /* Style & Extended-style */
     if (Prop->StyleValid == ERROR_SUCCESS)
     {
-        pszTemp = Str_TestCchRet(Str_PrintfExW(szBuffer,
-                                               ARRAYSIZE(szBuffer),
-                                               L"%08lX",
-                                               Prop->Style), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
+        Str_PrintfW(szBuffer, L"%08lX", Prop->Style) > 0 ? szBuffer : g_NAText;
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
     }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, pszTemp);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, szBuffer);
     if (Prop->ExStyleValid == ERROR_SUCCESS)
     {
-        pszTemp = Str_TestCchRet(Str_PrintfExW(szBuffer,
-                                               ARRAYSIZE(szBuffer),
-                                               L"%08lX",
-                                               Prop->ExStyle), ARRAYSIZE(szBuffer)) ? szBuffer : g_NAText;
+        Str_PrintfW(szBuffer, L"%08lX", Prop->ExStyle) > 0 ? szBuffer : g_NAText;
     } else
     {
-        pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
+        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
     }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_EXSTYLE_EDIT, pszTemp);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_EXSTYLE_EDIT, szBuffer);
 
     /* Rectangles */
     if (SUCCEEDED(Prop->ScreenRectValid))
@@ -167,12 +130,11 @@ _End_WndProc:
                     Prop->ScreenRect.bottom,
                     Prop->ScreenRect.right - Prop->ScreenRect.left,
                     Prop->ScreenRect.bottom - Prop->ScreenRect.top);
-        pszTemp = szBuffer;
     } else
     {
-        pszTemp = AW_GetNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
+        AW_WriteNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
     }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_SCREEN_RECT_EDIT, pszTemp);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_SCREEN_RECT_EDIT, szBuffer);
 
     if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
     {
@@ -187,10 +149,9 @@ _End_WndProc:
                         Prop->Rect2.bottom,
                         Prop->Rect2.right - Prop->Rect2.left,
                         Prop->Rect2.bottom - Prop->Rect2.top);
-            pszTemp = szBuffer;
         } else
         {
-            pszTemp = AW_GetNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+            AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
         }
     } else
     {
@@ -205,14 +166,13 @@ _End_WndProc:
                         Prop->Rect2.bottom,
                         Prop->Rect2.right - Prop->Rect2.left,
                         Prop->Rect2.bottom - Prop->Rect2.top);
-            pszTemp = szBuffer;
         } else
         {
-            pszTemp = AW_GetNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
+            AW_WriteNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
         }
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_TEXT, AW_GetStringEx(iTemp));
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_EDIT, pszTemp);
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_EDIT, szBuffer);
 }
 
 INT_PTR
