@@ -79,7 +79,7 @@ AW_WriteAddressDisplayString(
     Cch = AW_WritePropAddress(Prop, Address, Buffer, BufferCch);
     if (Cch == 0 || Cch + 2 > BufferCch)
     {
-        return Str_CopyExW(Buffer, BufferCch, g_NAText);
+        return Str_CopyExW(Buffer, BufferCch, g_ResNAText);
     }
     CchLast = Cch;
     Buffer[Cch++] = L' ';

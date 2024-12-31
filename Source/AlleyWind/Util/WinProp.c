@@ -18,9 +18,10 @@ WriteAddressDisplayName(
     WCHAR ch;
 
     /* If reader bits smaller than image bits, address is invalid */
-    if (AW_IsWindowPropNeeds64(Prop))
+    Status = AW_IsWindowPropBitsValid(Prop);
+    if (!NT_SUCCESS(Status))
     {
-        return STATUS_INVALID_IMAGE_WIN_64;
+        return Status;
     }
 
     /* Get name of address */
@@ -142,7 +143,7 @@ AW_GetWindowProp(
 
     /* Basic properties */
     Prop->ReaderBits = sizeof(void*) * CHAR_BIT;
-    Prop->Handle = UI_TruncateHandle(Window);
+    Prop->Handle = UI_TruncateHandle32(Window);
     Prop->TopLevelWindow = IsTopLevelWindow(Window);
     Prop->ThreadId = GetWindowThreadProcessId(Window, &Prop->ProcessId);
     if (Prop->ThreadId != 0)
@@ -162,13 +163,12 @@ AW_GetWindowProp(
         /* Process image path */
         if (Prop->ProcessId != NtCurrentProcessId())
         {
-            Prop->ImageMachine = IMAGE_FILE_MACHINE_UNKNOWN;
             Status = PS_OpenProcess(&PSHandle, PROCESS_QUERY_LIMITED_INFORMATION, Prop->ProcessId);
             if (!NT_SUCCESS(Status))
             {
                 goto _Get_Process_Info_End;
             }
-            PS_GetMachineType(PSHandle, &Prop->ImageMachine);
+            Prop->ImageMachineValid = PS_GetMachineType(PSHandle, &Prop->ImageMachine);
             Status = NtQueryInformationProcess(PSHandle, ProcessImageFileNameWin32, Buffer, sizeof(Buffer), NULL);
             NtClose(PSHandle);
             if (!NT_SUCCESS(Status))
@@ -178,7 +178,8 @@ AW_GetWindowProp(
             String = (PUNICODE_STRING)Buffer;
         } else
         {
-            Prop->ImageMachine = ((PIMAGE_NT_HEADERS)Add2Ptr(&__ImageBase, __ImageBase.e_lfanew))->FileHeader.Machine;
+            Prop->ImageMachine = NtGetImageNtHeader()->FileHeader.Machine;
+            Prop->ImageMachineValid = STATUS_SUCCESS;
             String = &NtCurrentPeb()->ProcessParameters->ImagePathName;
         }
         Prop->ImageBits = PE_GetMachineBits(Prop->ImageMachine);
@@ -220,6 +221,7 @@ _Get_Thread_Info_End:
         Prop->ThreadStartAddressValid = Status;
     } else
     {
+        Prop->ImageMachineValid = STATUS_UNSUCCESSFUL;
         Prop->ImageMachine = IMAGE_FILE_MACHINE_UNKNOWN;
         Prop->ImageBits = 0;
     }
@@ -287,6 +289,7 @@ _Get_Thread_Info_End:
     }
 
     Prop->Unicode = IsWindowUnicode(Window);
+    Prop->KernelMode = IsServerSideWindow(Window);
 
     /* Rect */
     Prop->ScreenRectValid = UI_GetWindowRect(Window, &Prop->ScreenRect);

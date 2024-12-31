@@ -38,7 +38,7 @@ UpdatePropInfo(
     SendMessageW(hCtl, EM_SETREADONLY, Prop->CaptionValid != ERROR_SUCCESS, 0);
 
     /* Handle */
-    Str_PrintfW(szBuffer, L"%08lX", UI_TruncateHandle32(Prop->Handle));
+    Str_PrintfW(szBuffer, L"%08lX", Prop->Handle);
     UI_SetDlgItemTextW(Dialog, IDC_PROP_HANDLE_EDIT, szBuffer);
 
     /* Instance Handle */
@@ -99,12 +99,16 @@ UpdatePropInfo(
                                      ARRAYSIZE(szBuffer));
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_EDIT, szBuffer);
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCUNICODE_TEXT, Prop->Unicode ? L"Unicode" : L"ANSI");
+    Str_PrintfW(szBuffer,
+                L"%ls | %ls",
+                Prop->Unicode ? L"Unicode" : L"ANSI",
+                AW_GetStringEx(Prop->KernelMode ? Precomp4C_I18N_All_KernelMode : Precomp4C_I18N_All_UserMode));
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_ATTR_TEXT, szBuffer);
 
     /* Style & Extended-style */
     if (Prop->StyleValid == ERROR_SUCCESS)
     {
-        Str_PrintfW(szBuffer, L"%08lX", Prop->Style) > 0 ? szBuffer : g_NAText;
+        Str_PrintfW(szBuffer, L"%08lX", Prop->Style) > 0 ? szBuffer : g_ResNAText;
     } else
     {
         AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
@@ -112,7 +116,7 @@ UpdatePropInfo(
     UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, szBuffer);
     if (Prop->ExStyleValid == ERROR_SUCCESS)
     {
-        Str_PrintfW(szBuffer, L"%08lX", Prop->ExStyle) > 0 ? szBuffer : g_NAText;
+        Str_PrintfW(szBuffer, L"%08lX", Prop->ExStyle) > 0 ? szBuffer : g_ResNAText;
     } else
     {
         AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);

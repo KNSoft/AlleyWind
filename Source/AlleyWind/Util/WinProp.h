@@ -31,7 +31,7 @@ AW_GetWindowIcon(
 typedef struct _AW_WINDOW_PROP
 {
     USHORT ReaderBits; // sizeof(void*) * CHAR_BIT, 32 or 64;
-    HWND Handle;
+    ULONG Handle;
     LOGICAL TopLevelWindow;
 
     ULONG CaptionValid;
@@ -62,13 +62,14 @@ typedef struct _AW_WINDOW_PROP
     LONGLONG Identifier; // 0 if invalid
 
     LOGICAL Unicode;
+    LOGICAL KernelMode;
 
     HRESULT ScreenRectValid;
     RECT ScreenRect; // { 0 } if invalid
 
     /*
-     * ULONG(Win32 ERROR) with Client Rect if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)),
-     * HRESULT with Relative Rect otherwise
+     * ULONG(Win32 Error) and Client Rect if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)),
+     * HRESULT and Relative Rect otherwise
      */
     ULONG Rect2Valid;
     RECT Rect2;
@@ -76,6 +77,7 @@ typedef struct _AW_WINDOW_PROP
     ULONG ThreadProcessIdValid;
     ULONG ProcessId; // 0 if invalid
     ULONG ThreadId; // 0 if invalid
+    NTSTATUS ImageMachineValid;
     USHORT ImageMachine; // IMAGE_FILE_MACHINE_UNKNOWN if invalid
     USHORT ImageBits; // 0 if invalid
 
@@ -100,11 +102,15 @@ AW_GetWindowProp(
     _Out_ PAW_WINDOW_PROP Prop);
 
 FORCEINLINE
-LOGICAL
-AW_IsWindowPropNeeds64(
+NTSTATUS
+AW_IsWindowPropBitsValid(
     _In_ PAW_WINDOW_PROP Prop)
 {
-    return Prop->ImageBits == 0 || Prop->ReaderBits < Prop->ImageBits;
+    if (!NT_SUCCESS(Prop->ImageMachineValid))
+    {
+        return Prop->ImageMachineValid;
+    }
+    return Prop->ReaderBits >= Prop->ImageBits ? STATUS_SUCCESS : STATUS_INVALID_IMAGE_WIN_64;
 }
 
 FORCEINLINE
@@ -125,7 +131,6 @@ AW_WritePropAddress(
     {
         u = Str_PrintfEx(Buffer, BufferCch, L"0x%08lX", (ULONG)Address);
     }
-
     return u;
 }
 

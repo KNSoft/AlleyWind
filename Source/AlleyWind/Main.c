@@ -20,13 +20,13 @@ RunMainProgram(VOID)
     hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
     AW_InitClassDatabase();
-    AW_InitStockResource();
+    AW_InitResource();
     hr = AW_OpenMainDialogBox();
     if (FAILED(hr))
     {
         KNS_HrMessageBox(NULL, hr);
     }
-    AW_UninitStockResource();
+    AW_UninitResource();
 
     if (SUCCEEDED(hrCom))
     {
@@ -133,7 +133,6 @@ wWinMain(
     }
 
 _RunMain:
-
     /* Get current privileges */
     Status = PS_OpenCurrentThreadToken(&Token);
     if (NT_SUCCESS(Status))

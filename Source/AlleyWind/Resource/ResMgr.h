@@ -2,166 +2,72 @@
 
 #include "../AlleyWind.Core.inl"
 
+#include "Util.h"
+
 EXTERN_C_START
 
-/* I18N */
+/* Stock Objects */
 
-PCWSTR
-AW_GetStringEx(
-    _In_ INT Index);
+extern PCWSTR g_ResNAText;
+extern PCWSTR g_ResNAFormatStringText;
+extern PCWSTR g_ResNAFormatCodeText;
 
-#define AW_GetString(x) AW_GetStringEx(Precomp4C_I18N_All_##x)
-
-VOID
-AW_InitI18NArrayEx(
-    _In_ PVOID Array,
-    _In_ ULONG Size,
-    _In_ ULONG Count,
-    _In_ ULONG FieldOffset);
-
-FORCEINLINE
-VOID
-AW_InitMenuI18NEx(
-    _In_reads_(Count) PUI_MENU_ITEM Items,
-    _In_ UINT Count)
-{
-    AW_InitI18NArrayEx(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
-}
-
-#define AW_InitMenuI18N(Items) AW_InitMenuI18NEx(Items, ARRAYSIZE(Items))
-
-/* Dialog resource */
-
-FORCEINLINE
-HRESULT
-AW_CreateDialog(
-    _Out_opt_ HWND* Dialog,
-    _In_opt_ HWND Owner,
-    _In_ PCWSTR DlgResName,
-    _In_opt_ DLGPROC DlgProc,
-    _In_opt_ LPARAM InitParam)
-{
-    NTSTATUS Status;
-    PVOID DlgRes;
-    HWND Window;
-
-    Status = PE_AccessResource((HINSTANCE)&__ImageBase,
-                               MAKEINTRESOURCEW(RT_DIALOG),
-                               DlgResName,
-                               LANG_USER_DEFAULT,
-                               &DlgRes,
-                               NULL);
-    if (!NT_SUCCESS(Status))
-    {
-        return HRESULT_FROM_NT(Status);
-    }
-
-    Window = CreateDialogIndirectParamW((HINSTANCE)&__ImageBase, DlgRes, Owner, DlgProc, InitParam);
-    if (Window == NULL)
-    {
-        return HRESULT_FROM_WIN32(NtGetLastError());
-    }
-
-    if (Dialog != NULL)
-    {
-        *Dialog = Window;
-    }
-    return S_OK;
-}
-
-FORCEINLINE
-HRESULT
-AW_OpenModelDialog(
-    _In_opt_ HWND Owner,
-    _In_ PCWSTR DlgResName,
-    _In_opt_ DLGPROC DlgProc,
-    _In_opt_ LPARAM InitParam)
-{
-    NTSTATUS Status;
-    PVOID DlgRes;
-
-    Status = PE_AccessResource((HINSTANCE)&__ImageBase,
-                               MAKEINTRESOURCEW(RT_DIALOG),
-                               DlgResName,
-                               LANG_USER_DEFAULT,
-                               &DlgRes,
-                               NULL);
-    if (!NT_SUCCESS(Status))
-    {
-        return HRESULT_FROM_NT(Status);
-    }
-    return KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase, Owner, DlgRes, DlgProc, InitParam);
-}
-
-typedef struct _AW_I18N_DLGITEM
-{
-    INT ItemId;
-    INT I18NIndex;
-} AW_I18N_DLGITEM, *PAW_I18N_DLGITEM;
-
-typedef struct _AW_I18N_PROPSHEET_PAGE
-{
-    INT I18NIndex;
-    PCWSTR DlgResName;
-    DLGPROC DlgProc;
-    LPARAM InitParam;
-} AW_I18N_PROPSHEET_PAGE, *PAW_I18N_PROPSHEET_PAGE;
-
-FORCEINLINE
-VOID
-AW_InitDlgItemI18NEx(
-    _In_ HWND Dialog,
-    _In_reads_(Count) AW_I18N_DLGITEM Items[],
-    _In_ UINT Count)
-{
-    UINT i;
-    HWND hCtl;
-
-    for (i = 0; i < Count; i++)
-    {
-        hCtl = GetDlgItem(Dialog, Items[i].ItemId);
-        SetWindowTextW(hCtl, AW_GetStringEx(Items[i].I18NIndex));
-    }
-}
-
-#define AW_InitDlgItemI18N(Dialog, Items) AW_InitDlgItemI18NEx(Dialog, Items, ARRAYSIZE(Items))
-
-FORCEINLINE
-VOID
-AW_InitPropSheetPageI18NEx(
-    _In_ HWND Dialog,
-    _In_reads_(Count) AW_I18N_PROPSHEET_PAGE InPages[],
-    _Out_writes_(Count) UI_PROPSHEET_PAGE OutPages[],
-    _In_ UINT Count)
-{
-    UINT i;
-
-    for (i = 0; i < Count; i++)
-    {
-        if (FAILED(AW_CreateDialog(&OutPages[i].PageWindow,
-                                   Dialog,
-                                   InPages[i].DlgResName,
-                                   InPages[i].DlgProc,
-                                   InPages[i].InitParam)))
-        {
-            OutPages[i].PageWindow = NULL;
-        }
-        OutPages[i].TabTitle = AW_GetStringEx(InPages[i].I18NIndex);
-    }
-}
-
-/* Stock resource */
-
-extern PCWSTR g_NAText;
-extern PCWSTR g_NAFormatStringText;
-extern PCWSTR g_NAFormatCodeText;
-extern HICON g_ResUACShieldIcon;
+extern HICON g_ResWindowIcon;
 extern HBITMAP g_ResUACShieldIconBitmap;
 
-VOID
-AW_InitStockResource(VOID);
+/* Main Dialog */
+
+#define IDM_MAINDLG_FILE_RUNAS_ADMIN 1
+#define IDM_MAINDLG_FILE_ALWAYS_ON_TOP 2
+#define IDM_MAINDLG_FILE_REFRESH 3
+#define IDM_MAINDLG_FILE_SAVETREE 4
+
+#define IDM_MAINDLG_HELP_HOMEPAGE 20
+
+#define IDM_MAINDLG_ITEM_HIGHLIGHT 101
+#define IDM_MAINDLG_ITEM_PROPERTIES 102
+
+enum
+{
+    Menu_MainDlg_Item_Highlight = 0,
+    Menu_MainDlg_Item_Properties,
+    Menu_MainDlg_Item_Max,
+};
+
+enum
+{
+    Menu_MainDlg_File_RunAsAdmin = 0,
+    Menu_MainDlg_File_Separator0,
+    Menu_MainDlg_File_AlwaysOnTop,
+    Menu_MainDlg_File_Separator1,
+    Menu_MainDlg_File_Refresh,
+    Menu_MainDlg_File_SaveTree,
+    Menu_MainDlg_File_Max
+};
+extern UI_MENU_ITEM g_MainDlgFileMenuItems[Menu_MainDlg_File_Max];
+
+enum
+{
+    Menu_MainDlg_File = 0,
+    Menu_MainDlg_Help,
+    Menu_MainDlg_Max
+};
+extern UI_MENU_ITEM g_ResMainDlgMenuItems[Menu_MainDlg_Max];
+
+extern HACCEL g_ResMainDlgAccel;
+extern HMENU g_ResMainDlgMenu;
+extern HMENU g_ResMainDlgItemMenu;
+extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
+
+/* Properties Dialog */
+
+extern AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[6];
+extern LPCDLGTEMPLATEW g_ResPropDlgTemplate;
+
+W32ERROR
+AW_InitResource(VOID);
 
 VOID
-AW_UninitStockResource(VOID);
+AW_UninitResource(VOID);
 
 EXTERN_C_END

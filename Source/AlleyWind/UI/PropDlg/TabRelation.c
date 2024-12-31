@@ -1,10 +1,21 @@
 ﻿#include "../../AlleyWind.inl"
 
+#define IDM_PROCESS_OPENFILELOCATION 1
+#define IDM_PROCESS_FILEPROPERTIES 2
+#define IDM_PROCESS_TERMINATE 3
+
 static
 AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_All_Process },
     { IDC_PROP_THREAD_TEXT, Precomp4C_I18N_All_Thread },
     { IDC_PROP_MONITOR_TEXT, Precomp4C_I18N_All_Monitor },
+};
+
+static
+UI_MENU_ITEM g_astProcessMenu[] = {
+    { FALSE, MF_STRING, IDM_PROCESS_OPENFILELOCATION, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
+    { FALSE, MF_STRING | MF_DEFAULT, IDM_PROCESS_FILEPROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
+    { FALSE, MF_STRING | MF_DEFAULT, IDM_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
 };
 
 static

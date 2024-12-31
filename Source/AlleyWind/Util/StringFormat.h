@@ -14,10 +14,10 @@ AW_WriteNAInfoString(
 {
     ULONG u;
 
-    u = Str_PrintfExW(Buffer, BufferCch, g_NAFormatStringText, Info);
+    u = Str_PrintfExW(Buffer, BufferCch, g_ResNAFormatStringText, Info);
     if (u == 0)
     {
-        u = Str_CopyExW(Buffer, BufferCch, g_NAText);
+        u = Str_CopyExW(Buffer, BufferCch, g_ResNAText);
     }
     return u;
 }
@@ -32,10 +32,10 @@ AW_WriteNACodeString(
 {
     ULONG u;
 
-    u = Str_PrintfExW(Buffer, BufferCch, g_NAFormatCodeText, Code);
+    u = Str_PrintfExW(Buffer, BufferCch, g_ResNAFormatCodeText, Code);
     if (u == 0)
     {
-        u = Str_CopyExW(Buffer, BufferCch, g_NAText);
+        u = Str_CopyExW(Buffer, BufferCch, g_ResNAText);
     }
     return u;
 }

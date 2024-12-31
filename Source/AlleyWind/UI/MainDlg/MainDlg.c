@@ -1,7 +1,5 @@
 ﻿#include "../../AlleyWind.inl"
 
-#include "Menu.h"
-
 typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 {
     HTREEITEM hParentNode;
@@ -11,11 +9,8 @@ typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
 HWND g_hMainDlg = NULL;
 static UI_WINDOW_RESIZE_INFO g_stResizeInfo = { 0 };
 static HWND g_hTree = NULL;
-static HMENU g_hMainMenu, g_hItemMenu;
-static HACCEL g_hAccel = NULL;
 static LONG _Interlocked_operand_ volatile g_bUpdatingTree = FALSE;
 static HIMAGELIST g_himlTreeIcons = NULL;
-static HICON g_hIconWndDefault = NULL;
 
 static
 _Function_class_(UI_TREEVIEW_ENUMITEM_FN)
@@ -180,7 +175,7 @@ UpdateWindowTreeThread(
                                        1);
     if (g_himlTreeIcons != NULL)
     {
-        ImageList_ReplaceIcon(g_himlTreeIcons, -1, g_hIconWndDefault);
+        ImageList_ReplaceIcon(g_himlTreeIcons, -1, g_ResWindowIcon);
     }
     SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)g_himlTreeIcons);
     InsertWindowToTree(GetDesktopWindow(), (LPARAM)&stEnumChildren);
@@ -297,10 +292,9 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* Initialize tree-view global resources */
         g_hTree = GetDlgItem(hDlg, IDC_WNDTREE);
         UI_SetWindowExplorerVisualStyle(g_hTree);
-        g_hIconWndDefault = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
 
         /* Sets menu before subclass procedures */
-        SetMenu(hDlg, g_hMainMenu);
+        SetMenu(hDlg, g_ResMainDlgMenu);
         if (GetClientRect(hDlg, &rc))
         {
             MainDlgResizeProc(hDlg, rc.right, rc.bottom, NULL);
@@ -323,7 +317,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     } else if (uMsg == WM_COMMAND)
     {
-        if (wParam == MAKEWPARAM(IDM_FILE_RUNAS_ADMIN, 0))
+        if (wParam == MAKEWPARAM(IDM_MAINDLG_FILE_RUNAS_ADMIN, 0))
         {
             W32ERROR Ret;
 
@@ -339,11 +333,11 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 KNS_Win32ErrorMessageBox(hDlg, Ret);
             }
-        } else if (wParam == MAKEWPARAM(IDM_FILE_ALWAYS_ON_TOP, 0))
+        } else if (wParam == MAKEWPARAM(IDM_MAINDLG_FILE_ALWAYS_ON_TOP, 0))
         {
             HRESULT hr;
 
-            hr = UI_ToggleMenuCheckItem(g_astMainMenu[Menu_MainDlg_File].Handle, Menu_MainDlg_File_AlwaysOnTop, TRUE);
+            hr = UI_ToggleMenuCheckItem(g_MainDlgFileMenuItems[Menu_MainDlg_File].Handle, Menu_MainDlg_File_AlwaysOnTop, TRUE);
             if (SUCCEEDED(hr))
             {
                 SetWindowPos(hDlg,
@@ -354,10 +348,10 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                              0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
             }
-        } else if (wParam == MAKEWPARAM(IDM_HELP_HOMEPAGE, 0))
+        } else if (wParam == MAKEWPARAM(IDM_MAINDLG_HELP_HOMEPAGE, 0))
         {
             KNS_OpenHomepage();
-        } else if (wParam == MAKEWPARAM(IDM_ITEM_HIGHLIGHT, 0))
+        } else if (wParam == MAKEWPARAM(IDM_MAINDLG_ITEM_HIGHLIGHT, 0))
         {
             HWND Window, RootWindow;
 
@@ -375,15 +369,15 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 }
                 SetActiveWindow(hDlg);
             }
-        } else if (wParam == MAKEWPARAM(IDM_ITEM_PROPERTIES, 0))
+        } else if (wParam == MAKEWPARAM(IDM_MAINDLG_ITEM_PROPERTIES, 0))
         {
             OpenPropDlgForSelectedItemRefWindow(hDlg);
         } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
-            if (LOWORD(wParam) == IDM_FILE_REFRESH)
+            if (LOWORD(wParam) == IDM_MAINDLG_FILE_REFRESH)
             {
                 UpdateWindowTreeAsync();
-            } else if (LOWORD(wParam) == IDM_FILE_SAVETREE)
+            } else if (LOWORD(wParam) == IDM_MAINDLG_FILE_SAVETREE)
             {
                 HRESULT hr;
                 WCHAR szFile[MAX_PATH];
@@ -430,9 +424,9 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                         mii.cbSize = sizeof(mii);
                         mii.fMask = MIIM_STATE;
                         mii.fState = IsWindowVisible(Window) ? MFS_ENABLED : MFS_DISABLED;
-                        if (SetMenuItemInfoW(g_hItemMenu, Menu_MainDlg_Item_Highlight, TRUE, &mii))
+                        if (SetMenuItemInfoW(g_ResMainDlgItemMenu, Menu_MainDlg_Item_Highlight, TRUE, &mii))
                         {
-                            UI_PopupMenu(g_hItemMenu, X, Y, hDlg);
+                            UI_PopupMenu(g_ResMainDlgItemMenu, X, Y, hDlg);
                         }
                     }
                 }
@@ -472,18 +466,11 @@ AW_OpenMainDialogBox(VOID)
 {
     HRESULT hr;
 
-    MainDlgCreateMenu(&g_hMainMenu, &g_hItemMenu);
-    g_hAccel = MainDlgCreateAccelerator();
-    hr = AW_CreateDialog(NULL, NULL, MAKEINTRESOURCEW(IDD_MAIN), MainDlgProc, 0);
+    hr = AW_CreateDialog(NULL, NULL, g_ResMainDlgTemplate, MainDlgProc, 0);
     if (SUCCEEDED(hr))
     {
-        hr = KNS_DlgMessageLoop(g_hAccel);
+        hr = KNS_DlgMessageLoop(g_ResMainDlgAccel);
     }
-    if (g_hAccel != NULL)
-    {
-        DestroyAcceleratorTable(g_hAccel);
-    }
-    MainDlgDestroyMenu(g_hMainMenu, g_hItemMenu);
 
     return hr;
 }

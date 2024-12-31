@@ -123,6 +123,14 @@
       <Value Locale="en">Window Procedure</Value>
       <Value Locale="zh-Hans">窗口过程</Value>
     </String>
+    <String Name="KernelMode">
+      <Value Locale="en">Kernel Mode</Value>
+      <Value Locale="zh-Hans">内核模式</Value>
+    </String>
+    <String Name="UserMode">
+      <Value Locale="en">User Mode</Value>
+      <Value Locale="zh-Hans">用户模式</Value>
+    </String>
     <String Name="Style">
       <Value Locale="en">Style</Value>
       <Value Locale="zh-Hans">样式</Value>
@@ -149,6 +157,18 @@
     </String>
 
     <!-- Properties dialog - Relation tab -->
+    <String Name="OpenFileLocation">
+      <Value Locale="en">Open file location</Value>
+      <Value Locale="zh-Hans">打开文件所在位置</Value>
+    </String>
+    <String Name="FileProperties">
+      <Value Locale="en">File properties</Value>
+      <Value Locale="zh-Hans">文件属性</Value>
+    </String>
+    <String Name="Terminate">
+      <Value Locale="en">Terminate</Value>
+      <Value Locale="zh-Hans">终止</Value>
+    </String>
     <String Name="Process">
       <Value Locale="en">Process</Value>
       <Value Locale="zh-Hans">进程</Value>

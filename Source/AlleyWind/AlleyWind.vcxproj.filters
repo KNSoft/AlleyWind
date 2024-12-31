@@ -5,16 +5,13 @@
     <ClCompile Include="Resource\I18N.xml.g.c">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Resource.c">
+    <ClCompile Include="Resource\ResMgr.c">
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Database\ClassConstants.c">
       <Filter>Database</Filter>
     </ClCompile>
     <ClCompile Include="UI\MainDlg\MainDlg.c">
-      <Filter>UI\MainDlg</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\MainDlg\Menu.c">
       <Filter>UI\MainDlg</Filter>
     </ClCompile>
     <ClCompile Include="UI\PropDlg\PropDlg.c">
@@ -42,6 +39,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="AlleyWind.inl" />
+    <None Include="Resource\Util.h">
+      <Filter>Resource</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.Core.inl" />
@@ -50,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Resource.h">
       <Filter>Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\MainDlg\Menu.h">
-      <Filter>UI\MainDlg</Filter>
     </ClInclude>
     <ClInclude Include="Database\Database.h">
       <Filter>Database</Filter>

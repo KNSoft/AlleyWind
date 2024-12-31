@@ -26,6 +26,7 @@
 #define IDC_PROP_THREAD_EDIT2           1011
 #define IDC_PROP_MONITOR_EDIT           1011
 #define IDC_PROP_INSTANCE_HANDLE_TEXT   1012
+#define IDC_BUTTON1                     1012
 #define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
 #define IDC_PROP_SYSCLASS_TEXT          1014
 #define IDC_PROP_SYSCLASS_EDIT          1015
@@ -38,6 +39,7 @@
 #define IDC_PROP_RECT2_TEXT             1022
 #define IDC_PROP_RECT2_EDIT             1023
 #define IDC_PROP_PROCUNICODE_TEXT       1024
+#define IDC_PROP_WNDPROC_ATTR_TEXT      1024
 
 // Next default values for new objects
 // 
@@ -45,7 +47,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

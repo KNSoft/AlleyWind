@@ -5,36 +5,6 @@ AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_REFRESH, Precomp4C_I18N_All_Refresh },
 };
 
-INT_PTR
-CALLBACK
-GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-INT_PTR
-CALLBACK
-ResourcePspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-INT_PTR
-CALLBACK
-RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-/* TODO */
-static
-INT_PTR
-CALLBACK
-EmptyPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    return FALSE;
-}
-
-static
-AW_I18N_PROPSHEET_PAGE g_astPspSource[] = {
-    { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc, 0 },
-    { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), ResourcePspProc, 0 },
-    { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_RELATION), RelationPspProc, 0 },
-    { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc, 0 },
-    { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc, 0 },
-};
-
 static
 INT_PTR
 CALLBACK
@@ -45,8 +15,8 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (uMsg == WM_INITDIALOG)
     {
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
-        ULONG Cch, i;
-        UI_PROPSHEET_PAGE Psp[ARRAYSIZE(g_astPspSource)];
+        ULONG Cch;
+        UI_PROPSHEET_PAGE Psp[ARRAYSIZE(g_ResPropDlgPages)];
 
         AW_InitDlgItemI18N(hDlg, g_astI18NItems);
 
@@ -58,14 +28,11 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         UI_SetWindowTextW(hDlg, szTitle);
 
         /* Create property sheet */
-        for (i = 0; i < ARRAYSIZE(g_astPspSource); i++)
-        {
-            g_astPspSource[i].InitParam = lParam;
-        }
-        AW_InitPropSheetPageI18NEx(hDlg,
-                                   g_astPspSource,
-                                   Psp,
-                                   ARRAYSIZE(g_astPspSource));
+        AW_CreatePropSheetPages(hDlg,
+                                g_ResPropDlgPages,
+                                Psp,
+                                ARRAYSIZE(g_ResPropDlgPages),
+                                lParam);
         UI_InitPropSheet(hDlg, IDC_PROP_TAB, Psp);
 
         return TRUE;
@@ -105,7 +72,7 @@ AW_OpenPropDialogBoxSync(
         goto _Exit;
     }
 
-    hr = AW_OpenModelDialog(NULL, MAKEINTRESOURCEW(IDD_PROP), PropDlgProc, (LPARAM)Prop);
+    hr = KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase, NULL, g_ResPropDlgTemplate, PropDlgProc, (LPARAM)Prop);
 
 _Exit:
     Mem_Free(Prop);
