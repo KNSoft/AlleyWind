@@ -18,7 +18,7 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         ULONG Cch;
         UI_PROPSHEET_PAGE Psp[ARRAYSIZE(g_ResPropDlgPages)];
 
-        AW_InitDlgItemI18N(hDlg, g_astI18NItems);
+        AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
 
         /* Set title */
         Cch = Str_PrintfW(szTitle,

@@ -16,7 +16,6 @@
 
 EXTERN_C_START
 
-extern HWND g_hMainDlg;
 extern LOGICAL g_IsRunAsAdmin;
 extern LOGICAL g_HasUIAccess;
 

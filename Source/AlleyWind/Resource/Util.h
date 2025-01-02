@@ -40,14 +40,12 @@ AW_InitI18NArrayEx(
 
 FORCEINLINE
 VOID
-AW_InitMenuI18NEx(
+AW_InitMenuI18N(
     _In_reads_(Count) PUI_MENU_ITEM Items,
     _In_ UINT Count)
 {
     AW_InitI18NArrayEx(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
 }
-
-#define AW_InitMenuI18N(Items) AW_InitMenuI18NEx(Items, ARRAYSIZE(Items))
 
 FORCEINLINE
 LPCDLGTEMPLATEW
@@ -89,7 +87,7 @@ AW_CreateDialog(
 
 FORCEINLINE
 VOID
-AW_InitDlgItemI18NEx(
+AW_InitDlgItemI18N(
     _In_ HWND Dialog,
     _In_reads_(Count) AW_I18N_DLGITEM Items[],
     _In_ UINT Count)
@@ -102,11 +100,9 @@ AW_InitDlgItemI18NEx(
     }
 }
 
-#define AW_InitDlgItemI18N(Dialog, Items) AW_InitDlgItemI18NEx(Dialog, Items, ARRAYSIZE(Items))
-
 FORCEINLINE
 VOID
-AW_InitPropSheetPageI18NEx(
+AW_InitPropSheetPageI18N(
     _In_reads_(Count) AW_I18N_PROPSHEET_PAGE Pages[],
     _In_ UINT Count)
 {
@@ -118,8 +114,6 @@ AW_InitPropSheetPageI18NEx(
         Pages[i].DlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(Pages[i].DlgResName));
     }
 }
-
-#define AW_InitPropSheetPageI18N(Pages) AW_InitPropSheetPageI18NEx(Pages, ARRAYSIZE(Pages))
 
 FORCEINLINE
 VOID

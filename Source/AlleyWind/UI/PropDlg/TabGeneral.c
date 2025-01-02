@@ -186,7 +186,7 @@ GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     UI_DPIScaleDlgProc(hDlg, uMsg, wParam, lParam);
     if (uMsg == WM_INITDIALOG)
     {
-        AW_InitDlgItemI18N(hDlg, g_astI18NItems);
+        AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
 
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
 

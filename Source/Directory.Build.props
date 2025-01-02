@@ -8,7 +8,7 @@
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <LanguageStandard>stdcpplatest</LanguageStandard>
-            <LanguageStandard_C>stdc17</LanguageStandard_C>
+            <LanguageStandard_C>stdclatest</LanguageStandard_C>
             <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
             <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
         </ClCompile>

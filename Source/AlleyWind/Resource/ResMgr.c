@@ -132,10 +132,10 @@ AW_InitResource(VOID)
 
     g_ResMainDlgAccel = CreateAcceleratorTableW(g_MainDlgAccelItems, ARRAYSIZE(g_MainDlgAccelItems));
 
-    AW_InitMenuI18N(g_MainDlgFileMenuItems);
-    AW_InitMenuI18N(g_MainDlgHelpMenuItems);
-    AW_InitMenuI18N(g_astMainDlgMenu);
-    AW_InitMenuI18N(g_astMainDlgItemMenu);
+    AW_InitMenuI18N(g_MainDlgFileMenuItems, ARRAYSIZE(g_MainDlgFileMenuItems));
+    AW_InitMenuI18N(g_MainDlgHelpMenuItems, ARRAYSIZE(g_MainDlgHelpMenuItems));
+    AW_InitMenuI18N(g_astMainDlgMenu, ARRAYSIZE(g_astMainDlgMenu));
+    AW_InitMenuI18N(g_astMainDlgItemMenu, ARRAYSIZE(g_astMainDlgItemMenu));
 
     /* Add runas sub-menu if privilege is limited */
     if (!g_IsRunAsAdmin)
@@ -169,7 +169,7 @@ AW_InitResource(VOID)
     g_ResMainDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MAIN));
     g_ResPropDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_PROP));
 
-    AW_InitPropSheetPageI18N(g_ResPropDlgPages);
+    AW_InitPropSheetPageI18N(g_ResPropDlgPages, ARRAYSIZE(g_ResPropDlgPages));
 
     return ERROR_SUCCESS;
 }

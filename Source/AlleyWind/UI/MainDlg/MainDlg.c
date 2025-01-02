@@ -6,7 +6,6 @@ typedef struct _UPDATE_WNDTREE_ENUM_CHILDREN
     ULONG ulDepth;
 } UPDATE_WNDTREE_ENUM_CHILDREN, *PUPDATE_WNDTREE_ENUM_CHILDREN;
 
-HWND g_hMainDlg = NULL;
 static UI_WINDOW_RESIZE_INFO g_stResizeInfo = { 0 };
 static HWND g_hTree = NULL;
 static LONG _Interlocked_operand_ volatile g_bUpdatingTree = FALSE;
@@ -278,8 +277,6 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         RECT rc;
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
 
-        g_hMainDlg = hDlg;
-
         /* Set title */
         C_ASSERT(ARRAYSIZE(szTitle) > _STR_CCH_LEN(KNSOFT_APP_NAME));
         wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
@@ -450,7 +447,6 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         DestroyWindow(hDlg);
     } else if (uMsg == WM_DESTROY)
     {
-        g_hMainDlg = NULL;
         if (g_himlTreeIcons != NULL)
         {
             SendMessageW(g_hTree, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)NULL);
