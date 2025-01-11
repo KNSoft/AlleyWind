@@ -25,7 +25,7 @@ ResourcePspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //AW_InitDlgItemI18N(hDlg, g_astI18NItems);
 
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
-
+        SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
         return TRUE;
     }
     return FALSE;

@@ -207,41 +207,42 @@ static
 _Success_(return != NULL)
 _Ret_maybenull_
 HWND
+GetTreeViewItemRefWindow(
+    _In_ HTREEITEM Item)
+{
+    LPARAM Param;
+
+    if (!UI_TreeViewGetItemParam(g_hTree, Item, &Param))
+    {
+        return NULL;
+    }
+    return IsWindow((HWND)Param) ? (HWND)Param : NULL;
+}
+
+static
+_Success_(return != NULL)
+_Ret_maybenull_
+HWND
 GetSelectedItemRefWindow(VOID)
 {
-    TVITEMW tvi;
+    HTREEITEM Item;
 
-    tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
-    if (tvi.hItem == NULL)
-    {
-        return NULL;
-    }
-
-    tvi.mask = TVIF_PARAM;
-    if (!SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
-    {
-        return NULL;
-    }
-
-    return IsWindow((HWND)tvi.lParam) ? (HWND)tvi.lParam : NULL;
+    Item = (HTREEITEM)SendMessageW(g_hTree, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)NULL);
+    return Item != NULL ? GetTreeViewItemRefWindow(Item) : NULL;
 }
 
 static
 VOID
-OpenPropDlgForSelectedItemRefWindow(
-    _In_ HWND Dialog)
+OpenPropDlgForWindow(
+    _In_ HWND Dialog,
+    _In_ HWND Window)
 {
     NTSTATUS Status;
-    HWND Window;
 
-    Window = GetSelectedItemRefWindow();
-    if (Window != NULL)
+    Status = AW_OpenPropDialogBoxAsync(Window);
+    if (!NT_SUCCESS(Status))
     {
-        Status = AW_OpenPropDialogBoxAsync(Window);
-        if (!NT_SUCCESS(Status))
-        {
-            KNS_NtStatusMessageBox(Dialog, Status);
-        }
+        KNS_NtStatusMessageBox(Dialog, Status);
     }
 }
 
@@ -368,7 +369,11 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
         } else if (wParam == MAKEWPARAM(IDM_MAINDLG_ITEM_PROPERTIES, 0))
         {
-            OpenPropDlgForSelectedItemRefWindow(hDlg);
+            HWND Window = GetSelectedItemRefWindow();
+            if (Window != NULL)
+            {
+                OpenPropDlgForWindow(hDlg, Window);
+            }
         } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
             if (LOWORD(wParam) == IDM_MAINDLG_FILE_REFRESH)
@@ -395,35 +400,32 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     } else if (uMsg == WM_CONTEXTMENU && wParam == (WPARAM)g_hTree)
     {
-        TVHITTESTINFO tvhti;
-        TVITEMW tvi;
+        POINT pt;
+        HTREEITEM Item;
         INT X, Y;
         HWND Window;
-        MENUITEMINFOW mii;
 
-        tvhti.pt.x = X = GET_X_LPARAM(lParam);
-        tvhti.pt.y = Y = GET_Y_LPARAM(lParam);
-        if (ScreenToClient(g_hTree, &tvhti.pt))
+        pt.x = X = GET_X_LPARAM(lParam);
+        pt.y = Y = GET_Y_LPARAM(lParam);
+        if (ScreenToClient(g_hTree, &pt))
         {
-            tvi.hItem = (HTREEITEM)SendMessageW(g_hTree, TVM_HITTEST, 0, (LPARAM)&tvhti);
-            if (tvi.hItem != NULL)
+            Item = UI_TreeViewLocateItem(g_hTree, pt.x, pt.y, NULL);
+            if (Item != NULL)
             {
-                tvi.mask = TVIF_PARAM;
-                if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&tvi))
+                if (UI_TreeViewGetItemParam(g_hTree, Item, (LPARAM*)&Window))
                 {
-                    Window = (HWND)tvi.lParam;
-                    SendMessageW(g_hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)tvi.hItem);
+                    SendMessageW(g_hTree, TVM_SELECTITEM, TVGN_CARET, (LPARAM)Item);
                     if (Window == INVALID_HANDLE_VALUE)
                     {
                         // TODO: UI_PopupMenu(g_hSearchItemMenu, X, Y, hDlg);
                     } else if (IsWindow(Window))
                     {
-                        mii.cbSize = sizeof(mii);
-                        mii.fMask = MIIM_STATE;
-                        mii.fState = IsWindowVisible(Window) ? MFS_ENABLED : MFS_DISABLED;
-                        if (SetMenuItemInfoW(g_ResMainDlgItemMenu, Menu_MainDlg_Item_Highlight, TRUE, &mii))
+                        if (UI_EnableMenuItem(g_ResMainDlgItemMenu,
+                                              Menu_MainDlg_Item_Highlight,
+                                              TRUE,
+                                              IsWindowVisible(Window)))
                         {
-                            UI_PopupMenu(g_ResMainDlgItemMenu, X, Y, hDlg);
+                            IsWindowVisible(Window);
                         }
                     }
                 }
@@ -438,7 +440,27 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             LPNMTREEVIEWW pnmtv = (LPNMTREEVIEWW)lParam;
             if (pnmtv->hdr.code == NM_DBLCLK)
             {
-                OpenPropDlgForSelectedItemRefWindow(hDlg);
+                POINT pt;
+                HTREEITEM Item;
+                UINT Flags;
+                HWND Window;
+
+                if (GetCursorPos(&pt) && ScreenToClient(hDlg, &pt))
+                {
+                    Item = UI_TreeViewLocateItem(g_hTree, pt.x, pt.y, &Flags);
+                    if (Item != NULL && Flags & TVHT_ONITEM)
+                    {
+                        Window = GetTreeViewItemRefWindow(Item);
+                        if (Window != NULL)
+                        {
+                            OpenPropDlgForWindow(hDlg, Window);
+                        }
+
+                        /* Disable default process, don't expand or collapse item */
+                        SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 1);
+                        return 1;
+                    }
+                }
             }
         }
     } else if (uMsg == WM_CLOSE)

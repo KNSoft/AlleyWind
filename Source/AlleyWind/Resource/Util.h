@@ -32,7 +32,7 @@ AW_GetStringEx(
 #define AW_GetString(x) AW_GetStringEx(Precomp4C_I18N_All_##x)
 
 VOID
-AW_InitI18NArrayEx(
+AW_InitI18NArray(
     _In_ PVOID Array,
     _In_ ULONG Size,
     _In_ ULONG Count,
@@ -44,7 +44,7 @@ AW_InitMenuI18N(
     _In_reads_(Count) PUI_MENU_ITEM Items,
     _In_ UINT Count)
 {
-    AW_InitI18NArrayEx(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
+    AW_InitI18NArray(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
 }
 
 FORCEINLINE

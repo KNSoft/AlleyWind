@@ -64,6 +64,14 @@ extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
 extern AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[6];
 extern LPCDLGTEMPLATEW g_ResPropDlgTemplate;
 
+enum
+{
+    Menu_PropRelDlg_Process_Locate = 0,
+    Menu_PropRelDlg_Process_Properties,
+    Menu_PropRelDlg_Process_Terminate,
+};
+extern HMENU g_ResPropRelDlgProcessMenu;
+
 W32ERROR
 AW_InitResource(VOID);
 

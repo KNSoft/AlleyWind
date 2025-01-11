@@ -1,9 +1,5 @@
 ﻿#include "../../AlleyWind.inl"
 
-#define IDM_PROCESS_OPENFILELOCATION 1
-#define IDM_PROCESS_FILEPROPERTIES 2
-#define IDM_PROCESS_TERMINATE 3
-
 static
 AW_I18N_DLGITEM g_astI18NItems[] = {
     { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_All_Process },
@@ -12,19 +8,12 @@ AW_I18N_DLGITEM g_astI18NItems[] = {
 };
 
 static
-UI_MENU_ITEM g_astProcessMenu[] = {
-    { FALSE, MF_STRING, IDM_PROCESS_OPENFILELOCATION, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
-    { FALSE, MF_STRING | MF_DEFAULT, IDM_PROCESS_FILEPROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
-    { FALSE, MF_STRING | MF_DEFAULT, IDM_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
-};
-
-static
 VOID
 UpdatePropInfo(
     _In_ HWND Dialog,
     _In_ PAW_WINDOW_PROP Prop)
 {
-    WCHAR Buffer[MAX_PATH + 64];
+    WCHAR Buffer[MAX_PATH + 64], *psz;
     ULONG Cch, CchLast, u;
 
     if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
@@ -59,12 +48,12 @@ _End_Write_Process_Path:
         }
         CchLast = Cch;
         Buffer[Cch++] = L' ';
-        u= AW_WriteAddressDisplayString(Prop,
-                                        Prop->ThreadStartAddress,
-                                        Prop->ThreadStartAddressDisplayNameValid,
-                                        Prop->ThreadStartAddressDisplayName,
-                                        Buffer + Cch,
-                                        ARRAYSIZE(Buffer) - Cch);
+        u = AW_WriteAddressDisplayString(Prop,
+                                         Prop->ThreadStartAddress,
+                                         Prop->ThreadStartAddressDisplayNameValid,
+                                         Prop->ThreadStartAddressDisplayName,
+                                         Buffer + Cch,
+                                         ARRAYSIZE(Buffer) - Cch);
         if (u == 0)
         {
             Buffer[CchLast] = UNICODE_NULL;
@@ -78,7 +67,16 @@ _End_Write_Thread_Address:
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, Buffer);
     }
 
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_MONITOR_EDIT, Prop->MonitorInfo.szDevice);
+    if (Prop->MonitorInfoValid)
+    {
+        psz = Prop->MonitorInfo.szDevice;
+        // TODO: Rect
+    } else
+    {
+        psz = NULL;
+    }
+_End_Write_Monitor_Info:
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_MONITOR_EDIT, psz);
 }
 
 INT_PTR
@@ -91,8 +89,26 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
 
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
-
+        SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
         return TRUE;
+    } else if (uMsg == WM_COMMAND)
+    {
+        if (wParam == MAKEWPARAM(IDC_IDC_PROP_PROCESS_BUTTON, BN_CLICKED))
+        {
+            POINT pt;
+            if (GetCursorPos(&pt))
+            {
+                PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
+                BOOL b;
+
+                b = NT_SUCCESS(Prop->ProcessImagePathValid);
+                if (UI_EnableMenuItem(g_ResPropRelDlgProcessMenu, Menu_PropRelDlg_Process_Locate, TRUE, b) &&
+                    UI_EnableMenuItem(g_ResPropRelDlgProcessMenu, Menu_PropRelDlg_Process_Properties, TRUE, b))
+                {
+                    UI_PopupMenu(g_ResPropRelDlgProcessMenu, pt.x, pt.y, hDlg);
+                }
+            }
+        }
     }
     return FALSE;
 }

@@ -317,17 +317,15 @@ _Get_Thread_Info_End:
     }
 
     /* Monitor */
+    Prop->MonitorInfoValid = FALSE;
     Monitor = MonitorFromWindow(Window, MONITOR_DEFAULTTONULL);
     if (Monitor != NULL)
     {
         Prop->MonitorInfo.cbSize = sizeof(Prop->MonitorInfo);
-        if (!GetMonitorInfoW(Monitor, (LPMONITORINFO)&Prop->MonitorInfo))
+        if (GetMonitorInfoW(Monitor, (LPMONITORINFO)&Prop->MonitorInfo))
         {
-            Prop->MonitorInfoValid = FALSE;
+            Prop->MonitorInfoValid = TRUE;
         }
-    } else
-    {
-        Prop->MonitorInfoValid = FALSE;
     }
 
     return ERROR_SUCCESS;
