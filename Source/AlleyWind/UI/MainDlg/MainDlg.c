@@ -279,10 +279,10 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
 
         /* Set title */
-        C_ASSERT(ARRAYSIZE(szTitle) > _STR_CCH_LEN(KNSOFT_APP_NAME));
+        C_ASSERT(ARRAYSIZE(szTitle) > _STR_LEN(KNSOFT_APP_NAME));
         wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
-        AW_PostFixTitleText(szTitle + _STR_CCH_LEN(KNSOFT_APP_NAME),
-                            ARRAYSIZE(szTitle) - _STR_CCH_LEN(KNSOFT_APP_NAME));
+        AW_PostFixTitleText(szTitle + _STR_LEN(KNSOFT_APP_NAME),
+                            ARRAYSIZE(szTitle) - _STR_LEN(KNSOFT_APP_NAME));
         UI_SetWindowTextW(hDlg, szTitle);
 
         UI_EnableWindowPeek(hDlg, FALSE);

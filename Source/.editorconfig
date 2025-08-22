@@ -1,11 +1,17 @@
-# Visual Studio generated .editorconfig file with C++ settings.
 root = true
+
+[*.{inc,mac,asm,s}]
+
+charset = utf-8
+
+# Visual Studio generated .editorconfig file with C++ settings.
 
 [*.{c,c++,cc,cpp,cppm,cxx,h,h++,hh,hpp,hxx,inl,ipp,ixx,tlh,tli}]
 
 charset = utf-8-bom
-indent_style = space
+indent_style = spaces
 indent_size = 4
+tab_width= 4
 end_of_line = crlf
 insert_final_newline = true
 max_line_length = 120
@@ -19,7 +25,7 @@ cpp_generate_documentation_comments = xml
 cpp_indent_braces = false
 cpp_indent_multi_line_relative_to = innermost_parenthesis
 cpp_indent_within_parentheses = align_to_parenthesis
-cpp_indent_preserve_within_parentheses = true
+cpp_indent_preserve_within_parentheses = false
 cpp_indent_case_contents = true
 cpp_indent_case_labels = true
 cpp_indent_case_contents_when_block = false
@@ -73,5 +79,17 @@ cpp_space_around_binary_operator = insert
 cpp_space_around_assignment_operator = insert
 cpp_space_pointer_reference_alignment = ignore
 cpp_space_around_ternary_operator = insert
-cpp_use_unreal_engine_macro_formatting = true
-cpp_wrap_preserve_blocks = all_one_line_scopes
+cpp_use_unreal_engine_macro_formatting = false
+cpp_wrap_preserve_blocks = never
+
+# Visual C++ Include Cleanup settings
+
+cpp_include_cleanup_add_missing_error_tag_type = suggestion
+cpp_include_cleanup_remove_unused_error_tag_type = dimmed
+cpp_include_cleanup_optimize_unused_error_tag_type = suggestion
+cpp_include_cleanup_sort_after_edits = false
+cpp_sort_includes_error_tag_type = none
+cpp_sort_includes_priority_case_sensitive = false
+cpp_sort_includes_priority_style = quoted
+cpp_includes_style = default
+cpp_includes_use_forward_slash = true

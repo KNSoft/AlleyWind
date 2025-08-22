@@ -44,7 +44,7 @@ AW_InitMenuI18N(
     _In_reads_(Count) PUI_MENU_ITEM Items,
     _In_ UINT Count)
 {
-    AW_InitI18NArray(Items, sizeof(*Items), Count, UFIELD_OFFSET(TYPE_OF(*Items), Text));
+    AW_InitI18NArray(Items, sizeof(*Items), Count, UFIELD_OFFSET(typeof(*Items), Text));
 }
 
 FORCEINLINE
@@ -76,7 +76,7 @@ AW_CreateDialog(
     Window = CreateDialogIndirectParamW((HINSTANCE)&__ImageBase, DlgTemplate, Owner, DlgProc, InitParam);
     if (Window == NULL)
     {
-        return NtGetLastError();
+        return Err_GetLastError();
     }
     if (Dialog != NULL)
     {

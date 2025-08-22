@@ -535,7 +535,7 @@ AW_InitClassDatabase(VOID)
     AW_InitI18NArray(g_astSysClassInfo,
                      sizeof(g_astSysClassInfo[0]),
                      ARRAYSIZE(g_astSysClassInfo),
-                     UFIELD_OFFSET(TYPE_OF(g_astSysClassInfo[0]), DisplayName));
+                     UFIELD_OFFSET(typeof(g_astSysClassInfo[0]), DisplayName));
 }
 
 static

@@ -1,55 +1,47 @@
 <Project>
-    <!-- Customize builds -->
-    <PropertyGroup>
-        <ForceImportAfterCppDefaultProps>$(MsbuildThisFileDirectory)\Directory.Build.AfterCppDefault.props</ForceImportAfterCppDefaultProps>
+
+    <!-- [Addendum variables] -->
+
+    <!-- $(KnsoftArch) equals to the default solution configuration names (Win32 -> x86) -->
+    <PropertyGroup Condition="'$(Platform)' != 'Win32'">
+        <KnsoftArch>$(Platform)</KnsoftArch>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'Win32'">
+        <KnsoftArch>x86</KnsoftArch>
     </PropertyGroup>
 
+    <!-- [Overwrite defaults] -->
+
+    <!-- Recommended defaults and support for source files with the same name -->
     <ItemDefinitionGroup>
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <LanguageStandard>stdcpplatest</LanguageStandard>
             <LanguageStandard_C>stdclatest</LanguageStandard_C>
             <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-            <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
+            <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
         </ClCompile>
+        <Link>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+        </Link>
+        <MASM>
+            <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+        </MASM>
+        <!-- FIXME: CL preprocessor may break this
+        <MARMASM>
+            <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+        </MARMASM>
+        -->
     </ItemDefinitionGroup>
 
-    <!-- MSBuild variable to C/C++ macro -->
-    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'Application'">
-        <ClCompile>
-            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_EXE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        </ClCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
-        <ClCompile>
-            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        </ClCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
-        <ClCompile>
-            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        </ClCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'Utility'">
-        <ClCompile>
-            <PreprocessorDefinitions>MSB_CONFIGURATIONTYPE_UTILITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        </ClCompile>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup>
-        <ClCompile>
-            <PreprocessorDefinitions>_KNSOFT_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_CONFIGURATION_NAME="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_MSBUILD_VERSION="$(MSBuildVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_VCTOOLS_VERSION="$(VCToolsVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET="$(PlatformToolset)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_PLATFORM_TOOLSET_VERSION="$(PlatformToolsetVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_PLATFORM_TARGET="$(PlatformTarget)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_VERSION="$(TargetPlatformVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <PreprocessorDefinitions>MSB_TARGET_PLATFORM_DISPLAY_NAME="$(TargetPlatformDisplayName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-        </ClCompile>
+    <!-- Enable Safe SEH for MASM Release x86, as well as CL default -->
+    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <MASM>
+            <UseSafeExceptionHandlers>true</UseSafeExceptionHandlers>
+        </MASM>
     </ItemDefinitionGroup>
 
-    <!-- Use static default libraries -->
+    <!-- Use static runtime libraries -->
     <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
         <ClCompile>
             <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -61,15 +53,34 @@
         </ClCompile>
     </ItemDefinitionGroup>
 
-    <!-- Import $(MSBuildProjectName).Build.props if exists -->
+    <!-- Include ntdll.lib by default -->
+    <ItemDefinitionGroup>
+        <Link>
+            <AdditionalDependencies>ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        </Link>
+    </ItemDefinitionGroup>
+
+    <!-- Disable LTCG and ignore default libraries for LIB -->
+    <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
+        <Lib>
+            <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+            <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
+        </Lib>
+    </ItemDefinitionGroup>
+
+    <!-- [Customize builds] -->
+
+    <!-- Import some sheets before or after Microsoft.Cpp.* files -->
     <PropertyGroup>
-        <ProjectNameBuildPropsPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.props</ProjectNameBuildPropsPath>
+        <ForceImportAfterCppDefaultProps>$(MsbuildThisFileDirectory)\Directory.Build.AfterCppDefault.props</ForceImportAfterCppDefaultProps>
+        <ForceImportAfterCppProps>$(MsbuildThisFileDirectory)\Directory.Build.AfterCpp.props</ForceImportAfterCppProps>
     </PropertyGroup>
-    <Import Project="$(ProjectNameBuildPropsPath)" Condition="Exists('$(ProjectNameBuildPropsPath)')"/>
+
+    <!-- Import $(MSBuildProjectName).Build.(props/targets) if exists -->
+    <Import Project="$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.props" Condition="Exists('$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.props')"/>
+    <Import Project="$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.targets" Condition="Exists('$(MSBuildProjectDirectory)\$(MSBuildProjectName).Build.targets')"/>
     
     <!-- Import outer Directory.Build.props if exists -->
-    <PropertyGroup>
-        <OuterDirectoryBuildPropsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</OuterDirectoryBuildPropsPath>
-    </PropertyGroup>
-    <Import Project="$(OuterDirectoryBuildPropsPath)" Condition="'$(OuterDirectoryBuildPropsPath)' != ''"/>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')) != ''" />
+
 </Project>

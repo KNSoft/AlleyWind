@@ -151,7 +151,7 @@ AW_GetWindowProp(
         Prop->ThreadProcessIdValid = ERROR_SUCCESS;
     } else
     {
-        Prop->ThreadProcessIdValid = NtGetLastError();
+        Prop->ThreadProcessIdValid = Err_GetLastError();
         Prop->ProcessId = 0;
     }
 
@@ -161,7 +161,7 @@ AW_GetWindowProp(
     if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
     {
         /* Process image path */
-        if (Prop->ProcessId != NtCurrentProcessId())
+        if ((HANDLE)(ULONG_PTR)Prop->ProcessId != NtCurrentProcessId())
         {
             Status = PS_OpenProcess(&PSHandle, PROCESS_QUERY_LIMITED_INFORMATION, Prop->ProcessId);
             if (!NT_SUCCESS(Status))
@@ -249,7 +249,7 @@ _Get_Thread_Info_End:
         Prop->ClassNameValid = ERROR_SUCCESS;
     } else
     {
-        Prop->ClassNameValid = NtGetLastError();
+        Prop->ClassNameValid = Err_GetLastError();
         Prop->ClassName[0] = UNICODE_NULL;
     }
 
@@ -304,7 +304,7 @@ _Get_Thread_Info_End:
             Prop->Rect2Valid = ERROR_SUCCESS;
         } else
         {
-            Prop->Rect2Valid = NtGetLastError();
+            Prop->Rect2Valid = Err_GetLastError();
             RtlZeroMemory(&Prop->Rect2, sizeof(Prop->Rect2));
         }
     } else

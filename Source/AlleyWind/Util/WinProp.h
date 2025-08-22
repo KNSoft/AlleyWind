@@ -126,10 +126,10 @@ AW_WritePropAddress(
 
     if (Prop->ReaderBits != 32)
     {
-        u = Str_PrintfEx(Buffer, BufferCch, L"0x%016llX", Address);
+        u = Str_PrintfExW(Buffer, BufferCch, L"0x%016llX", Address);
     } else
     {
-        u = Str_PrintfEx(Buffer, BufferCch, L"0x%08lX", (ULONG)Address);
+        u = Str_PrintfExW(Buffer, BufferCch, L"0x%08lX", (ULONG)Address);
     }
     return u;
 }
