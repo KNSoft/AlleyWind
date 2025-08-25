@@ -169,6 +169,10 @@
       <Value Locale="en">Terminate</Value>
       <Value Locale="zh-Hans">终止</Value>
     </String>
+    <String Name="TerminateConfirm">
+      <Value Locale="en">Do you want to terminate %ls (%lu) ?</Value>
+      <Value Locale="zh-Hans">你希望结束 %ls (%lu) 吗？</Value>
+    </String>
     <String Name="Process">
       <Value Locale="en">Process</Value>
       <Value Locale="zh-Hans">进程</Value>

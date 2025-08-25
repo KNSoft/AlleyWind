@@ -52,6 +52,7 @@ enum
     Precomp4C_I18N_All_OpenFileLocation,
     Precomp4C_I18N_All_FileProperties,
     Precomp4C_I18N_All_Terminate,
+    Precomp4C_I18N_All_TerminateConfirm,
     Precomp4C_I18N_All_Process,
     Precomp4C_I18N_All_Thread,
     Precomp4C_I18N_All_Monitor,

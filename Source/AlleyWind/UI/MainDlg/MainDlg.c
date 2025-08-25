@@ -335,7 +335,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             HRESULT hr;
 
-            hr = UI_ToggleMenuCheckItem(g_MainDlgFileMenuItems[Menu_MainDlg_File].Handle, Menu_MainDlg_File_AlwaysOnTop, TRUE);
+            hr = UI_ToggleMenuCheckItem(g_MainDlgMenuItems[Menu_MainDlg_File].Handle, Menu_MainDlg_File_AlwaysOnTop, TRUE);
             if (SUCCEEDED(hr))
             {
                 SetWindowPos(hDlg,

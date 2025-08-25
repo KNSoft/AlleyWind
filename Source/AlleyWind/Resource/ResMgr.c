@@ -56,7 +56,7 @@ static UI_MENU_ITEM g_MainDlgHelpMenuItems[] = {
 };
 
 // enum Menu_MainDlg_*
-UI_MENU_ITEM g_astMainDlgMenu[] = {
+UI_MENU_ITEM g_MainDlgMenuItems[] = {
     { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_MainDlgFileMenuItems), g_MainDlgFileMenuItems },
     { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_MainDlgHelpMenuItems), g_MainDlgHelpMenuItems },
 };
@@ -107,15 +107,11 @@ AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[] = {
     { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
 };
 
-#define IDM_PROCESS_OPENFILELOCATION 1
-#define IDM_PROCESS_FILEPROPERTIES 2
-#define IDM_PROCESS_TERMINATE 3
-
 static
 UI_MENU_ITEM g_astPropProcessMenu[] = {
-    { FALSE, MF_STRING, IDM_PROCESS_OPENFILELOCATION, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_PROCESS_FILEPROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_LOCATE, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_PROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
 };
 
 HMENU g_ResPropRelDlgProcessMenu = NULL;
@@ -149,7 +145,7 @@ AW_InitResource(VOID)
 
     AW_InitMenuI18N(g_MainDlgFileMenuItems, ARRAYSIZE(g_MainDlgFileMenuItems));
     AW_InitMenuI18N(g_MainDlgHelpMenuItems, ARRAYSIZE(g_MainDlgHelpMenuItems));
-    AW_InitMenuI18N(g_astMainDlgMenu, ARRAYSIZE(g_astMainDlgMenu));
+    AW_InitMenuI18N(g_MainDlgMenuItems, ARRAYSIZE(g_MainDlgMenuItems));
     AW_InitMenuI18N(g_astMainDlgItemMenu, ARRAYSIZE(g_astMainDlgItemMenu));
     AW_InitMenuI18N(g_astPropProcessMenu, ARRAYSIZE(g_astPropProcessMenu));
 
@@ -165,7 +161,7 @@ AW_InitResource(VOID)
     g_ResMainDlgMenu = CreateMenu();
     if (g_ResMainDlgMenu != NULL)
     {
-        if (UI_CreateMenuItems(g_ResMainDlgMenu, g_astMainDlgMenu) != ERROR_SUCCESS)
+        if (UI_CreateMenuItems(g_ResMainDlgMenu, g_MainDlgMenuItems) != ERROR_SUCCESS)
         {
             DestroyMenu(g_ResMainDlgMenu);
             g_ResMainDlgMenu = NULL;
@@ -214,7 +210,7 @@ AW_UninitResource(VOID)
     if (g_ResMainDlgMenu != NULL)
     {
         DestroyMenu(g_ResMainDlgMenu);
-        UI_DestroyMenuItems(g_astMainDlgMenu);
+        UI_DestroyMenuItems(g_MainDlgMenuItems);
     }
     if (g_ResMainDlgItemMenu != NULL)
     {

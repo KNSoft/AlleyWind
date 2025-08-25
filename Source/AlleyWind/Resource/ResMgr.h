@@ -52,7 +52,7 @@ enum
     Menu_MainDlg_Help,
     Menu_MainDlg_Max
 };
-extern UI_MENU_ITEM g_ResMainDlgMenuItems[Menu_MainDlg_Max];
+extern UI_MENU_ITEM g_MainDlgMenuItems[Menu_MainDlg_Max];
 
 extern HACCEL g_ResMainDlgAccel;
 extern HMENU g_ResMainDlgMenu;
@@ -60,6 +60,10 @@ extern HMENU g_ResMainDlgItemMenu;
 extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
 
 /* Properties Dialog */
+
+#define IDM_RESPROPDLG_PROCESS_LOCATE 1
+#define IDM_RESPROPDLG_PROCESS_PROPERTIES 2
+#define IDM_RESPROPDLG_PROCESS_TERMINATE 3
 
 extern AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[6];
 extern LPCDLGTEMPLATEW g_ResPropDlgTemplate;

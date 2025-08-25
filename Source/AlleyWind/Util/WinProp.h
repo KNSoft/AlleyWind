@@ -31,7 +31,7 @@ AW_GetWindowIcon(
 typedef struct _AW_WINDOW_PROP
 {
     USHORT ReaderBits; // sizeof(void*) * CHAR_BIT, 32 or 64;
-    ULONG Handle;
+    HWND Handle;
     LOGICAL TopLevelWindow;
 
     ULONG CaptionValid;

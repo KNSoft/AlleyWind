@@ -38,7 +38,7 @@ UpdatePropInfo(
     SendMessageW(hCtl, EM_SETREADONLY, Prop->CaptionValid != ERROR_SUCCESS, 0);
 
     /* Handle */
-    Str_PrintfW(szBuffer, L"%08lX", Prop->Handle);
+    Str_PrintfW(szBuffer, L"%08lX", UI_TruncateHandle32(Prop->Handle));
     UI_SetDlgItemTextW(Dialog, IDC_PROP_HANDLE_EDIT, szBuffer);
 
     /* Instance Handle */

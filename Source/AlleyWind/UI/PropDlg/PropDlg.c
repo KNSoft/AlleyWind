@@ -23,7 +23,7 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* Set title */
         Cch = Str_PrintfW(szTitle,
                           AW_GetString(WindowPropertiesFormat),
-                          (ULONG)(ULONG_PTR)(((PAW_WINDOW_PROP)lParam)->Handle));
+                          UI_TruncateHandle32(((PAW_WINDOW_PROP)lParam)->Handle));
         AW_PostFixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
         UI_SetWindowTextW(hDlg, szTitle);
 

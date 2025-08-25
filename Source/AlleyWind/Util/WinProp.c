@@ -143,7 +143,7 @@ AW_GetWindowProp(
 
     /* Basic properties */
     Prop->ReaderBits = sizeof(void*) * CHAR_BIT;
-    Prop->Handle = UI_TruncateHandle32(Window);
+    Prop->Handle = UI_TruncateHandle(Window);
     Prop->TopLevelWindow = IsTopLevelWindow(Window);
     Prop->ThreadId = GetWindowThreadProcessId(Window, &Prop->ProcessId);
     if (Prop->ThreadId != 0)

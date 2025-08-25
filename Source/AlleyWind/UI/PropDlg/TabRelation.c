@@ -99,13 +99,53 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             if (GetCursorPos(&pt))
             {
                 PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
-                BOOL b;
+                BOOL b = NT_SUCCESS(Prop->ProcessImagePathValid);
 
-                b = NT_SUCCESS(Prop->ProcessImagePathValid);
                 if (UI_EnableMenuItem(g_ResPropRelDlgProcessMenu, Menu_PropRelDlg_Process_Locate, TRUE, b) &&
                     UI_EnableMenuItem(g_ResPropRelDlgProcessMenu, Menu_PropRelDlg_Process_Properties, TRUE, b))
                 {
                     UI_PopupMenu(g_ResPropRelDlgProcessMenu, pt.x, pt.y, hDlg);
+                }
+            }
+        } else if (wParam == MAKEWPARAM(IDM_RESPROPDLG_PROCESS_LOCATE, 0))
+        {
+            PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
+            HRESULT hr = Shell_LocateItem(Prop->ProcessImagePath);
+
+            if (FAILED(hr))
+            {
+                KNS_HrMessageBox(hDlg, hr);
+            }
+        } else if (wParam == MAKEWPARAM(IDM_RESPROPDLG_PROCESS_PROPERTIES, 0))
+        {
+
+            W32ERROR Ret;
+            PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
+
+            Ret = Shell_Exec(Prop->ProcessImagePath, NULL, L"properties", SW_SHOWNORMAL, NULL);
+            if (Ret != ERROR_SUCCESS)
+            {
+                KNS_Win32ErrorMessageBox(hDlg, Ret);
+            }
+        } else if (wParam == MAKEWPARAM(IDM_RESPROPDLG_PROCESS_TERMINATE, 0))
+        {
+            PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
+            WCHAR ConfirmText[MAX_PATH * 2];
+            NTSTATUS Status;
+
+            if (Str_PrintfW(ConfirmText,
+                            AW_GetString(TerminateConfirm),
+                            Prop->ProcessImagePath,
+                            Prop->ProcessId) > 0 &&
+                UI_MsgBox(hDlg, ConfirmText, g_KNSAppInfo.AppName, MB_ICONQUESTION | MB_YESNO) == IDYES)
+            {
+                if (!EndTask(Prop->Handle, FALSE, TRUE))
+                {
+                    Status = PS_TerminateProcessById(Prop->ProcessId, 1);
+                    if (!NT_SUCCESS(Status))
+                    {
+                        KNS_NtStatusMessageBox(hDlg, Status);
+                    }
                 }
             }
         }
