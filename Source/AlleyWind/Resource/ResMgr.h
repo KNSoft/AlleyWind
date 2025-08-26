@@ -65,6 +65,10 @@ extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
 #define IDM_RESPROPDLG_PROCESS_PROPERTIES 2
 #define IDM_RESPROPDLG_PROCESS_TERMINATE 3
 
+#define IDM_RESPROPDLG_RELWINDOW_PROPERTIES 10
+#define IDM_RESPROPDLG_RELWINDOW_LOCATEINLIST 11
+#define IDM_RESPROPDLG_RELWINDOW_HIGHLIGHT 12
+
 extern AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[6];
 extern LPCDLGTEMPLATEW g_ResPropDlgTemplate;
 
@@ -75,6 +79,7 @@ enum
     Menu_PropRelDlg_Process_Terminate,
 };
 extern HMENU g_ResPropRelDlgProcessMenu;
+extern HMENU g_ResPropRelDlgRelWindowMenu;
 
 W32ERROR
 AW_InitResource(VOID);

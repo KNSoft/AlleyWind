@@ -62,7 +62,7 @@ UI_MENU_ITEM g_MainDlgMenuItems[] = {
 };
 
 /* enum Menu_MainDlg_Item_*/
-UI_MENU_ITEM g_astMainDlgItemMenu[] = {
+UI_MENU_ITEM aMainDlgItemMenuItems[] = {
     { FALSE, MF_STRING, IDM_MAINDLG_ITEM_HIGHLIGHT, NULL, Precomp4C_I18N_All_Highlight, NULL, 0, NULL },
     { FALSE, MF_STRING | MF_DEFAULT, IDM_MAINDLG_ITEM_PROPERTIES, NULL, Precomp4C_I18N_All_Properties, NULL, 0, NULL },
 };
@@ -107,14 +107,21 @@ AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[] = {
     { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
 };
 
-static
-UI_MENU_ITEM g_astPropProcessMenu[] = {
+static UI_MENU_ITEM aPropProcessMenuItems[] = {
     { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_LOCATE, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
     { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_PROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
     { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
 };
 
 HMENU g_ResPropRelDlgProcessMenu = NULL;
+
+static UI_MENU_ITEM aPropRelWindowMenuItems[] = {
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_PROPERTIES, NULL, Precomp4C_I18N_All_Properties, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_LOCATEINLIST, NULL, Precomp4C_I18N_All_LocateInList, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_HIGHLIGHT, NULL, Precomp4C_I18N_All_Highlight, NULL, 0, NULL }
+};
+
+HMENU g_ResPropRelDlgRelWindowMenu = NULL;
 
 W32ERROR
 AW_InitResource(VOID)
@@ -146,8 +153,9 @@ AW_InitResource(VOID)
     AW_InitMenuI18N(g_MainDlgFileMenuItems, ARRAYSIZE(g_MainDlgFileMenuItems));
     AW_InitMenuI18N(g_MainDlgHelpMenuItems, ARRAYSIZE(g_MainDlgHelpMenuItems));
     AW_InitMenuI18N(g_MainDlgMenuItems, ARRAYSIZE(g_MainDlgMenuItems));
-    AW_InitMenuI18N(g_astMainDlgItemMenu, ARRAYSIZE(g_astMainDlgItemMenu));
-    AW_InitMenuI18N(g_astPropProcessMenu, ARRAYSIZE(g_astPropProcessMenu));
+    AW_InitMenuI18N(aMainDlgItemMenuItems, ARRAYSIZE(aMainDlgItemMenuItems));
+    AW_InitMenuI18N(aPropProcessMenuItems, ARRAYSIZE(aPropProcessMenuItems));
+    AW_InitMenuI18N(aPropRelWindowMenuItems, ARRAYSIZE(aPropRelWindowMenuItems));
 
     /* Add runas sub-menu if privilege is limited */
     if (!g_IsRunAsAdmin)
@@ -158,35 +166,11 @@ AW_InitResource(VOID)
         g_MainDlgFileMenuItems[Menu_MainDlg_File_RunAsAdmin].Invalid = g_MainDlgFileMenuItems[Menu_MainDlg_File_Separator0].Invalid = TRUE;
     }
 
-    g_ResMainDlgMenu = CreateMenu();
-    if (g_ResMainDlgMenu != NULL)
-    {
-        if (UI_CreateMenuItems(g_ResMainDlgMenu, g_MainDlgMenuItems) != ERROR_SUCCESS)
-        {
-            DestroyMenu(g_ResMainDlgMenu);
-            g_ResMainDlgMenu = NULL;
-        }
-    }
 
-    g_ResMainDlgItemMenu = CreatePopupMenu();
-    if (g_ResMainDlgItemMenu != NULL)
-    {
-        if (UI_CreateMenuItems(g_ResMainDlgItemMenu, g_astMainDlgItemMenu) != ERROR_SUCCESS)
-        {
-            DestroyMenu(g_ResMainDlgItemMenu);
-            g_ResMainDlgItemMenu = NULL;
-        }
-    }
-
-    g_ResPropRelDlgProcessMenu = CreatePopupMenu();
-    if (g_ResPropRelDlgProcessMenu != NULL)
-    {
-        if (UI_CreateMenuItems(g_ResPropRelDlgProcessMenu, g_astPropProcessMenu) != ERROR_SUCCESS)
-        {
-            DestroyMenu(g_ResPropRelDlgProcessMenu);
-            g_ResPropRelDlgProcessMenu = NULL;
-        }
-    }
+    UI_CreateMenu(&g_ResMainDlgMenu, FALSE, g_MainDlgMenuItems);
+    UI_CreateMenu(&g_ResMainDlgItemMenu, TRUE, aMainDlgItemMenuItems);
+    UI_CreateMenu(&g_ResPropRelDlgProcessMenu, TRUE, aPropProcessMenuItems);
+    UI_CreateMenu(&g_ResPropRelDlgRelWindowMenu, TRUE, aPropRelWindowMenuItems);
 
     g_ResMainDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MAIN));
     g_ResPropDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_PROP));
@@ -215,11 +199,11 @@ AW_UninitResource(VOID)
     if (g_ResMainDlgItemMenu != NULL)
     {
         DestroyMenu(g_ResMainDlgItemMenu);
-        UI_DestroyMenuItems(g_astMainDlgItemMenu);
+        UI_DestroyMenuItems(aMainDlgItemMenuItems);
     }
     if (g_ResPropRelDlgProcessMenu != NULL)
     {
         DestroyMenu(g_ResPropRelDlgProcessMenu);
-        UI_DestroyMenuItems(g_astPropProcessMenu);
+        UI_DestroyMenuItems(aPropProcessMenuItems);
     }
 }

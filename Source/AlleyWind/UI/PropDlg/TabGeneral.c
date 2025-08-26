@@ -1,7 +1,6 @@
 ﻿#include "../../AlleyWind.inl"
 
-static
-AW_I18N_DLGITEM g_astI18NItems[] = {
+static AW_I18N_DLGITEM aI18NItems[] = {
     { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_All_Caption },
     { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_All_Handle },
     { IDC_PROP_INSTANCE_HANDLE_TEXT, Precomp4C_I18N_All_InstanceHandle },
@@ -186,7 +185,7 @@ GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     UI_DPIScaleDlgProc(hDlg, uMsg, wParam, lParam);
     if (uMsg == WM_INITDIALOG)
     {
-        AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
+        AW_InitDlgItemI18N(hDlg, aI18NItems, ARRAYSIZE(aI18NItems));
 
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
         SetWindowLongPtrW(hDlg, DWLP_USER, lParam);

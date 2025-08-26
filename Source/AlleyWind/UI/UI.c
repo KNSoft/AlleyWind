@@ -39,7 +39,7 @@ _Exit:
 }
 
 ULONG
-AW_PostFixTitleText(
+AW_PostfixTitleText(
     _Out_writes_(TextCch) PWSTR Text,
     _In_ ULONG TextCch)
 {

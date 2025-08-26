@@ -1,11 +1,30 @@
 ﻿#include "../../AlleyWind.inl"
 
-static
-AW_I18N_DLGITEM g_astI18NItems[] = {
+static AW_I18N_DLGITEM aI18NItems[] = {
     { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_All_Process },
     { IDC_PROP_THREAD_TEXT, Precomp4C_I18N_All_Thread },
     { IDC_PROP_MONITOR_TEXT, Precomp4C_I18N_All_Monitor },
 };
+
+static UINT aRelWindowColCx[] = { 180, 140, 200, 200 };
+static ULONG_PTR aRelWindowColPsz[] = {
+    Precomp4C_I18N_All_Relationship,
+    Precomp4C_I18N_All_Handle,
+    Precomp4C_I18N_All_Caption,
+    Precomp4C_I18N_All_Class,
+};
+C_ASSERT(ARRAYSIZE(aRelWindowColCx) == ARRAYSIZE(aRelWindowColPsz));
+
+static ULONG_PTR aRelWindowI18NItems[AWWindowRelationshipMax] = {
+    Precomp4C_I18N_All_ParentWindow,
+    Precomp4C_I18N_All_OwnerWindow,
+    Precomp4C_I18N_All_PreviousWindow,
+    Precomp4C_I18N_All_NextWindow,
+    Precomp4C_I18N_All_FirstChildWindow,
+    Precomp4C_I18N_All_FirstEqualWindow,
+    Precomp4C_I18N_All_LastEqualWindow,
+};
+C_ASSERT(ARRAYSIZE(aRelWindowI18NItems) == AWWindowRelationshipMax);
 
 static
 VOID
@@ -15,6 +34,9 @@ UpdatePropInfo(
 {
     WCHAR Buffer[MAX_PATH + 64], *psz;
     ULONG Cch, CchLast, u;
+    LVITEMW lvi;
+    HWND hRelList;
+    W32ERROR Ret;
 
     if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
     {
@@ -75,8 +97,46 @@ _End_Write_Thread_Address:
     {
         psz = NULL;
     }
-_End_Write_Monitor_Info:
     UI_SetDlgItemTextW(Dialog, IDC_PROP_MONITOR_EDIT, psz);
+
+    hRelList = GetDlgItem(Dialog, IDC_PROP_RELATION_LIST);
+    for (ULONG i = 0; i < ARRAYSIZE(aRelWindowI18NItems); i++)
+    {
+        lvi.mask = LVIF_TEXT | LVIF_PARAM;
+        lvi.pszText = (LPWSTR)AW_GetStringEx(aRelWindowI18NItems[i]);
+        lvi.iItem = MAXINT;
+        lvi.iSubItem = 0;
+        lvi.lParam = (LPARAM)Prop->RelWindows[i];
+        lvi.iItem = (INT)SendMessageW(hRelList, LVM_INSERTITEM, 0, (LPARAM)&lvi);
+        if (lvi.iItem != -1)
+        {
+            lvi.mask = LVIF_TEXT;
+            lvi.iSubItem++;
+            lvi.pszText = Prop->RelWindows[i] != 0 && Str_PrintfW(Buffer, L"%08X", Prop->RelWindows[i]) > 0 ? Buffer : (PWSTR)AW_GetString(NA);
+            SendMessageW(hRelList, LVM_SETITEM, 0, (LPARAM)&lvi);
+            lvi.iSubItem++;
+            if (Prop->RelWindows[i] != 0)
+            {
+                Ret = AW_GetWindowText((HWND)(ULONG_PTR)Prop->RelWindows[i], Buffer, ARRAYSIZE(Buffer));
+                lvi.pszText = Ret == ERROR_SUCCESS ? Buffer :
+                    (AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Ret) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
+            } else
+            {
+                lvi.pszText = (PWSTR)AW_GetString(NA);
+            }
+            SendMessageW(hRelList, LVM_SETITEM, 0, (LPARAM)&lvi);
+            lvi.iSubItem++;
+            if (Prop->RelWindows[i] != 0)
+            {
+                lvi.pszText = GetClassNameW((HWND)(ULONG_PTR)Prop->RelWindows[i], Buffer, ARRAYSIZE(Buffer)) > 0 ? Buffer :
+                    (AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Err_GetLastError()) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
+            } else
+            {
+                lvi.pszText = (PWSTR)AW_GetString(NA);
+            }
+            SendMessageW(hRelList, LVM_SETITEM, 0, (LPARAM)&lvi);
+        }
+    }
 }
 
 INT_PTR
@@ -86,7 +146,21 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     UI_DPIScaleDlgProc(hDlg, uMsg, wParam, lParam);
     if (uMsg == WM_INITDIALOG)
     {
-        AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
+        HWND hRelList;
+        LVCOLUMNW lvc;
+
+        hRelList = GetDlgItem(hDlg, IDC_PROP_RELATION_LIST);
+        AW_InitDlgItemI18N(hDlg, aI18NItems, ARRAYSIZE(aI18NItems));
+
+        ListView_SetExtendedListViewStyle(hRelList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+        UI_SetWindowExplorerVisualStyle(hRelList);
+        lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+        for (INT i = 0; i < ARRAYSIZE(aRelWindowColCx); i++)
+        {
+            lvc.cx = aRelWindowColCx[i];
+            lvc.pszText = (PWSTR)AW_GetStringEx(aRelWindowColPsz[i]);
+            ListView_InsertColumn(hRelList, i, &lvc);
+        }
 
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
         SetWindowLongPtrW(hDlg, DWLP_USER, lParam);

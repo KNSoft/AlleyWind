@@ -185,7 +185,39 @@
       <Value Locale="en">Monitor</Value>
       <Value Locale="zh-Hans">显示器</Value>
     </String>
-    
+    <String Name="LocateInList">
+      <Value Locale="en">Locate in list</Value>
+      <Value Locale="zh-Hans">在列表中定位</Value>
+    </String>
+    <String Name="ParentWindow">
+      <Value Locale="en">Parent Window</Value>
+      <Value Locale="zh-Hans">父窗口</Value>
+    </String>
+    <String Name="OwnerWindow">
+      <Value Locale="en">Owner Window</Value>
+      <Value Locale="zh-Hans">所有者窗口</Value>
+    </String>
+    <String Name="PreviousWindow">
+      <Value Locale="en">Previous Window</Value>
+      <Value Locale="zh-Hans">上一个窗口</Value>
+    </String>
+    <String Name="NextWindow">
+      <Value Locale="en">Next Window</Value>
+      <Value Locale="zh-Hans">下一个窗口</Value>
+    </String>
+    <String Name="FirstChildWindow">
+      <Value Locale="en">First Child Window</Value>
+      <Value Locale="zh-Hans">首个子窗口</Value>
+    </String>
+    <String Name="FirstEqualWindow">
+      <Value Locale="en">First Equal Window</Value>
+      <Value Locale="zh-Hans">首个同级窗口</Value>
+    </String>
+    <String Name="LastEqualWindow">
+      <Value Locale="en">Last Equal Window</Value>
+      <Value Locale="zh-Hans">末个同级窗口</Value>
+    </String>
+
     <!-- Database - Classes -->
     <String Name="Desktop">
       <Value Locale="en">Desktop</Value>

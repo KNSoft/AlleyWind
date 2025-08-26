@@ -129,12 +129,12 @@ AW_GetWindowProp(
     _Out_ PAW_WINDOW_PROP Prop)
 {
     PVOID Ptr;
-    DWORD_PTR MsgResult;
     NTSTATUS Status;
     HANDLE PSHandle;
     BYTE Buffer[sizeof(UNICODE_STRING) + sizeof(Prop->ProcessImagePath)];
     PUNICODE_STRING String;
     HMONITOR Monitor;
+    HWND RelWindow;
 
     if (!IsWindow(Window))
     {
@@ -227,18 +227,8 @@ _Get_Thread_Info_End:
     }
 
     /* Caption */
-    Prop->CaptionValid = AW_SendMsgTO(Window, WM_GETTEXT, ARRAYSIZE(Prop->Caption), (LPARAM)Prop->Caption, &MsgResult);
-    if (Prop->CaptionValid == ERROR_SUCCESS)
-    {
-        if (MsgResult < ARRAYSIZE(Prop->Caption))
-        {
-            Prop->Caption[MsgResult] = UNICODE_NULL;
-        } else
-        {
-            Prop->CaptionValid = ERROR_INSUFFICIENT_BUFFER;
-            Prop->Caption[0] = UNICODE_NULL;
-        }
-    } else
+    Prop->CaptionValid = AW_GetWindowText(Window, Prop->Caption, ARRAYSIZE(Prop->Caption));
+    if (Prop->CaptionValid != ERROR_SUCCESS)
     {
         Prop->Caption[0] = UNICODE_NULL;
     }
@@ -326,6 +316,37 @@ _Get_Thread_Info_End:
         {
             Prop->MonitorInfoValid = TRUE;
         }
+    }
+
+    /* Related windows */
+    for (INT i = 0; i < AWWindowRelationshipMax; i++)
+    {
+        if (i == AWWindowRelationshipParent)
+        {
+            RelWindow = GetAncestor(Window, GA_PARENT);
+        } else if (i == AWWindowRelationshipOwner)
+        {
+            RelWindow = GetWindow(Window, GW_OWNER);
+        } else if (i == AWWindowRelationshipPrevious)
+        {
+            RelWindow = GetWindow(Window, GW_HWNDPREV);
+        } else if (i == AWWindowRelationshipNext)
+        {
+            RelWindow = GetWindow(Window, GW_HWNDNEXT);
+        } else if (i == AWWindowRelationshipFirstChild)
+        {
+            RelWindow = GetWindow(Window, GW_CHILD);
+        } else if (i == AWWindowRelationshipFirst)
+        {
+            RelWindow = GetWindow(Window, GW_HWNDFIRST);
+        } else if (i == AWWindowRelationshipLast)
+        {
+            RelWindow = GetWindow(Window, GW_HWNDLAST);
+        } else
+        {
+            RelWindow = NULL;
+        }
+        Prop->RelWindows[i] = UI_TruncateHandle32(RelWindow);
     }
 
     return ERROR_SUCCESS;

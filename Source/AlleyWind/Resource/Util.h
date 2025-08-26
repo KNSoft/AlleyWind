@@ -48,6 +48,15 @@ AW_InitMenuI18N(
 }
 
 FORCEINLINE
+VOID
+AW_InitStringI18N(
+    _In_reads_(Count) PULONG_PTR Indexes,
+    _In_ UINT Count)
+{
+    AW_InitI18NArray(Indexes, sizeof(*Indexes), Count, 0);
+}
+
+FORCEINLINE
 LPCDLGTEMPLATEW
 AW_LoadDialogTemplate(
     _In_ PCWSTR DlgResName)

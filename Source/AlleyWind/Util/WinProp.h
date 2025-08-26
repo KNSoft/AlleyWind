@@ -28,6 +28,48 @@ AW_GetWindowIcon(
     return hIcon;
 }
 
+FORCEINLINE
+W32ERROR
+AW_GetWindowText(
+    _In_ HWND Window,
+    _Out_writes_(BufferCch) PWSTR Buffer,
+    _In_ ULONG BufferCch)
+{
+    DWORD_PTR MsgResult;
+    W32ERROR Ret;
+
+    Ret = AW_SendMsgTO(Window, WM_GETTEXT, BufferCch, (LPARAM)Buffer, &MsgResult);
+    if (Ret == ERROR_SUCCESS)
+    {
+        if (MsgResult < BufferCch)
+        {
+            Buffer[MsgResult] = UNICODE_NULL;
+        } else
+        {
+            return ERROR_INSUFFICIENT_BUFFER;
+        }
+    }
+    return Ret;
+}
+
+typedef enum _AW_WINDOW_RELATIONSHIP
+{
+    AWWindowRelationshipParent = 0,
+    AWWindowRelationshipOwner,
+    AWWindowRelationshipPrevious,
+    AWWindowRelationshipNext,
+    AWWindowRelationshipFirstChild,
+    AWWindowRelationshipFirst,
+    AWWindowRelationshipLast,
+    /* TODO
+    AWWindowRelationshipPreviousTabControl,
+    AWWindowRelationshipNextTabControl,
+    AWWindowRelationshipPreviousGroupControl,
+    AWWindowRelationshipNextGroupControl,
+    */
+    AWWindowRelationshipMax,
+} AW_WINDOW_RELATIONSHIP, *PAW_WINDOW_RELATIONSHIP;
+
 typedef struct _AW_WINDOW_PROP
 {
     USHORT ReaderBits; // sizeof(void*) * CHAR_BIT, 32 or 64;
@@ -90,9 +132,11 @@ typedef struct _AW_WINDOW_PROP
     ULONGLONG ThreadStartAddress; // 0 if invalid
     NTSTATUS ThreadStartAddressDisplayNameValid;
     WCHAR ThreadStartAddressDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
-    
+
     LOGICAL MonitorInfoValid;
     MONITORINFOEXW MonitorInfo;
+
+    ULONG RelWindows[AWWindowRelationshipMax];
 
 } AW_WINDOW_PROP, *PAW_WINDOW_PROP;
 

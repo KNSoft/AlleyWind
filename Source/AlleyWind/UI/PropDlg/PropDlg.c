@@ -24,7 +24,7 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         Cch = Str_PrintfW(szTitle,
                           AW_GetString(WindowPropertiesFormat),
                           UI_TruncateHandle32(((PAW_WINDOW_PROP)lParam)->Handle));
-        AW_PostFixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
+        AW_PostfixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
         UI_SetWindowTextW(hDlg, szTitle);
 
         /* Create property sheet */

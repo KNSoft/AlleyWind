@@ -281,7 +281,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* Set title */
         C_ASSERT(ARRAYSIZE(szTitle) > _STR_LEN(KNSOFT_APP_NAME));
         wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
-        AW_PostFixTitleText(szTitle + _STR_LEN(KNSOFT_APP_NAME),
+        AW_PostfixTitleText(szTitle + _STR_LEN(KNSOFT_APP_NAME),
                             ARRAYSIZE(szTitle) - _STR_LEN(KNSOFT_APP_NAME));
         UI_SetWindowTextW(hDlg, szTitle);
 
@@ -425,7 +425,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                                               TRUE,
                                               IsWindowVisible(Window)))
                         {
-                            IsWindowVisible(Window);
+                            UI_PopupMenu(g_ResMainDlgItemMenu, X, Y, hDlg);
                         }
                     }
                 }
