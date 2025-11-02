@@ -37,11 +37,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="AlleyWind.inl" />
     <None Include="Resource\Util.h">
       <Filter>Resource</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlleyWind.Core.inl" />

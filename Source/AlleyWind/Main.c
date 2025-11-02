@@ -48,7 +48,7 @@ TryElevateUIAccess(VOID)
     PROCESS_INFORMATION pi;
 
     /* Impersonate LSA */
-    Status = Sys_LsaGetProcessId(&LsaProcessId);
+    Status = Sys_GetLsaProcessId(&LsaProcessId);
     if (!NT_SUCCESS(Status))
     {
         return HRESULT_FROM_NT(Status);

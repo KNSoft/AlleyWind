@@ -185,7 +185,6 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
             HRESULT hr = Shell_LocateItem(Prop->ProcessImagePath);
-
             if (FAILED(hr))
             {
                 KNS_HrMessageBox(hDlg, hr);
