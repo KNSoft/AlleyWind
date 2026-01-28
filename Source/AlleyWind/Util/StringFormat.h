@@ -76,4 +76,23 @@ AW_WriteNAStringFromNtStatus(
     return psz != NULL ? AW_WriteNAInfoString(Buffer, BufferCch, psz) : AW_WriteNACodeString(Buffer, BufferCch, Status);
 }
 
+FORCEINLINE
+_Success_(return > 0)
+ULONG
+AW_WriteRectString(
+    _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
+    _In_ ULONG BufferCch,
+    _In_ PRECT Rect)
+{
+    return Str_PrintfExW(Buffer,
+                         BufferCch,
+                         AW_GetString(RectangleFormat),
+                         Rect->left,
+                         Rect->top,
+                         Rect->right,
+                         Rect->bottom,
+                         Rect->right - Rect->left,
+                         Rect->bottom - Rect->top);
+}
+
 EXTERN_C_END

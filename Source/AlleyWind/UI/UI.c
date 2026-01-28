@@ -98,3 +98,69 @@ _Truncate:
     Buffer[CchLast] = UNICODE_NULL;
     return CchLast;
 }
+
+HRESULT
+AW_EditStyleValue(
+    _In_ HWND Owner,
+    _In_ PAW_WINDOW_PROP Prop,
+    _In_ AW_STYLE_VALUE_TYPE StyleType)
+{
+    HRESULT hr;
+    PUI_VALUEEDITOR_CONSTANT Consts;
+    ULONG ConstsCount;
+    DWORD Value;
+    W32ERROR Ret;
+
+    if (StyleType == AW_StyleType_Style)
+    {
+        Value = Prop->Info.dwStyle;
+    } else if (StyleType == AW_StyleType_ExStyle)
+    {
+        Value = Prop->Info.dwExStyle;
+    } else if (StyleType == AW_StyleType_ClassStyle)
+    {
+        return E_NOTIMPL;
+    } else
+    {
+        return E_INVALIDARG;
+    }
+    hr = AW_GetStyleValueConstants(Prop->SysClassInfo,
+                                   StyleType,
+                                   Prop->Info.dwStyle & WS_CHILD,
+                                   &Consts,
+                                   &ConstsCount);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    hr = UI_ValueEditorDlg(Owner, UIValueEditorCombine, &Value, sizeof(Value), Consts, ConstsCount);
+    AW_ReleaseStyleValueConstants(StyleType, Consts);
+    if (hr != S_OK)
+    {
+        return hr;
+    }
+
+    if (StyleType == AW_StyleType_Style)
+    {
+        Ret = UI_SetWindowLong(Prop->Handle, GWL_STYLE, Value);
+    } else if (StyleType == AW_StyleType_ExStyle)
+    {
+        Ret = UI_SetWindowLong(Prop->Handle, GWL_EXSTYLE, Value);
+    } else if (StyleType == AW_StyleType_ClassStyle)
+    {
+        return E_NOTIMPL;
+    }
+    if (Ret != ERROR_SUCCESS)
+    {
+        return HRESULT_FROM_WIN32(Ret);
+    }
+    SetWindowPos(Prop->Handle,
+                 NULL,
+                 0,
+                 0,
+                 0,
+                 0,
+                 SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    UI_Redraw(Prop->Handle);
+    return S_OK;
+}

@@ -24,10 +24,16 @@ AW_OpenMainDialogBox(VOID);
 
 HRESULT
 AW_OpenPropDialogBoxSync(
-    _In_ HWND RefWindow);
+    _In_ HWND Window);
 
 NTSTATUS
 AW_OpenPropDialogBoxAsync(
-    _In_ HWND RefWindow);
+    _In_ HWND Window);
+
+HRESULT
+AW_EditStyleValue(
+    _In_ HWND Owner,
+    _In_ PAW_WINDOW_PROP Prop,
+    _In_ AW_STYLE_VALUE_TYPE StyleType);
 
 EXTERN_C_END

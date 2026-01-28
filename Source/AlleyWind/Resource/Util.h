@@ -29,7 +29,7 @@ PCWSTR
 AW_GetStringEx(
     _In_ ULONG_PTR Index);
 
-#define AW_GetString(x) AW_GetStringEx(Precomp4C_I18N_All_##x)
+#define AW_GetString(x) AW_GetStringEx(Precomp4C_I18N_KNSAW_##x)
 
 VOID
 AW_InitI18NArray(
@@ -63,7 +63,7 @@ AW_LoadDialogTemplate(
 {
     LPCDLGTEMPLATEW p;
 
-    return NT_SUCCESS(PE_AccessResource((HINSTANCE)&__ImageBase,
+    return NT_SUCCESS(PE_AccessResource((PVOID)&__ImageBase,
                                         MAKEINTRESOURCEW(RT_DIALOG),
                                         DlgResName,
                                         LANG_USER_DEFAULT,

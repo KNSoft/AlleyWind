@@ -1,15 +1,64 @@
 ﻿#include "../../AlleyWind.inl"
 
+#define STYLE_VALUE_FORMAT L"%08lX"
+
 static AW_I18N_DLGITEM aI18NItems[] = {
-    { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_All_Caption },
-    { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_All_Handle },
-    { IDC_PROP_INSTANCE_HANDLE_TEXT, Precomp4C_I18N_All_InstanceHandle },
-    { IDC_PROP_SYSCLASS_TEXT, Precomp4C_I18N_All_SystemClass },
-    { IDC_PROP_WNDPROC_TEXT, Precomp4C_I18N_All_WindowProcedure },
-    { IDC_PROP_STYLE_TEXT, Precomp4C_I18N_All_Style },
-    { IDC_PROP_EXSTYLE_TEXT, Precomp4C_I18N_All_ExtendedStyle },
-    { IDC_PROP_SCREEN_RECT_TEXT, Precomp4C_I18N_All_ScreenRectangle },
+    { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_KNSAW_Caption },
+    { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_KNSAW_Handle },
+    { IDC_PROP_INSTANCE_HANDLE_TEXT, Precomp4C_I18N_KNSAW_InstanceHandle },
+    { IDC_PROP_SYSCLASS_TEXT, Precomp4C_I18N_KNSAW_SystemClass },
+    { IDC_PROP_WNDPROC_TEXT, Precomp4C_I18N_KNSAW_WindowProcedure },
+    { IDC_PROP_STYLE_TEXT, Precomp4C_I18N_KNSAW_Style },
+    { IDC_PROP_EXSTYLE_TEXT, Precomp4C_I18N_KNSAW_ExtendedStyle },
+    { IDC_PROP_RECT_TEXT, Precomp4C_I18N_KNSAW_Rectangle },
+    { IDC_PROP_RECT_RELTIVE_CHECK, Precomp4C_I18N_KNSAW_Relative },
 };
+
+FORCEINLINE
+VOID
+SetStyleValue(
+    _Out_ PWSTR Buffer,
+    _In_ ULONG BufferCch,
+    _In_ HWND Dialog,
+    _In_ INT EditTextId,
+    _In_ DWORD Style)
+{
+    UI_SetDlgItemTextW(Dialog,
+                       EditTextId,
+                       Str_PrintfExW(Buffer, BufferCch, STYLE_VALUE_FORMAT, Style) != 0 ? Buffer : g_ResNAText);
+}
+
+static
+VOID
+SetRectValue(
+    _Out_ PWSTR Buffer,
+    _In_ ULONG BufferCch,
+    _In_ HWND Dialog,
+    _In_ PAW_WINDOW_PROP Prop)
+{
+    HWND hCheck = GetDlgItem(Dialog, IDC_PROP_RECT_RELTIVE_CHECK);
+    LOGICAL bShowRelative;
+    
+    EnableWindow(hCheck, Prop->RelativeRectValid);
+    UI_EnableDlgItem(Dialog, IDC_PROP_RECT_BTN, Prop->RelativeRectValid);
+
+    if (Prop->RelativeRectValid)
+    {
+        bShowRelative = SendMessageW(hCheck, BM_GETCHECK, 0, 0) != BST_UNCHECKED;
+    } else
+    {
+        SendMessageW(hCheck, BM_SETCHECK, BST_UNCHECKED, 0);
+        bShowRelative = FALSE;
+    }
+    if (bShowRelative)
+    {
+        AW_WriteRectString(Buffer, BufferCch, &Prop->RelativeRect);
+    } else
+    {
+        AW_WriteRectString(Buffer, BufferCch, &Prop->Info.rcWindow);
+    }
+    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT_EDIT, Buffer);
+}
 
 static
 VOID
@@ -21,7 +70,6 @@ UpdatePropInfo(
     HWND hCtl;
     PCWSTR pszTemp;
     BOOL bTemp;
-    INT iTemp;
 
     /* Caption */
     hCtl = GetDlgItem(Dialog, IDC_PROP_CAPTION_EDIT);
@@ -58,7 +106,7 @@ UpdatePropInfo(
     /* System Class */
     if (Prop->ClassNameValid == ERROR_SUCCESS)
     {
-        pszTemp = AW_GetSysClassDisplayName(Prop->ClassName);
+        pszTemp = Prop->SysClassInfo == NULL ? NULL : Prop->SysClassInfo->DisplayName;
     } else
     {
         AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
@@ -68,21 +116,17 @@ UpdatePropInfo(
 
     /* Control ID */
     hCtl = GetDlgItem(Dialog, IDC_PROP_CTLID_EDIT);
-    bTemp = TRUE;
-    if (Prop->IdentifierValid == ERROR_SUCCESS)
+    bTemp = Prop->IdentifierValid == ERROR_SUCCESS;
+    if (bTemp)
     {
         pszTemp = Str_FromIntW(Prop->Identifier, szBuffer) > 0 ? szBuffer : NULL;
-        bTemp = FALSE;
-    } else if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
-    {
-        pszTemp = AW_GetString(NANonChildWindow);
     } else
     {
         AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
         pszTemp = szBuffer;
     }
     UI_SetWindowTextW(hCtl, pszTemp);
-    SendMessageW(hCtl, EM_SETREADONLY, bTemp, 0);
+    SendMessageW(hCtl, EM_SETREADONLY, !bTemp, 0);
 
     /* Window Procedure */
     if (Prop->WndProcValid != ERROR_SUCCESS)
@@ -101,81 +145,15 @@ UpdatePropInfo(
     Str_PrintfW(szBuffer,
                 L"%ls | %ls",
                 Prop->Unicode ? L"Unicode" : L"ANSI",
-                AW_GetStringEx(Prop->KernelMode ? Precomp4C_I18N_All_KernelMode : Precomp4C_I18N_All_UserMode));
+                AW_GetStringEx(Prop->KernelMode ? Precomp4C_I18N_KNSAW_KernelMode : Precomp4C_I18N_KNSAW_UserMode));
     UI_SetDlgItemTextW(Dialog, IDC_PROP_WNDPROC_ATTR_TEXT, szBuffer);
 
     /* Style & Extended-style */
-    if (Prop->StyleValid == ERROR_SUCCESS)
-    {
-        Str_PrintfW(szBuffer, L"%08lX", Prop->Style) > 0 ? szBuffer : g_ResNAText;
-    } else
-    {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->StyleValid);
-    }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_STYLE_EDIT, szBuffer);
-    if (Prop->ExStyleValid == ERROR_SUCCESS)
-    {
-        Str_PrintfW(szBuffer, L"%08lX", Prop->ExStyle) > 0 ? szBuffer : g_ResNAText;
-    } else
-    {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ExStyleValid);
-    }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_EXSTYLE_EDIT, szBuffer);
+    SetStyleValue(szBuffer, ARRAYSIZE(szBuffer), Dialog, IDC_PROP_STYLE_EDIT, Prop->Info.dwStyle);
+    SetStyleValue(szBuffer, ARRAYSIZE(szBuffer), Dialog, IDC_PROP_EXSTYLE_EDIT, Prop->Info.dwExStyle);
 
-    /* Rectangles */
-    if (SUCCEEDED(Prop->ScreenRectValid))
-    {
-        Str_PrintfW(szBuffer,
-                    AW_GetString(RectangleFormat),
-                    Prop->ScreenRect.left,
-                    Prop->ScreenRect.top,
-                    Prop->ScreenRect.right,
-                    Prop->ScreenRect.bottom,
-                    Prop->ScreenRect.right - Prop->ScreenRect.left,
-                    Prop->ScreenRect.bottom - Prop->ScreenRect.top);
-    } else
-    {
-        AW_WriteNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->ScreenRectValid);
-    }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_SCREEN_RECT_EDIT, szBuffer);
-
-    if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD))
-    {
-        iTemp = Precomp4C_I18N_All_ClientRectangle;
-        if (Prop->Rect2Valid == ERROR_SUCCESS)
-        {
-            Str_PrintfW(szBuffer,
-                        AW_GetString(RectangleFormat),
-                        Prop->Rect2.left,
-                        Prop->Rect2.top,
-                        Prop->Rect2.right,
-                        Prop->Rect2.bottom,
-                        Prop->Rect2.right - Prop->Rect2.left,
-                        Prop->Rect2.bottom - Prop->Rect2.top);
-        } else
-        {
-            AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
-        }
-    } else
-    {
-        iTemp = Precomp4C_I18N_All_RelativeRectangle;
-        if (SUCCEEDED(Prop->Rect2Valid))
-        {
-            Str_PrintfW(szBuffer,
-                        AW_GetString(RectangleFormat),
-                        Prop->Rect2.left,
-                        Prop->Rect2.top,
-                        Prop->Rect2.right,
-                        Prop->Rect2.bottom,
-                        Prop->Rect2.right - Prop->Rect2.left,
-                        Prop->Rect2.bottom - Prop->Rect2.top);
-        } else
-        {
-            AW_WriteNAStringFromHr(szBuffer, ARRAYSIZE(szBuffer), Prop->Rect2Valid);
-        }
-    }
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_TEXT, AW_GetStringEx(iTemp));
-    UI_SetDlgItemTextW(Dialog, IDC_PROP_RECT2_EDIT, szBuffer);
+    /* Rectangle */
+    SetRectValue(szBuffer, ARRAYSIZE(szBuffer), Dialog, Prop);
 }
 
 INT_PTR
@@ -190,6 +168,65 @@ GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         UpdatePropInfo(hDlg, (PAW_WINDOW_PROP)lParam);
         SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
         return TRUE;
+    } else if (uMsg == WM_COMMAND)
+    {
+        HRESULT hr;
+        PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
+
+        if (wParam == MAKEWPARAM(IDC_PROP_STYLE_BTN, BN_CLICKED) ||
+            wParam == MAKEWPARAM(IDC_PROP_EXSTYLE_BTN, BN_CLICKED))
+        {
+            LOGICAL bStyle = wParam == MAKEWPARAM(IDC_PROP_STYLE_BTN, BN_CLICKED);
+            hr = AW_EditStyleValue(hDlg, Prop, bStyle ? AW_StyleType_Style : AW_StyleType_ExStyle);
+            if (SUCCEEDED(hr))
+            {
+                AW_UpdatePropInfo(Prop);
+                UpdatePropInfo(hDlg, Prop);
+            }
+        } else if (wParam == MAKEWPARAM(IDC_PROP_RECT_BTN, BN_CLICKED))
+        {
+            RECT rc;
+            W32ERROR Ret;
+            LOGICAL bRelative;
+
+            bRelative = UI_GetDlgButtonCheck(hDlg, IDC_PROP_RECT_RELTIVE_CHECK) != BST_UNCHECKED;
+            if (bRelative && !Prop->RelativeRectValid)
+            {
+                return FALSE;
+            }
+
+            rc = bRelative ? Prop->RelativeRect : Prop->Info.rcWindow;
+            hr = UI_RectEditorDlg(hDlg, &rc);
+            if (hr == S_OK)
+            {
+                if (!bRelative)
+                {
+                    if (!UI_ScreenRectToClient((HWND)(ULONG_PTR)Prop->RelWindows[AWWindowRelationshipParent],
+                                               &rc,
+                                               &rc))
+                    {
+                        KNS_HrMessageBox(hDlg, E_UNEXPECTED);
+                        return FALSE;
+                    }
+                }
+                Ret = UI_SetWindowRect(Prop->Handle, &rc, TRUE);
+                if (Ret == ERROR_SUCCESS)
+                {
+                    AW_UpdatePropInfo(Prop);
+                    UpdatePropInfo(hDlg, Prop); 
+                } else
+                {
+                    KNS_Win32ErrorMessageBox(hDlg, Ret);
+                }
+            } else if (FAILED(hr))
+            {
+                KNS_HrMessageBox(hDlg, hr);
+            }
+        } else if (wParam == MAKEWPARAM(IDC_PROP_RECT_RELTIVE_CHECK, BN_CLICKED))
+        {
+            WCHAR szBuffer[MAX_PATH];
+            SetRectValue(szBuffer, ARRAYSIZE(szBuffer), hDlg, Prop);
+        }
     }
     return FALSE;
 }

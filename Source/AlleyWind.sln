@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35327.3
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlleyWind", "AlleyWind\AlleyWind.vcxproj", "{32E988D1-B4C4-467C-813E-40C1937BEFEA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4889E88D-A60F-418F-9737-989D84A1A73E} = {4889E88D-A60F-418F-9737-989D84A1A73E}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KNSoft.MakeLifeEasier", "..\..\KNSoft.MakeLifeEasier\Source\KNSoft.MakeLifeEasier\KNSoft.MakeLifeEasier.vcxproj", "{4889E88D-A60F-418F-9737-989D84A1A73E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,18 +27,6 @@ Global
 		{32E988D1-B4C4-467C-813E-40C1937BEFEA}.Release|x64.Build.0 = Release|x64
 		{32E988D1-B4C4-467C-813E-40C1937BEFEA}.Release|x86.ActiveCfg = Release|Win32
 		{32E988D1-B4C4-467C-813E-40C1937BEFEA}.Release|x86.Build.0 = Release|Win32
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|ARM64.Build.0 = Debug|ARM64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|x64.ActiveCfg = Debug|x64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|x64.Build.0 = Debug|x64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|x86.ActiveCfg = Debug|Win32
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Debug|x86.Build.0 = Debug|Win32
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|ARM64.ActiveCfg = Release|ARM64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|ARM64.Build.0 = Release|ARM64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|x64.ActiveCfg = Release|x64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|x64.Build.0 = Release|x64
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|x86.ActiveCfg = Release|Win32
-		{4889E88D-A60F-418F-9737-989D84A1A73E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

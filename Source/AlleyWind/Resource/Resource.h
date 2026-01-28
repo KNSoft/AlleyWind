@@ -23,10 +23,9 @@
 #define IDC_PROP_WNDPROC_TEXT           1010
 #define IDC_PROP_MONITOR_TEXT           1010
 #define IDC_PROP_WNDPROC_EDIT           1011
-#define IDC_PROP_THREAD_EDIT2           1011
 #define IDC_PROP_MONITOR_EDIT           1011
 #define IDC_PROP_INSTANCE_HANDLE_TEXT   1012
-#define IDC_IDC_PROP_PROCESS_BUTTON     1012
+#define IDC_PROP_PROCESS_BUTTON         1012
 #define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
 #define IDC_PROP_RELATION_LIST          1013
 #define IDC_PROP_SYSCLASS_TEXT          1014
@@ -35,12 +34,13 @@
 #define IDC_PROP_STYLE_EDIT             1017
 #define IDC_PROP_EXSTYLE_TEXT           1018
 #define IDC_PROP_EXSTYLE_EDIT           1019
-#define IDC_PROP_SCREEN_RECT_TEXT       1020
-#define IDC_PROP_SCREEN_RECT_EDIT       1021
-#define IDC_PROP_RECT2_TEXT             1022
-#define IDC_PROP_RECT2_EDIT             1023
-#define IDC_PROP_PROCUNICODE_TEXT       1024
+#define IDC_PROP_RECT_TEXT              1022
+#define IDC_PROP_RECT_EDIT              1023
 #define IDC_PROP_WNDPROC_ATTR_TEXT      1024
+#define IDC_PROP_STYLE_BTN              1025
+#define IDC_PROP_EXSTYLE_BTN            1026
+#define IDC_PROP_RECT_BTN               1027
+#define IDC_PROP_RECT_RELTIVE_CHECK     1028
 
 // Next default values for new objects
 // 
@@ -48,7 +48,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1014
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

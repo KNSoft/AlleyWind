@@ -1,28 +1,28 @@
 ﻿#include "../../AlleyWind.inl"
 
 static AW_I18N_DLGITEM aI18NItems[] = {
-    { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_All_Process },
-    { IDC_PROP_THREAD_TEXT, Precomp4C_I18N_All_Thread },
-    { IDC_PROP_MONITOR_TEXT, Precomp4C_I18N_All_Monitor },
+    { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_KNSAW_Process },
+    { IDC_PROP_THREAD_TEXT, Precomp4C_I18N_KNSAW_Thread },
+    { IDC_PROP_MONITOR_TEXT, Precomp4C_I18N_KNSAW_Monitor },
 };
 
 static UINT aRelWindowColCx[] = { 180, 140, 200, 200 };
 static ULONG_PTR aRelWindowColPsz[] = {
-    Precomp4C_I18N_All_Relationship,
-    Precomp4C_I18N_All_Handle,
-    Precomp4C_I18N_All_Caption,
-    Precomp4C_I18N_All_Class,
+    Precomp4C_I18N_KNSAW_Relationship,
+    Precomp4C_I18N_KNSAW_Handle,
+    Precomp4C_I18N_KNSAW_Caption,
+    Precomp4C_I18N_KNSAW_Class,
 };
 C_ASSERT(ARRAYSIZE(aRelWindowColCx) == ARRAYSIZE(aRelWindowColPsz));
 
 static ULONG_PTR aRelWindowI18NItems[AWWindowRelationshipMax] = {
-    Precomp4C_I18N_All_ParentWindow,
-    Precomp4C_I18N_All_OwnerWindow,
-    Precomp4C_I18N_All_PreviousWindow,
-    Precomp4C_I18N_All_NextWindow,
-    Precomp4C_I18N_All_FirstChildWindow,
-    Precomp4C_I18N_All_FirstEqualWindow,
-    Precomp4C_I18N_All_LastEqualWindow,
+    Precomp4C_I18N_KNSAW_ParentWindow,
+    Precomp4C_I18N_KNSAW_OwnerWindow,
+    Precomp4C_I18N_KNSAW_PreviousWindow,
+    Precomp4C_I18N_KNSAW_NextWindow,
+    Precomp4C_I18N_KNSAW_FirstChildWindow,
+    Precomp4C_I18N_KNSAW_FirstEqualWindow,
+    Precomp4C_I18N_KNSAW_LastEqualWindow,
 };
 C_ASSERT(ARRAYSIZE(aRelWindowI18NItems) == AWWindowRelationshipMax);
 
@@ -50,7 +50,7 @@ UpdatePropInfo(
         Buffer[Cch++] = L' ';
         if (NT_SUCCESS(Prop->ProcessImagePathValid))
         {
-            u = Str_CopyExW(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePath);
+            u = Str_CopyExW(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePath.Buffer);
         } else
         {
             u = AW_WriteNAStringFromNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePathValid);
@@ -70,12 +70,18 @@ _End_Write_Process_Path:
         }
         CchLast = Cch;
         Buffer[Cch++] = L' ';
-        u = AW_WriteAddressDisplayString(Prop,
+        if (NT_SUCCESS(Prop->ThreadStartAddressValid))
+        {
+            u = AW_WriteAddressDisplayString(Prop,
                                          Prop->ThreadStartAddress,
                                          Prop->ThreadStartAddressDisplayNameValid,
                                          Prop->ThreadStartAddressDisplayName,
                                          Buffer + Cch,
                                          ARRAYSIZE(Buffer) - Cch);
+        } else
+        {
+            u = AW_WriteNAStringFromNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ThreadStartAddressValid);
+        }
         if (u == 0)
         {
             Buffer[CchLast] = UNICODE_NULL;
@@ -87,16 +93,22 @@ _End_Write_Thread_Address:
         AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Prop->ThreadProcessIdValid);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCESS_EDIT, Buffer);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, Buffer);
+        UI_EnableDlgItem(Dialog, IDC_PROP_PROCESS_BUTTON, FALSE);
     }
 
+    psz = NULL;
     if (Prop->MonitorInfoValid)
     {
-        psz = Prop->MonitorInfo.szDevice;
-        // TODO: Rect
-    } else
-    {
-        psz = NULL;
+        Cch = Str_CopyW(Buffer, Prop->MonitorInfo.szDevice);
+        if (Cch == 0 || Cch == ARRAYSIZE(Buffer) - 1)
+        {
+            goto _Set_Monitor_Info;
+        }
+        Buffer[Cch++] = L' ';
+        AW_WriteRectString(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, &Prop->MonitorInfo.rcMonitor);
+        psz = Buffer;
     }
+_Set_Monitor_Info:
     UI_SetDlgItemTextW(Dialog, IDC_PROP_MONITOR_EDIT, psz);
 
     hRelList = GetDlgItem(Dialog, IDC_PROP_RELATION_LIST);
@@ -167,7 +179,7 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return TRUE;
     } else if (uMsg == WM_COMMAND)
     {
-        if (wParam == MAKEWPARAM(IDC_IDC_PROP_PROCESS_BUTTON, BN_CLICKED))
+        if (wParam == MAKEWPARAM(IDC_PROP_PROCESS_BUTTON, BN_CLICKED))
         {
             POINT pt;
             if (GetCursorPos(&pt))
@@ -184,7 +196,7 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         } else if (wParam == MAKEWPARAM(IDM_RESPROPDLG_PROCESS_LOCATE, 0))
         {
             PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
-            HRESULT hr = Shell_LocateItem(Prop->ProcessImagePath);
+            HRESULT hr = Shell_LocateItem(Prop->ProcessImagePath.Buffer);
             if (FAILED(hr))
             {
                 KNS_HrMessageBox(hDlg, hr);
@@ -195,7 +207,7 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             W32ERROR Ret;
             PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
 
-            Ret = Shell_Exec(Prop->ProcessImagePath, NULL, L"properties", SW_SHOWNORMAL, NULL);
+            Ret = Shell_Exec(Prop->ProcessImagePath.Buffer, NULL, L"properties", SW_SHOWNORMAL, NULL);
             if (Ret != ERROR_SUCCESS)
             {
                 KNS_Win32ErrorMessageBox(hDlg, Ret);

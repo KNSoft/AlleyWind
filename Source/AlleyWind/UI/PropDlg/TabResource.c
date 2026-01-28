@@ -3,7 +3,7 @@
 /*
 static
 AW_I18N_DLGITEM g_astI18NItems[] = {
-    { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_All_Caption },
+    { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_KNSAW_Caption },
 };*/
 
 static

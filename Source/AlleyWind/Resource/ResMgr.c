@@ -2,7 +2,7 @@
 
 #pragma region I18N
 
-static KNS_I18N_TABLE g_I18NTable = { PS_RUNONCE_INIT, &Precomp4C_I18N_Table_All };
+static KNS_I18N_TABLE g_I18NTable = { PS_RUNONCE_INIT, &Precomp4C_I18N_Table_KNSAW };
 
 PCWSTR
 AW_GetStringEx(
@@ -43,28 +43,28 @@ HACCEL g_ResMainDlgAccel = NULL;
 
 // enum Menu_MainDlg_File_*
 UI_MENU_ITEM g_MainDlgFileMenuItems[Menu_MainDlg_File_Max] = {
-    { FALSE, MF_STRING, IDM_MAINDLG_FILE_RUNAS_ADMIN, NULL, Precomp4C_I18N_All_RunAsAdmin, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_FILE_RUNAS_ADMIN, NULL, Precomp4C_I18N_KNSAW_RunAsAdmin, NULL, 0 , NULL },
     { FALSE, MF_SEPARATOR, 0, NULL, -1, NULL, 0 , NULL },
-    { FALSE, MF_STRING, IDM_MAINDLG_FILE_ALWAYS_ON_TOP, NULL, Precomp4C_I18N_All_AlwaysOnTop, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_FILE_ALWAYS_ON_TOP, NULL, Precomp4C_I18N_KNSAW_AlwaysOnTop, NULL, 0 , NULL },
     { FALSE, MF_SEPARATOR, 0, NULL, -1, NULL, 0 , NULL },
-    { FALSE, MF_STRING, IDM_MAINDLG_FILE_REFRESH, NULL, Precomp4C_I18N_All_Refresh_F5, NULL, 0 , NULL },
-    { FALSE, MF_STRING, IDM_MAINDLG_FILE_SAVETREE, NULL, Precomp4C_I18N_All_SaveTree_Ctrl_S, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_FILE_REFRESH, NULL, Precomp4C_I18N_KNSAW_Refresh_F5, NULL, 0 , NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_FILE_SAVETREE, NULL, Precomp4C_I18N_KNSAW_SaveTree_Ctrl_S, NULL, 0 , NULL },
 };
 
 static UI_MENU_ITEM g_MainDlgHelpMenuItems[] = {
-    { FALSE, MF_STRING, IDM_MAINDLG_HELP_HOMEPAGE, NULL, Precomp4C_I18N_All_Homepage, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_HELP_HOMEPAGE, NULL, Precomp4C_I18N_KNSAW_Homepage, NULL, 0, NULL },
 };
 
 // enum Menu_MainDlg_*
 UI_MENU_ITEM g_MainDlgMenuItems[] = {
-    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_File, NULL, ARRAYSIZE(g_MainDlgFileMenuItems), g_MainDlgFileMenuItems },
-    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_All_Help, NULL, ARRAYSIZE(g_MainDlgHelpMenuItems), g_MainDlgHelpMenuItems },
+    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_KNSAW_File, NULL, ARRAYSIZE(g_MainDlgFileMenuItems), g_MainDlgFileMenuItems },
+    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_KNSAW_Help, NULL, ARRAYSIZE(g_MainDlgHelpMenuItems), g_MainDlgHelpMenuItems },
 };
 
 /* enum Menu_MainDlg_Item_*/
 UI_MENU_ITEM aMainDlgItemMenuItems[] = {
-    { FALSE, MF_STRING, IDM_MAINDLG_ITEM_HIGHLIGHT, NULL, Precomp4C_I18N_All_Highlight, NULL, 0, NULL },
-    { FALSE, MF_STRING | MF_DEFAULT, IDM_MAINDLG_ITEM_PROPERTIES, NULL, Precomp4C_I18N_All_Properties, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_ITEM_HIGHLIGHT, NULL, Precomp4C_I18N_KNSAW_Highlight, NULL, 0, NULL },
+    { FALSE, MF_STRING | MF_DEFAULT, IDM_MAINDLG_ITEM_PROPERTIES, NULL, Precomp4C_I18N_KNSAW_Properties, NULL, 0, NULL },
 };
 
 HMENU g_ResMainDlgMenu = NULL;
@@ -99,26 +99,26 @@ EmptyPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /* Properties - Relation Dialog */
 
 AW_I18N_PROPSHEET_PAGE g_ResPropDlgPages[] = {
-    { Precomp4C_I18N_All_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc },
-    { Precomp4C_I18N_All_Resource, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), ResourcePspProc },
-    { Precomp4C_I18N_All_Relationship, MAKEINTRESOURCEW(IDD_PROP_RELATION), RelationPspProc },
-    { Precomp4C_I18N_All_Class, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
+    { Precomp4C_I18N_KNSAW_General, MAKEINTRESOURCEW(IDD_PROP_GENERAL), GeneralPspProc },
+    { Precomp4C_I18N_KNSAW_Resource, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), ResourcePspProc },
+    { Precomp4C_I18N_KNSAW_Relationship, MAKEINTRESOURCEW(IDD_PROP_RELATION), RelationPspProc },
+    { Precomp4C_I18N_KNSAW_Class, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
     { (INT_PTR)L"DPI", MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
-    { Precomp4C_I18N_All_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
+    { Precomp4C_I18N_KNSAW_Operation, MAKEINTRESOURCEW(IDD_PROP_RESOURCE), EmptyPspProc },
 };
 
 static UI_MENU_ITEM aPropProcessMenuItems[] = {
-    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_LOCATE, NULL, Precomp4C_I18N_All_OpenFileLocation, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_PROPERTIES, NULL, Precomp4C_I18N_All_FileProperties, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_TERMINATE, NULL, Precomp4C_I18N_All_Terminate, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_LOCATE, NULL, Precomp4C_I18N_KNSAW_OpenFileLocation, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_PROPERTIES, NULL, Precomp4C_I18N_KNSAW_FileProperties, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_PROCESS_TERMINATE, NULL, Precomp4C_I18N_KNSAW_Terminate, NULL, 0, NULL },
 };
 
 HMENU g_ResPropRelDlgProcessMenu = NULL;
 
 static UI_MENU_ITEM aPropRelWindowMenuItems[] = {
-    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_PROPERTIES, NULL, Precomp4C_I18N_All_Properties, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_LOCATEINLIST, NULL, Precomp4C_I18N_All_LocateInList, NULL, 0, NULL },
-    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_HIGHLIGHT, NULL, Precomp4C_I18N_All_Highlight, NULL, 0, NULL }
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_PROPERTIES, NULL, Precomp4C_I18N_KNSAW_Properties, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_LOCATEINLIST, NULL, Precomp4C_I18N_KNSAW_LocateInList, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_RESPROPDLG_RELWINDOW_HIGHLIGHT, NULL, Precomp4C_I18N_KNSAW_Highlight, NULL, 0, NULL }
 };
 
 HMENU g_ResPropRelDlgRelWindowMenu = NULL;

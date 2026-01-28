@@ -1,5 +1,5 @@
 <I18N>
-  <Table Name="All">
+  <Table Name="KNSAW">
 
     <String Name="NA">
       <Value Locale="en">(N/A)</Value>
@@ -12,10 +12,6 @@
     <String Name="NAFormatCode">
       <Value Locale="en">(N/A: 0x%08lX)</Value>
       <Value Locale="zh-Hans">（不可用：0x%08lX）</Value>
-    </String>
-    <String Name="NANonChildWindow">
-      <Value Locale="en">(N/A: Non-child Window)</Value>
-      <Value Locale="zh-Hans">（不可用：非子窗口）</Value>
     </String>
     <String Name="NARequire64Bit">
       <Value Locale="en">(N/A: Require 64-bit main program)</Value>
@@ -143,17 +139,13 @@
       <Value Locale="en">LT(%ld, %ld)-RB(%ld, %ld) [%ldx%ld]</Value>
       <Value Locale="zh-Hans">左上(%ld, %ld)-右下(%ld, %ld) [%ldx%ld]</Value>
     </String>
-    <String Name="ScreenRectangle">
-      <Value Locale="en">Screen Rectangle</Value>
-      <Value Locale="zh-Hans">屏幕矩形</Value>
+    <String Name="Rectangle">
+      <Value Locale="en">Rectangle</Value>
+      <Value Locale="zh-Hans">矩形</Value>
     </String>
-    <String Name="ClientRectangle">
-      <Value Locale="en">Client Rectangle</Value>
-      <Value Locale="zh-Hans">客户矩形</Value>
-    </String>
-    <String Name="RelativeRectangle">
-      <Value Locale="en">Relative Rectangle</Value>
-      <Value Locale="zh-Hans">相对矩形</Value>
+    <String Name="Relative">
+      <Value Locale="en">Relative</Value>
+      <Value Locale="zh-Hans">相对</Value>
     </String>
 
     <!-- Properties dialog - Relation tab -->

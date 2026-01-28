@@ -2,7 +2,7 @@
 
 static
 AW_I18N_DLGITEM g_astI18NItems[] = {
-    { IDC_PROP_REFRESH, Precomp4C_I18N_All_Refresh },
+    { IDC_PROP_REFRESH, Precomp4C_I18N_KNSAW_Refresh },
 };
 
 static
@@ -35,6 +35,7 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                                 lParam);
         UI_InitPropSheet(hDlg, IDC_PROP_TAB, Psp);
 
+        SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
         return TRUE;
     } else if (uMsg == WM_COMMAND)
     {
@@ -55,26 +56,22 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 HRESULT
 AW_OpenPropDialogBoxSync(
-    _In_ HWND RefWindow)
+    _In_ HWND Window)
 {
-    HRESULT hr;
     PAW_WINDOW_PROP Prop;
-    W32ERROR Error;
+    W32ERROR Ret;
+    HRESULT hr;
 
     if (!Mem_AllocPtr(Prop))
     {
         return E_OUTOFMEMORY;
     }
-    Error = AW_GetWindowProp(RefWindow, Prop);
-    if (Error != ERROR_SUCCESS)
-    {
-        hr = HRESULT_FROM_WIN32(Error);
-        goto _Exit;
-    }
-
-    hr = KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase, NULL, g_ResPropDlgTemplate, PropDlgProc, (LPARAM)Prop);
-
-_Exit:
+    Ret = AW_GetWindowProp(Window, Prop);
+    hr = Ret == ERROR_SUCCESS ? KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase,
+                                                       NULL,
+                                                       g_ResPropDlgTemplate,
+                                                       PropDlgProc,
+                                                       (LPARAM)Prop) : HRESULT_FROM_WIN32(Ret);
     Mem_Free(Prop);
     return hr;
 }
@@ -91,7 +88,7 @@ OpenPropDialogBoxThread(
 
 NTSTATUS
 AW_OpenPropDialogBoxAsync(
-    _In_ HWND RefWindow)
+    _In_ HWND Window)
 {
-    return PS_CreateThread(NtCurrentProcess(), FALSE, OpenPropDialogBoxThread, (PVOID)RefWindow, NULL, NULL);
+    return PS_CreateThread(NtCurrentProcess(), FALSE, OpenPropDialogBoxThread, (PVOID)Window, NULL, NULL);
 }

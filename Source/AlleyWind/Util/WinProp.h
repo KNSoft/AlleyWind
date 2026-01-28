@@ -72,73 +72,70 @@ typedef enum _AW_WINDOW_RELATIONSHIP
 
 typedef struct _AW_WINDOW_PROP
 {
+    _Notnull_ HWND Handle;
+    WINDOWINFO Info; // GetWindowInfo must success
+
     USHORT ReaderBits; // sizeof(void*) * CHAR_BIT, 32 or 64;
-    HWND Handle;
-    LOGICAL TopLevelWindow;
+    struct
+    {
+        USHORT TopLevel : 1;
+        USHORT Unicode : 1;
+        USHORT KernelMode : 1;
+        USHORT MonitorInfoValid : 1;
+        USHORT RelativeRectValid : 1; // FALSE if failed or not a child window
+    }; // Bit flags
+
+    RECT RelativeRect; // { 0 } if invalid
 
     ULONG CaptionValid;
     _Null_terminated_ WCHAR Caption[MAX_WNDCAPTION_CCH]; // UNICODE_NULL if invalid
 
     ULONG ClassNameValid;
     _Null_terminated_ WCHAR ClassName[MAX_CLASSNAME_CCH]; // UNICODE_NULL if invalid
-
-    ULONG StyleValid;
-    ULONG Style; // 0 if invalid
-
-    ULONG ExStyleValid;
-    ULONG ExStyle; // 0 if invalid
+    PAW_SYSCLASS_INFO SysClassInfo; // NULL if no system class matched
 
     ULONG WndProcValid;
     ULONGLONG WndProc; // 0 if invalid
     NTSTATUS WndProcDisplayNameValid;
-    WCHAR WndProcDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
+    _Null_terminated_ WCHAR WndProcDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
 
     ULONG InstanceHandleValid;
     ULONGLONG InstanceHandle; // 0 if invalid
     NTSTATUS InstanceHandleDisplayNameValid;
-    WCHAR InstanceHandleDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
+    _Null_terminated_ WCHAR InstanceHandleDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
 
-
-    /* ERROR_INVALID_PARAMETER if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)) */
+    /* ERROR_NOT_CHILD_WINDOW if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)) */
     ULONG IdentifierValid;
     LONGLONG Identifier; // 0 if invalid
-
-    LOGICAL Unicode;
-    LOGICAL KernelMode;
-
-    HRESULT ScreenRectValid;
-    RECT ScreenRect; // { 0 } if invalid
-
-    /*
-     * ULONG(Win32 Error) and Client Rect if (Prop->TopLevelWindow || !(Prop->Style & WS_CHILD)),
-     * HRESULT and Relative Rect otherwise
-     */
-    ULONG Rect2Valid;
-    RECT Rect2;
 
     ULONG ThreadProcessIdValid;
     ULONG ProcessId; // 0 if invalid
     ULONG ThreadId; // 0 if invalid
+
     NTSTATUS ImageMachineValid;
     USHORT ImageMachine; // IMAGE_FILE_MACHINE_UNKNOWN if invalid
     USHORT ImageBits; // 0 if invalid
-
-    /* Require ProcessId valid */
     NTSTATUS ProcessImagePathValid;
-    WCHAR ProcessImagePath[MAX_PATH]; // UNICODE_NULL if invalid
+    struct
+    {
+        UNICODE_STRING Path;
+        _Null_terminated_ WCHAR Buffer[MAX_PATH];
+    } ProcessImagePath;
 
-    /* Require ThreadId valid */
     NTSTATUS ThreadStartAddressValid;
     ULONGLONG ThreadStartAddress; // 0 if invalid
     NTSTATUS ThreadStartAddressDisplayNameValid;
-    WCHAR ThreadStartAddressDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
+    _Null_terminated_ WCHAR ThreadStartAddressDisplayName[MAX_ADDRESSNAME_CCH]; // UNICODE_NULL if invalid
 
-    LOGICAL MonitorInfoValid;
     MONITORINFOEXW MonitorInfo;
-
     ULONG RelWindows[AWWindowRelationshipMax];
 
 } AW_WINDOW_PROP, *PAW_WINDOW_PROP;
+
+/* Update window dynamic information */
+W32ERROR
+AW_UpdatePropInfo(
+    _Inout_ PAW_WINDOW_PROP Prop);
 
 W32ERROR
 AW_GetWindowProp(

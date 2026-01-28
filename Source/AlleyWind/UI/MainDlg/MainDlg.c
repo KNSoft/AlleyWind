@@ -94,7 +94,8 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
 {
     UPDATE_WNDTREE_ENUM_CHILDREN stEnumChildren, *lpstEnumChildren;
     WCHAR szCaption[MAX_WNDCAPTION_CCH], szClassName[MAX_CLASSNAME_CCH];
-    PCWSTR pszSysClassName;
+    PAW_SYSCLASS_INFO pSysClassInfo;
+    PCWSTR pszSysClassDisplayName;
     WCHAR szBuffer[sizeof(DWORD) * 2 + ARRAYSIZE(szCaption) + ARRAYSIZE(szClassName) + 16];
     HICON hIcon;
     INT iImageIcon, iCch;
@@ -109,19 +110,25 @@ InsertWindowToTree(HWND hWnd, LPARAM lParam)
 
     /* Get window info */
     UI_GetWindowTextW(hWnd, szCaption);
-    if (!GetClassNameW(hWnd, szClassName, ARRAYSIZE(szClassName)))
+    if (GetClassNameW(hWnd, szClassName, ARRAYSIZE(szClassName)) == 0)
     {
         szClassName[0] = UNICODE_NULL;
     }
     if (szClassName[0] != UNICODE_NULL)
     {
-        pszSysClassName = AW_GetSysClassDisplayName(szClassName);
-        if (pszSysClassName != NULL)
-        {
-            iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls (%ls)", UI_TruncateHandle32(hWnd), szCaption, szClassName, pszSysClassName);
-        } else
+        pSysClassInfo = AW_GetSysClass(szClassName);
+        pszSysClassDisplayName = pSysClassInfo == NULL ? NULL : pSysClassInfo->DisplayName;
+        if (pszSysClassDisplayName == NULL)
         {
             iCch = Str_PrintfW(szBuffer, L"%08lX \"%ls\" %ls", UI_TruncateHandle32(hWnd), szCaption, szClassName);
+        } else
+        {
+            iCch = Str_PrintfW(szBuffer,
+                               L"%08lX \"%ls\" %ls (%ls)",
+                               UI_TruncateHandle32(hWnd),
+                               szCaption,
+                               szClassName,
+                               pszSysClassDisplayName);
         }
     } else
     {

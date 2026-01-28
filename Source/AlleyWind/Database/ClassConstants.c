@@ -476,16 +476,9 @@ static UI_VALUEEDITOR_CONSTANT MDISConsts[] = {
 
 #pragma region Classes
 
-typedef struct _AW_SYSCLASS_INFO {
-    PCWSTR ClassName;
-    PCWSTR DisplayName;
-    PUI_VALUEEDITOR_CONSTANT StyleConsts;
-    ULONG StyleConstsCount;
-} AW_SYSCLASS_INFO, * PAW_SYSCLASS_INFO;
-
 #define AW_DATABASE_SYSCTLLIB_COMMCTLINDEX 2
-#define DEFINE_CLASS_INFO_0(ClassName, DisplayName) { ClassName, (PCWSTR)Precomp4C_I18N_All_##DisplayName, NULL, 0 }
-#define DEFINE_CLASS_INFO_1(ClassName, DisplayName, StyleConstants) { ClassName, (PCWSTR)Precomp4C_I18N_All_##DisplayName, StyleConstants, ARRAYSIZE(StyleConstants) }
+#define DEFINE_CLASS_INFO_0(ClassName, DisplayName) { ClassName, (PCWSTR)Precomp4C_I18N_KNSAW_##DisplayName, NULL, 0 }
+#define DEFINE_CLASS_INFO_1(ClassName, DisplayName, StyleConstants) { ClassName, (PCWSTR)Precomp4C_I18N_KNSAW_##DisplayName, StyleConstants, ARRAYSIZE(StyleConstants) }
 
 static AW_SYSCLASS_INFO g_astSysClassInfo[] = {
 
@@ -538,9 +531,9 @@ AW_InitClassDatabase(VOID)
                      UFIELD_OFFSET(typeof(g_astSysClassInfo[0]), DisplayName));
 }
 
-static
+_Ret_maybenull_
 PAW_SYSCLASS_INFO
-FindSysClassInfoByName(
+AW_GetSysClass(
     _In_ PCWSTR ClassName)
 {
     UINT i;
@@ -569,13 +562,69 @@ FindSysClassInfoByName(
     return NULL;
 }
 
-_Ret_maybenull_
-PCWSTR
-AW_GetSysClassDisplayName(
-    _In_ PCWSTR ClassName)
+HRESULT
+AW_GetStyleValueConstants(
+    _In_opt_ PAW_SYSCLASS_INFO SysClassInfo,
+    _In_ AW_STYLE_VALUE_TYPE StyleType,
+    _In_ LOGICAL IsChild,
+    _Out_ PUI_VALUEEDITOR_CONSTANT* Consts,
+    _Out_ PULONG ConstsCount)
 {
-    PAW_SYSCLASS_INFO Info = FindSysClassInfoByName(ClassName);
-    return Info == NULL ? NULL : Info->DisplayName;
+    PUI_VALUEEDITOR_CONSTANT pConsts;
+    ULONG ulConstsCount;
+
+    if (StyleType == AW_StyleType_Style)
+    {
+        PUI_VALUEEDITOR_CONSTANT TempConsts, SysClassConsts;
+        ULONG TempConstsCount, SysClassConstsCount;
+
+        if (IsChild)
+        {
+            TempConsts = WSChildConsts;
+            TempConstsCount = ARRAYSIZE(WSChildConsts);
+        } else
+        {
+            TempConsts = WSPopupConsts;
+            TempConstsCount = ARRAYSIZE(WSPopupConsts);
+        }
+        if (SysClassInfo)
+        {
+            SysClassConsts = SysClassInfo->StyleConsts;
+            SysClassConstsCount = SysClassInfo->StyleConstsCount;
+        } else
+        {
+            SysClassConsts = NULL;
+            SysClassConstsCount = 0;
+        }
+        pConsts = Mem_CombineStruct(3,
+                                    typeof(*TempConsts),
+                                    WSConsts,
+                                    ARRAYSIZE(WSConsts),
+                                    TempConsts,
+                                    TempConstsCount,
+                                    SysClassConsts,
+                                    SysClassConstsCount);
+        if (pConsts == NULL)
+        {
+            return E_OUTOFMEMORY;
+        }
+        ulConstsCount = ARRAYSIZE(WSConsts) + TempConstsCount + SysClassConstsCount;
+    } else if (StyleType == AW_StyleType_ExStyle)
+    {
+        pConsts = WSEXConsts;
+        ulConstsCount = ARRAYSIZE(WSEXConsts);
+    } else if (StyleType == AW_StyleType_ClassStyle)
+    {
+        pConsts = CSConsts;
+        ulConstsCount = ARRAYSIZE(CSConsts);
+    } else
+    {
+        return E_INVALIDARG;
+    }
+
+    *Consts = pConsts;
+    *ConstsCount = ulConstsCount;
+    return S_OK;
 }
 
 #pragma endregion
