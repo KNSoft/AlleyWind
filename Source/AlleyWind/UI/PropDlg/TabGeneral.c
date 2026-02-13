@@ -1,7 +1,5 @@
 ﻿#include "../../AlleyWind.inl"
 
-#define STYLE_VALUE_FORMAT L"%08lX"
-
 static AW_I18N_DLGITEM aI18NItems[] = {
     { IDC_PROP_CAPTION_TEXT, Precomp4C_I18N_KNSAW_Caption },
     { IDC_PROP_HANDLE_TEXT, Precomp4C_I18N_KNSAW_Handle },
@@ -25,7 +23,7 @@ SetStyleValue(
 {
     UI_SetDlgItemTextW(Dialog,
                        EditTextId,
-                       Str_PrintfExW(Buffer, BufferCch, STYLE_VALUE_FORMAT, Style) != 0 ? Buffer : g_ResNAText);
+                       Str_PrintfExW(Buffer, BufferCch, L"%08lX", Style) != 0 ? Buffer : g_ResNAText);
 }
 
 static
@@ -39,7 +37,9 @@ SetRectValue(
     HWND hCheck = GetDlgItem(Dialog, IDC_PROP_RECT_RELTIVE_CHECK);
     LOGICAL bShowRelative;
     
-    EnableWindow(hCheck, Prop->RelativeRectValid);
+    EnableWindow(hCheck,
+                 Prop->RelativeRectValid &&
+                 Prop->RelWindows[AWWindowRelationshipParent] != UI_TruncateHandle32(GetDesktopWindow()));
     UI_EnableDlgItem(Dialog, IDC_PROP_RECT_BTN, Prop->RelativeRectValid);
 
     if (Prop->RelativeRectValid)
@@ -78,7 +78,7 @@ UpdatePropInfo(
         pszTemp = Prop->Caption;
     } else
     {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
+        AW_WriteNAStringWithWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->CaptionValid);
         pszTemp = szBuffer;
     }
     UI_SetWindowTextW(hCtl, pszTemp);
@@ -99,7 +99,7 @@ UpdatePropInfo(
                                      ARRAYSIZE(szBuffer));
     } else
     {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
+        AW_WriteNAStringWithWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->InstanceHandleValid);
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_INSTANCE_HANDLE_EDIT, szBuffer);
 
@@ -109,7 +109,7 @@ UpdatePropInfo(
         pszTemp = Prop->SysClassInfo == NULL ? NULL : Prop->SysClassInfo->DisplayName;
     } else
     {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
+        AW_WriteNAStringWithWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->ClassNameValid);
         pszTemp = szBuffer;
     }
     UI_SetDlgItemTextW(Dialog, IDC_PROP_SYSCLASS_EDIT, pszTemp);
@@ -122,7 +122,7 @@ UpdatePropInfo(
         pszTemp = Str_FromIntW(Prop->Identifier, szBuffer) > 0 ? szBuffer : NULL;
     } else
     {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
+        AW_WriteNAStringWithWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->IdentifierValid);
         pszTemp = szBuffer;
     }
     UI_SetWindowTextW(hCtl, pszTemp);
@@ -131,7 +131,7 @@ UpdatePropInfo(
     /* Window Procedure */
     if (Prop->WndProcValid != ERROR_SUCCESS)
     {
-        AW_WriteNAStringFromWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->WndProcValid);
+        AW_WriteNAStringWithWin32Error(szBuffer, ARRAYSIZE(szBuffer), Prop->WndProcValid);
     } else
     {
         AW_WriteAddressDisplayString(Prop,
@@ -201,7 +201,7 @@ GeneralPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 if (!bRelative)
                 {
-                    if (!UI_ScreenRectToClient((HWND)(ULONG_PTR)Prop->RelWindows[AWWindowRelationshipParent],
+                    if (!UI_ScreenRectToClient(UI_32ToHandle(Prop->RelWindows[AWWindowRelationshipParent]),
                                                &rc,
                                                &rc))
                     {

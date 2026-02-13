@@ -43,7 +43,7 @@ AW_WriteNACodeString(
 FORCEINLINE
 _Success_(return > 0)
 ULONG
-AW_WriteNAStringFromWin32Error(
+AW_WriteNAStringWithWin32Error(
     _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
     _In_ ULONG BufferCch,
     _In_ ULONG Win32Error)
@@ -55,7 +55,7 @@ AW_WriteNAStringFromWin32Error(
 FORCEINLINE
 _Success_(return > 0)
 ULONG
-AW_WriteNAStringFromHr(
+AW_WriteNAStringWithHr(
     _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
     _In_ ULONG BufferCch,
     _In_ HRESULT Hr)
@@ -67,7 +67,7 @@ AW_WriteNAStringFromHr(
 FORCEINLINE
 _Success_(return > 0)
 ULONG
-AW_WriteNAStringFromNtStatus(
+AW_WriteNAStringWithNtStatus(
     _Out_writes_(BufferCch) _Always_(_Post_z_) PWSTR Buffer,
     _In_ ULONG BufferCch,
     _In_ NTSTATUS Status)

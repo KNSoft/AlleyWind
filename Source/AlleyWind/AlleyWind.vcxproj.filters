@@ -35,6 +35,9 @@
     <ClCompile Include="Util\StringFormat.c">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="Util\Init.c">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="AlleyWind.inl" />
@@ -64,6 +67,9 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="Util\StringFormat.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Init.h">
       <Filter>Util</Filter>
     </ClInclude>
   </ItemGroup>

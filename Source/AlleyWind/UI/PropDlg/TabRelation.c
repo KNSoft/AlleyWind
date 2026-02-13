@@ -4,6 +4,7 @@ static AW_I18N_DLGITEM aI18NItems[] = {
     { IDC_PROP_PROCESS_TEXT, Precomp4C_I18N_KNSAW_Process },
     { IDC_PROP_THREAD_TEXT, Precomp4C_I18N_KNSAW_Thread },
     { IDC_PROP_MONITOR_TEXT, Precomp4C_I18N_KNSAW_Monitor },
+    { IDC_PROP_VIRTDESK_TEXT, Precomp4C_I18N_KNSAW_VirtualDesktop },
 };
 
 static UINT aRelWindowColCx[] = { 180, 140, 200, 200 };
@@ -13,7 +14,7 @@ static ULONG_PTR aRelWindowColPsz[] = {
     Precomp4C_I18N_KNSAW_Caption,
     Precomp4C_I18N_KNSAW_Class,
 };
-C_ASSERT(ARRAYSIZE(aRelWindowColCx) == ARRAYSIZE(aRelWindowColPsz));
+_STATIC_ASSERT(ARRAYSIZE(aRelWindowColCx) == ARRAYSIZE(aRelWindowColPsz));
 
 static ULONG_PTR aRelWindowI18NItems[AWWindowRelationshipMax] = {
     Precomp4C_I18N_KNSAW_ParentWindow,
@@ -24,7 +25,69 @@ static ULONG_PTR aRelWindowI18NItems[AWWindowRelationshipMax] = {
     Precomp4C_I18N_KNSAW_FirstEqualWindow,
     Precomp4C_I18N_KNSAW_LastEqualWindow,
 };
-C_ASSERT(ARRAYSIZE(aRelWindowI18NItems) == AWWindowRelationshipMax);
+_STATIC_ASSERT(ARRAYSIZE(aRelWindowI18NItems) == AWWindowRelationshipMax);
+
+typedef struct
+{
+    GUID CurrentId;
+    HWND ComboBox;
+} VIRTDESK_ENUM_CONTEXT, *PVIRTDESK_ENUM_CONTEXT;
+
+static
+_Function_class_(SHELL_ENUM_VIRTUALDESKTOP_PROC)
+__callback
+LOGICAL
+CALLBACK
+EnumVirtualDesktopProc(
+    _In_ IVirtualDesktop* VirtualDesktop,
+    _In_ UINT Index,
+    _In_opt_ PVOID Context)
+{
+    _Analysis_assume_(Context != NULL);
+    PVIRTDESK_ENUM_CONTEXT ctx = (PVIRTDESK_ENUM_CONTEXT)Context;
+
+    HRESULT hrId, hrName;
+    GUID Id;
+    HSTRING Name = NULL; // Patches C4703 error due to IVirtualDesktop::GetName has no _Out_ SAL annotation
+    ULONG Cch;
+    WCHAR Buffer[MAX_PATH];
+    INT_PTR iItem;
+
+    hrId = VirtualDesktop->lpVtbl->GetId(VirtualDesktop, &Id);
+    if (IS_NT_VERSION_GE(NT_VERSION_WIN11_22H2))
+    {
+        hrName = VirtualDesktop->lpVtbl->GetName(VirtualDesktop, &Name);
+    } else
+    {
+        hrName = E_NOINTERFACE;
+    }
+
+    Buffer[0] = L'#';
+    Cch = 1;
+    Cch += Str_FromIntExW((INT64)Index + 1, TRUE, 10, Buffer + Cch, ARRAYSIZE(Buffer) - Cch);
+    if (SUCCEEDED(hrName))
+    {
+        Cch += Str_PrintfExW(Buffer + Cch,
+                             ARRAYSIZE(Buffer) - Cch,
+                             L" \"%ls\"",
+                             _Inline_WindowsGetStringRawBuffer(Name, NULL));
+    }
+    if (SUCCEEDED(hrId))
+    {
+        Buffer[Cch++] = L' ';
+        Cch += Str_FromGUIDUpperW(Buffer + Cch,
+                                  ARRAYSIZE(Buffer) - Cch,
+                                  &Id);
+    }
+
+    iItem = SendMessageW(ctx->ComboBox, CB_ADDSTRING, 0, (LPARAM)Buffer);
+    if (iItem >= 0 && IsEqualGUID(&Id, &ctx->CurrentId))
+    {
+        SendMessageW(ctx->ComboBox, CB_SETCURSEL, iItem, 0);
+    }
+
+    return TRUE;
+}
 
 static
 VOID
@@ -37,7 +100,9 @@ UpdatePropInfo(
     LVITEMW lvi;
     HWND hRelList;
     W32ERROR Ret;
+    HRESULT hr;
 
+    /* Process and thread information */
     if (Prop->ThreadProcessIdValid == ERROR_SUCCESS)
     {
         /* Process Id and Path */
@@ -53,7 +118,7 @@ UpdatePropInfo(
             u = Str_CopyExW(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePath.Buffer);
         } else
         {
-            u = AW_WriteNAStringFromNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePathValid);
+            u = AW_WriteNAStringWithNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ProcessImagePathValid);
         }
         if (u == 0)
         {
@@ -73,14 +138,14 @@ _End_Write_Process_Path:
         if (NT_SUCCESS(Prop->ThreadStartAddressValid))
         {
             u = AW_WriteAddressDisplayString(Prop,
-                                         Prop->ThreadStartAddress,
-                                         Prop->ThreadStartAddressDisplayNameValid,
-                                         Prop->ThreadStartAddressDisplayName,
-                                         Buffer + Cch,
-                                         ARRAYSIZE(Buffer) - Cch);
+                                             Prop->ThreadStartAddress,
+                                             Prop->ThreadStartAddressDisplayNameValid,
+                                             Prop->ThreadStartAddressDisplayName,
+                                             Buffer + Cch,
+                                             ARRAYSIZE(Buffer) - Cch);
         } else
         {
-            u = AW_WriteNAStringFromNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ThreadStartAddressValid);
+            u = AW_WriteNAStringWithNtStatus(Buffer + Cch, ARRAYSIZE(Buffer) - Cch, Prop->ThreadStartAddressValid);
         }
         if (u == 0)
         {
@@ -90,12 +155,13 @@ _End_Write_Thread_Address:
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, Buffer);
     } else
     {
-        AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Prop->ThreadProcessIdValid);
+        AW_WriteNAStringWithWin32Error(Buffer, ARRAYSIZE(Buffer), Prop->ThreadProcessIdValid);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_PROCESS_EDIT, Buffer);
         UI_SetDlgItemTextW(Dialog, IDC_PROP_THREAD_EDIT, Buffer);
         UI_EnableDlgItem(Dialog, IDC_PROP_PROCESS_BUTTON, FALSE);
     }
 
+    /* Monitor information */
     psz = NULL;
     if (Prop->MonitorInfoValid)
     {
@@ -111,6 +177,37 @@ _End_Write_Thread_Address:
 _Set_Monitor_Info:
     UI_SetDlgItemTextW(Dialog, IDC_PROP_MONITOR_EDIT, psz);
 
+    /* Virtual Desktop information */
+
+    BOOL VDAvailable = FALSE;
+    VIRTDESK_ENUM_CONTEXT VDCtx;
+
+    VDCtx.ComboBox = GetDlgItem(Dialog, IDC_PROP_VIRTDESK_COMBO);
+    SendMessageW(VDCtx.ComboBox, CB_RESETCONTENT, 0, 0);
+    if (!Prop->TopLevel || g_Util_piVDM == NULL)
+    {
+        psz = (PWSTR)g_ResNAText;
+        goto _Set_VirtDesk_Info;
+    }
+    hr = g_Util_piVDM->lpVtbl->GetWindowDesktopId(g_Util_piVDM, Prop->Handle, &VDCtx.CurrentId);
+    if (SUCCEEDED(hr))
+    {
+        hr = Shell_EnumVirtualDesktops(g_Util_piVDMI_26100, EnumVirtualDesktopProc, &VDCtx);
+        if (SUCCEEDED(hr))
+        {
+            VDAvailable = TRUE;
+        }
+        Cch = Str_FromGUIDUpperW(Buffer, ARRAYSIZE(Buffer), &VDCtx.CurrentId);
+    } else
+    {
+        Cch = AW_WriteNAStringWithHr(Buffer, ARRAYSIZE(Buffer), hr);
+    }
+    psz = Cch > 0 ? Buffer : (PWSTR)g_ResNAText;
+_Set_VirtDesk_Info:
+    UI_SetWindowTextW(VDCtx.ComboBox, psz);
+    EnableWindow(VDCtx.ComboBox, VDAvailable);
+
+    /* Related windows */
     hRelList = GetDlgItem(Dialog, IDC_PROP_RELATION_LIST);
     for (ULONG i = 0; i < ARRAYSIZE(aRelWindowI18NItems); i++)
     {
@@ -129,9 +226,9 @@ _Set_Monitor_Info:
             lvi.iSubItem++;
             if (Prop->RelWindows[i] != 0)
             {
-                Ret = AW_GetWindowText((HWND)(ULONG_PTR)Prop->RelWindows[i], Buffer, ARRAYSIZE(Buffer));
+                Ret = AW_GetWindowText(UI_32ToHandle(Prop->RelWindows[i]), Buffer, ARRAYSIZE(Buffer));
                 lvi.pszText = Ret == ERROR_SUCCESS ? Buffer :
-                    (AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Ret) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
+                    (AW_WriteNAStringWithWin32Error(Buffer, ARRAYSIZE(Buffer), Ret) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
             } else
             {
                 lvi.pszText = (PWSTR)AW_GetString(NA);
@@ -140,8 +237,8 @@ _Set_Monitor_Info:
             lvi.iSubItem++;
             if (Prop->RelWindows[i] != 0)
             {
-                lvi.pszText = GetClassNameW((HWND)(ULONG_PTR)Prop->RelWindows[i], Buffer, ARRAYSIZE(Buffer)) > 0 ? Buffer :
-                    (AW_WriteNAStringFromWin32Error(Buffer, ARRAYSIZE(Buffer), Err_GetLastError()) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
+                lvi.pszText = GetClassNameW(UI_32ToHandle(Prop->RelWindows[i]), Buffer, ARRAYSIZE(Buffer)) > 0 ? Buffer :
+                    (AW_WriteNAStringWithWin32Error(Buffer, ARRAYSIZE(Buffer), Err_GetLastError()) > 0 ? Buffer : (PWSTR)AW_GetString(NA));
             } else
             {
                 lvi.pszText = (PWSTR)AW_GetString(NA);

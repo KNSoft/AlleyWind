@@ -47,6 +47,7 @@ enum
     Precomp4C_I18N_KNSAW_Process,
     Precomp4C_I18N_KNSAW_Thread,
     Precomp4C_I18N_KNSAW_Monitor,
+    Precomp4C_I18N_KNSAW_VirtualDesktop,
     Precomp4C_I18N_KNSAW_LocateInList,
     Precomp4C_I18N_KNSAW_ParentWindow,
     Precomp4C_I18N_KNSAW_OwnerWindow,

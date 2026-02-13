@@ -168,10 +168,9 @@ AW_UpdatePropInfo(
         }
         Prop->RelWindows[i] = UI_TruncateHandle32(RelWindow);
     }
-    RelWindow = (HWND)(ULONG_PTR)Prop->RelWindows[AWWindowRelationshipParent];
+    RelWindow = UI_32ToHandle(Prop->RelWindows[AWWindowRelationshipParent]);
 
     if (RelWindow != NULL &&
-        RelWindow != GetDesktopWindow() &&
         UI_ScreenRectToClient(RelWindow, &Prop->Info.rcWindow, &Prop->RelativeRect))
     {
         Prop->RelativeRectValid = TRUE;
@@ -214,12 +213,18 @@ AW_UpdatePropInfo(
 W32ERROR
 AW_GetWindowProp(
     _In_ HWND Window,
-    _Out_ PAW_WINDOW_PROP Prop)
+    _Out_ PAW_WINDOW_PROP* NewProp)
 {
+    PAW_WINDOW_PROP Prop;
     W32ERROR Ret;
     PVOID Ptr;
     NTSTATUS Status;
     HANDLE PSHandle;
+
+    if (!Mem_AllocPtr(Prop))
+    {
+        return ERROR_OUTOFMEMORY;
+    }
 
     Prop->Handle = UI_TruncateHandle(Window);
     Ret = AW_UpdatePropInfo(Prop);
@@ -364,5 +369,13 @@ _Get_Thread_Info_End:
     Prop->Unicode = IsWindowUnicode(Window);
     Prop->KernelMode = IsServerSideWindow(Window);
 
+    *NewProp = Prop;
     return ERROR_SUCCESS;
+}
+
+VOID
+AW_ReleaseWindowProp(
+    __drv_freesMem(Mem) _Frees_ptr_opt_ _Post_invalid_ PAW_WINDOW_PROP Prop)
+{
+    Mem_Free(Prop);
 }

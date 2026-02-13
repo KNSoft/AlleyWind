@@ -286,7 +286,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
 
         /* Set title */
-        C_ASSERT(ARRAYSIZE(szTitle) > _STR_LEN(KNSOFT_APP_NAME));
+        _STATIC_ASSERT(ARRAYSIZE(szTitle) > _STR_LEN(KNSOFT_APP_NAME));
         wcscpy_s(szTitle, ARRAYSIZE(szTitle), KNSOFT_APP_NAME);
         AW_PostfixTitleText(szTitle + _STR_LEN(KNSOFT_APP_NAME),
                             ARRAYSIZE(szTitle) - _STR_LEN(KNSOFT_APP_NAME));

@@ -29,6 +29,7 @@
 #define IDC_PROP_INSTANCE_HANDLE_EDIT   1013
 #define IDC_PROP_RELATION_LIST          1013
 #define IDC_PROP_SYSCLASS_TEXT          1014
+#define IDC_PROP_VIRTDESK_TEXT          1014
 #define IDC_PROP_SYSCLASS_EDIT          1015
 #define IDC_PROP_STYLE_TEXT             1016
 #define IDC_PROP_STYLE_EDIT             1017
@@ -41,6 +42,7 @@
 #define IDC_PROP_EXSTYLE_BTN            1026
 #define IDC_PROP_RECT_BTN               1027
 #define IDC_PROP_RECT_RELTIVE_CHECK     1028
+#define IDC_PROP_VIRTDESK_COMBO         1029
 
 // Next default values for new objects
 // 
@@ -48,7 +50,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1029
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

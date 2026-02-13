@@ -21,11 +21,13 @@ RunMainProgram(VOID)
 
     AW_InitClassDatabase();
     AW_InitResource();
+    AW_InitUtil();
     hr = AW_OpenMainDialogBox();
     if (FAILED(hr))
     {
         KNS_HrMessageBox(NULL, hr);
     }
+    AW_UninitUtil();
     AW_UninitResource();
 
     if (SUCCEEDED(hrCom))

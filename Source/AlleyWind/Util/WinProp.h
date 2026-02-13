@@ -140,7 +140,11 @@ AW_UpdatePropInfo(
 W32ERROR
 AW_GetWindowProp(
     _In_ HWND Window,
-    _Out_ PAW_WINDOW_PROP Prop);
+    _Out_ PAW_WINDOW_PROP* NewProp);
+
+VOID
+AW_ReleaseWindowProp(
+    __drv_freesMem(Mem) _Frees_ptr_opt_ _Post_invalid_ PAW_WINDOW_PROP Prop);
 
 FORCEINLINE
 NTSTATUS

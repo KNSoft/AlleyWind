@@ -60,19 +60,22 @@ AW_OpenPropDialogBoxSync(
 {
     PAW_WINDOW_PROP Prop;
     W32ERROR Ret;
-    HRESULT hr;
+    HRESULT hr, hrCom;
 
-    if (!Mem_AllocPtr(Prop))
-    {
-        return E_OUTOFMEMORY;
-    }
-    Ret = AW_GetWindowProp(Window, Prop);
+    hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+    Ret = AW_GetWindowProp(Window, &Prop);
     hr = Ret == ERROR_SUCCESS ? KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase,
                                                        NULL,
                                                        g_ResPropDlgTemplate,
                                                        PropDlgProc,
                                                        (LPARAM)Prop) : HRESULT_FROM_WIN32(Ret);
-    Mem_Free(Prop);
+    AW_ReleaseWindowProp(Prop);
+
+    if (SUCCEEDED(hrCom))
+    {
+        CoUninitialize();
+    }
     return hr;
 }
 
