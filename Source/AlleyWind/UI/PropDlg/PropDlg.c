@@ -65,12 +65,18 @@ AW_OpenPropDialogBoxSync(
     hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
     Ret = AW_GetWindowProp(Window, &Prop);
-    hr = Ret == ERROR_SUCCESS ? KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase,
-                                                       NULL,
-                                                       g_ResPropDlgTemplate,
-                                                       PropDlgProc,
-                                                       (LPARAM)Prop) : HRESULT_FROM_WIN32(Ret);
-    AW_ReleaseWindowProp(Prop);
+    if (Ret == ERROR_SUCCESS)
+    {
+        hr = KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase,
+                                    NULL,
+                                    g_ResPropDlgTemplate,
+                                    PropDlgProc,
+                                    (LPARAM)Prop);
+        AW_ReleaseWindowProp(Prop);
+    } else
+    {
+        hr = HRESULT_FROM_WIN32(Ret);
+    }
 
     if (SUCCEEDED(hrCom))
     {

@@ -38,6 +38,7 @@ AW_InitUtil(VOID)
 VOID
 AW_UninitUtil(VOID)
 {
+    AW_FreeVirtDeskInfo();
     if (g_Util_piAVC != NULL)
     {
         g_Util_piAVC->lpVtbl->Release(g_Util_piAVC);

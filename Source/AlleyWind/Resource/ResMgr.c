@@ -142,10 +142,7 @@ AW_InitResource(VOID)
     if (SUCCEEDED(hr))
     {
         g_ResUACShieldIconBitmap = UI_CreateBitmapFromIcon(sii.hIcon, 0, 0);
-        if (g_ResUACShieldIconBitmap == NULL)
-        {
-            DestroyIcon(sii.hIcon);
-        }
+        DestroyIcon(sii.hIcon);
     }
 
     g_ResMainDlgAccel = CreateAcceleratorTableW(g_MainDlgAccelItems, ARRAYSIZE(g_MainDlgAccelItems));
@@ -205,5 +202,10 @@ AW_UninitResource(VOID)
     {
         DestroyMenu(g_ResPropRelDlgProcessMenu);
         UI_DestroyMenuItems(aPropProcessMenuItems);
+    }
+    if (g_ResPropRelDlgRelWindowMenu != NULL)
+    {
+        DestroyMenu(g_ResPropRelDlgRelWindowMenu);
+        UI_DestroyMenuItems(aPropRelWindowMenuItems);
     }
 }

@@ -25,28 +25,31 @@ ExportWindowTreeToFileEnumProc(
     TVITEMW stTVI;
     WCHAR szUnicodeBuff[512];
     CHAR szUTF8Buff[ARRAYSIZE(szUnicodeBuff) * 2];
-    UINT i;
-    ULONG uChWritten;
+    ULONG i;
 
     _Analysis_assume_(Context != NULL);
     hFile = (HANDLE)Context;
 
+    if (Level > 0)
+    {
+        for (i = 0; i < Level && i < ARRAYSIZE(szUTF8Buff); i++)
+        {
+            szUTF8Buff[i] = '\t';
+        }
+        IO_WriteFile(hFile, NULL, szUTF8Buff, i);
+    }
+
     stTVI.mask = TVIF_TEXT;
     stTVI.hItem = TreeItem;
-    stTVI.cchTextMax = ARRAYSIZE(szUnicodeBuff) - Level;
-    for (i = 0; i < Level; i++)
-    {
-        szUnicodeBuff[i] = '\t';
-        stTVI.cchTextMax--;
-    }
-    stTVI.pszText = szUnicodeBuff + Level;
+    stTVI.cchTextMax = ARRAYSIZE(szUnicodeBuff);
+    stTVI.pszText = szUnicodeBuff;
     if (SendMessageW(g_hTree, TVM_GETITEMW, 0, (LPARAM)&stTVI))
     {
         _Analysis_assume_nullterminated_(szUnicodeBuff);
-        uChWritten = Str_W2U(szUTF8Buff, szUnicodeBuff);
-        szUTF8Buff[uChWritten] = '\r';
-        szUTF8Buff[uChWritten + 1] = '\n';
-        IO_WriteFile(hFile, NULL, szUTF8Buff, uChWritten + 2);
+        i = Str_W2U(szUTF8Buff, szUnicodeBuff);
+        szUTF8Buff[i] = '\r';
+        szUTF8Buff[i + 1] = '\n';
+        IO_WriteFile(hFile, NULL, szUTF8Buff, i + 2);
     }
 
     return TRUE;
@@ -204,6 +207,7 @@ UpdateWindowTreeAsync(VOID)
     Status = PS_CreateThread(NtCurrentProcess(), FALSE, UpdateWindowTreeThread, NULL, NULL, NULL);
     if (!NT_SUCCESS(Status))
     {
+        InterlockedCompareExchange(&g_bUpdatingTree, FALSE, TRUE);
         return RtlNtStatusToDosErrorNoTeb(Status);
     }
 

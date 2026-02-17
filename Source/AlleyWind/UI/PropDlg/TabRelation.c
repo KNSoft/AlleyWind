@@ -34,54 +34,46 @@ typedef struct
 } VIRTDESK_ENUM_CONTEXT, *PVIRTDESK_ENUM_CONTEXT;
 
 static
-_Function_class_(SHELL_ENUM_VIRTUALDESKTOP_PROC)
+_Function_class_(AW_VIRTDESK_ENUM_PROC)
 __callback
 LOGICAL
 CALLBACK
 EnumVirtualDesktopProc(
-    _In_ IVirtualDesktop* VirtualDesktop,
-    _In_ UINT Index,
+    _In_ PAW_VIRTDESK_INFO DeskInfo,
     _In_opt_ PVOID Context)
 {
     _Analysis_assume_(Context != NULL);
     PVIRTDESK_ENUM_CONTEXT ctx = (PVIRTDESK_ENUM_CONTEXT)Context;
 
-    HRESULT hrId, hrName;
-    GUID Id;
-    HSTRING Name = NULL; // Patches C4703 error due to IVirtualDesktop::GetName has no _Out_ SAL annotation
     ULONG Cch;
     WCHAR Buffer[MAX_PATH];
     INT_PTR iItem;
 
-    hrId = VirtualDesktop->lpVtbl->GetId(VirtualDesktop, &Id);
-    if (IS_NT_VERSION_GE(NT_VERSION_WIN11_22H2))
-    {
-        hrName = VirtualDesktop->lpVtbl->GetName(VirtualDesktop, &Name);
-    } else
-    {
-        hrName = E_NOINTERFACE;
-    }
-
+    /* Index */
     Buffer[0] = L'#';
     Cch = 1;
-    Cch += Str_FromIntExW((INT64)Index + 1, TRUE, 10, Buffer + Cch, ARRAYSIZE(Buffer) - Cch);
-    if (SUCCEEDED(hrName))
+    Cch += Str_FromIntExW((INT64)DeskInfo->Index + 1, TRUE, 10, Buffer + Cch, ARRAYSIZE(Buffer) - Cch);
+
+    /* Name */
+    if (SUCCEEDED(DeskInfo->hrName))
     {
         Cch += Str_PrintfExW(Buffer + Cch,
                              ARRAYSIZE(Buffer) - Cch,
                              L" \"%ls\"",
-                             _Inline_WindowsGetStringRawBuffer(Name, NULL));
+                             _Inline_WindowsGetStringRawBuffer(DeskInfo->Name, NULL));
     }
-    if (SUCCEEDED(hrId))
+
+    /* Id */
+    if (SUCCEEDED(DeskInfo->hrId))
     {
         Buffer[Cch++] = L' ';
         Cch += Str_FromGUIDUpperW(Buffer + Cch,
                                   ARRAYSIZE(Buffer) - Cch,
-                                  &Id);
+                                  &DeskInfo->Id);
     }
 
     iItem = SendMessageW(ctx->ComboBox, CB_ADDSTRING, 0, (LPARAM)Buffer);
-    if (iItem >= 0 && IsEqualGUID(&Id, &ctx->CurrentId))
+    if (iItem >= 0 && IsEqualGUID(&DeskInfo->Id, &ctx->CurrentId))
     {
         SendMessageW(ctx->ComboBox, CB_SETCURSEL, iItem, 0);
     }
@@ -192,7 +184,7 @@ _Set_Monitor_Info:
     hr = g_Util_piVDM->lpVtbl->GetWindowDesktopId(g_Util_piVDM, Prop->Handle, &VDCtx.CurrentId);
     if (SUCCEEDED(hr))
     {
-        hr = Shell_EnumVirtualDesktops(g_Util_piVDMI_26100, EnumVirtualDesktopProc, &VDCtx);
+        hr = AW_EnumVirtualDesktops(EnumVirtualDesktopProc, &VDCtx);
         if (SUCCEEDED(hr))
         {
             VDAvailable = TRUE;
@@ -216,7 +208,7 @@ _Set_VirtDesk_Info:
         lvi.iItem = MAXINT;
         lvi.iSubItem = 0;
         lvi.lParam = (LPARAM)Prop->RelWindows[i];
-        lvi.iItem = (INT)SendMessageW(hRelList, LVM_INSERTITEM, 0, (LPARAM)&lvi);
+        lvi.iItem = (INT)SendMessageW(hRelList, LVM_INSERTITEMW, 0, (LPARAM)&lvi);
         if (lvi.iItem != -1)
         {
             lvi.mask = LVIF_TEXT;
@@ -304,7 +296,7 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             W32ERROR Ret;
             PAW_WINDOW_PROP Prop = (PAW_WINDOW_PROP)GetWindowLongPtrW(hDlg, DWLP_USER);
 
-            Ret = Shell_Exec(Prop->ProcessImagePath.Buffer, NULL, L"properties", SW_SHOWNORMAL, NULL);
+            Ret = Shell_Exec(Prop->ProcessImagePath.Path.Buffer, NULL, L"properties", SW_SHOWNORMAL, NULL);
             if (Ret != ERROR_SUCCESS)
             {
                 KNS_Win32ErrorMessageBox(hDlg, Ret);
@@ -317,7 +309,7 @@ RelationPspProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             if (Str_PrintfW(ConfirmText,
                             AW_GetString(TerminateConfirm),
-                            Prop->ProcessImagePath,
+                            &Prop->ProcessImagePath.Path,
                             Prop->ProcessId) > 0 &&
                 UI_MsgBox(hDlg, ConfirmText, g_KNSAppInfo.AppName, MB_ICONQUESTION | MB_YESNO) == IDYES)
             {

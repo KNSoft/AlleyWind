@@ -6,6 +6,7 @@
 #include "Util/StringFormat.h"
 #include "Database/Database.h"
 #include "Util/Init.h"
+#include "Util/VirtDesk.h"
 #include "Util/WinProp.h"
 #include "UI/UI.h"
 

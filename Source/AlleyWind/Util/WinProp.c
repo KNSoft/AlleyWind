@@ -230,6 +230,7 @@ AW_GetWindowProp(
     Ret = AW_UpdatePropInfo(Prop);
     if (Ret != ERROR_SUCCESS)
     {
+        Mem_Free(Prop);
         return Ret;
     }
 

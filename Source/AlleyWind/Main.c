@@ -88,9 +88,15 @@ TryElevateUIAccess(VOID)
                               NULL,
                               NULL,
                               &pi);
-    NtClose(pi.hThread);
-    NtClose(pi.hProcess);
-    Ret = W32Ret == ERROR_SUCCESS ? S_OK : HRESULT_FROM_WIN32(W32Ret);
+    if (W32Ret != ERROR_SUCCESS)
+    {
+        Ret = HRESULT_FROM_WIN32(W32Ret);
+    } else
+    {
+        NtClose(pi.hThread);
+        NtClose(pi.hProcess);
+        Ret = S_OK;
+    }
 
 _Exit_2:
     NtClose(ProcessToken);

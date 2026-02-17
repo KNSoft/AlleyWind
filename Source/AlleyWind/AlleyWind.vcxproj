@@ -206,6 +206,7 @@
     <ClCompile Include="UI\PropDlg\PropDlg.c" />
     <ClCompile Include="UI\UI.c" />
     <ClCompile Include="Util\Init.c" />
+    <ClCompile Include="Util\VirtDesk.c" />
     <ClCompile Include="Util\WinProp.c" />
     <ClCompile Include="Util\StringFormat.c" />
   </ItemGroup>
@@ -222,6 +223,7 @@
     <ClInclude Include="Resource\Resource.h" />
     <ClInclude Include="UI\UI.h" />
     <ClInclude Include="Util\Init.h" />
+    <ClInclude Include="Util\VirtDesk.h" />
     <ClInclude Include="Util\WinProp.h" />
     <ClInclude Include="Util\StringFormat.h" />
   </ItemGroup>
