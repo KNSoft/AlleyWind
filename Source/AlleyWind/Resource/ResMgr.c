@@ -2,14 +2,7 @@
 
 #pragma region I18N
 
-static KNS_I18N_TABLE g_I18NTable = { PS_RUNONCE_INIT, &Precomp4C_I18N_Table_KNSAW };
-
-PCWSTR
-AW_GetStringEx(
-    _In_ ULONG_PTR Index)
-{
-    return KNS_I18NGetString(&g_I18NTable, Index);
-}
+KNS_I18N_TABLE g_I18NTable = { PS_RUNONCE_INIT, &Precomp4C_I18N_Table_KNSAW };
 
 VOID
 AW_InitI18NArray(
@@ -36,7 +29,8 @@ HBITMAP g_ResUACShieldIconBitmap = NULL;
 
 static ACCEL g_MainDlgAccelItems[] = {
     { FVIRTKEY, VK_F5, IDM_MAINDLG_FILE_REFRESH },
-    { FVIRTKEY | FCONTROL, 'S', IDM_MAINDLG_FILE_SAVETREE},
+    { FVIRTKEY | FCONTROL, 'S', IDM_MAINDLG_FILE_SAVETREE },
+    { FVIRTKEY | FCONTROL, 'F', IDM_MAINDLG_TOOL_FINDWINDOW },
 };
 
 HACCEL g_ResMainDlgAccel = NULL;
@@ -51,6 +45,11 @@ UI_MENU_ITEM g_MainDlgFileMenuItems[Menu_MainDlg_File_Max] = {
     { FALSE, MF_STRING, IDM_MAINDLG_FILE_SAVETREE, NULL, Precomp4C_I18N_KNSAW_SaveTree_Ctrl_S, NULL, 0 , NULL },
 };
 
+static UI_MENU_ITEM g_MainDlgToolMenuItems[] = {
+    { FALSE, MF_STRING, IDM_MAINDLG_TOOL_FINDWINDOW, NULL, Precomp4C_I18N_KNSAW_FindWindow, NULL, 0, NULL },
+    { FALSE, MF_STRING, IDM_MAINDLG_TOOL_SYSINPUTMON, NULL, Precomp4C_I18N_KNSAW_SysInputMon, NULL, 0, NULL },
+};
+
 static UI_MENU_ITEM g_MainDlgHelpMenuItems[] = {
     { FALSE, MF_STRING, IDM_MAINDLG_HELP_HOMEPAGE, NULL, Precomp4C_I18N_KNSAW_Homepage, NULL, 0, NULL },
 };
@@ -58,6 +57,7 @@ static UI_MENU_ITEM g_MainDlgHelpMenuItems[] = {
 // enum Menu_MainDlg_*
 UI_MENU_ITEM g_MainDlgMenuItems[] = {
     { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_KNSAW_File, NULL, ARRAYSIZE(g_MainDlgFileMenuItems), g_MainDlgFileMenuItems },
+    { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_KNSAW_Tool, NULL, ARRAYSIZE(g_MainDlgToolMenuItems), g_MainDlgToolMenuItems },
     { FALSE, MF_STRING, 0, NULL, Precomp4C_I18N_KNSAW_Help, NULL, ARRAYSIZE(g_MainDlgHelpMenuItems), g_MainDlgHelpMenuItems },
 };
 
@@ -71,6 +71,10 @@ HMENU g_ResMainDlgMenu = NULL;
 HMENU g_ResMainDlgItemMenu = NULL;
 
 LPCDLGTEMPLATEW g_ResMainDlgTemplate = NULL;
+
+/* Message monitor Dialog */
+
+LPCDLGTEMPLATEW g_ResMsgMonDlgTemplate = NULL;
 
 /* Properties Dialog */
 
@@ -148,6 +152,7 @@ AW_InitResource(VOID)
     g_ResMainDlgAccel = CreateAcceleratorTableW(g_MainDlgAccelItems, ARRAYSIZE(g_MainDlgAccelItems));
 
     AW_InitMenuI18N(g_MainDlgFileMenuItems, ARRAYSIZE(g_MainDlgFileMenuItems));
+    AW_InitMenuI18N(g_MainDlgToolMenuItems, ARRAYSIZE(g_MainDlgToolMenuItems));
     AW_InitMenuI18N(g_MainDlgHelpMenuItems, ARRAYSIZE(g_MainDlgHelpMenuItems));
     AW_InitMenuI18N(g_MainDlgMenuItems, ARRAYSIZE(g_MainDlgMenuItems));
     AW_InitMenuI18N(aMainDlgItemMenuItems, ARRAYSIZE(aMainDlgItemMenuItems));
@@ -171,6 +176,7 @@ AW_InitResource(VOID)
 
     g_ResMainDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MAIN));
     g_ResPropDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_PROP));
+    g_ResMsgMonDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MSGMON));
 
     AW_InitPropSheetPageI18N(g_ResPropDlgPages, ARRAYSIZE(g_ResPropDlgPages));
 

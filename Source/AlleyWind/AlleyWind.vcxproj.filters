@@ -41,6 +41,9 @@
     <ClCompile Include="Util\VirtDesk.c">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="UI\MsgMon.c">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="AlleyWind.inl" />

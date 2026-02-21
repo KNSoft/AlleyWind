@@ -244,16 +244,19 @@ GetSelectedItemRefWindow(VOID)
 
 static
 VOID
-OpenPropDlgForWindow(
+OpenPropWindow(
     _In_ HWND Dialog,
-    _In_ HWND Window)
+    _In_opt_ HWND Window)
 {
     NTSTATUS Status;
 
-    Status = AW_OpenPropDialogBoxAsync(Window);
-    if (!NT_SUCCESS(Status))
+    if (Window != NULL)
     {
-        KNS_NtStatusMessageBox(Dialog, Status);
+        Status = AW_OpenPropDialogBox(Window);
+        if (!NT_SUCCESS(Status))
+        {
+            KNS_NtStatusMessageBox(Dialog, Status);
+        }
     }
 }
 
@@ -380,11 +383,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
         } else if (wParam == MAKEWPARAM(IDM_MAINDLG_ITEM_PROPERTIES, 0))
         {
-            HWND Window = GetSelectedItemRefWindow();
-            if (Window != NULL)
-            {
-                OpenPropDlgForWindow(hDlg, Window);
-            }
+            OpenPropWindow(hDlg, GetSelectedItemRefWindow());
         } else if (HIWORD(wParam) == 0 || HIWORD(wParam) == 1)
         {
             if (LOWORD(wParam) == IDM_MAINDLG_FILE_REFRESH)
@@ -454,18 +453,13 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 POINT pt;
                 HTREEITEM Item;
                 UINT Flags;
-                HWND Window;
 
-                if (GetCursorPos(&pt) && ScreenToClient(hDlg, &pt))
+                if (GetCursorPos(&pt) && ScreenToClient(g_hTree, &pt))
                 {
                     Item = UI_TreeViewLocateItem(g_hTree, pt.x, pt.y, &Flags);
                     if (Item != NULL && Flags & TVHT_ONITEM)
                     {
-                        Window = GetTreeViewItemRefWindow(Item);
-                        if (Window != NULL)
-                        {
-                            OpenPropDlgForWindow(hDlg, Window);
-                        }
+                        OpenPropWindow(hDlg, GetTreeViewItemRefWindow(Item));
 
                         /* Disable default process, don't expand or collapse item */
                         SetWindowLongPtrW(hDlg, DWLP_MSGRESULT, 1);

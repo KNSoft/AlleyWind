@@ -22,6 +22,9 @@ extern HBITMAP g_ResUACShieldIconBitmap;
 #define IDM_MAINDLG_FILE_REFRESH 3
 #define IDM_MAINDLG_FILE_SAVETREE 4
 
+#define IDM_MAINDLG_TOOL_FINDWINDOW 11
+#define IDM_MAINDLG_TOOL_SYSINPUTMON 12
+
 #define IDM_MAINDLG_HELP_HOMEPAGE 20
 
 #define IDM_MAINDLG_ITEM_HIGHLIGHT 101
@@ -49,6 +52,7 @@ extern UI_MENU_ITEM g_MainDlgFileMenuItems[Menu_MainDlg_File_Max];
 enum
 {
     Menu_MainDlg_File = 0,
+    Menu_MainDlg_Tool,
     Menu_MainDlg_Help,
     Menu_MainDlg_Max
 };
@@ -58,6 +62,10 @@ extern HACCEL g_ResMainDlgAccel;
 extern HMENU g_ResMainDlgMenu;
 extern HMENU g_ResMainDlgItemMenu;
 extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
+
+/* Message monitor Dialog */
+
+extern LPCDLGTEMPLATEW g_ResMsgMonDlgTemplate;
 
 /* Properties Dialog */
 

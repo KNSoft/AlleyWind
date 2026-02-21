@@ -25,9 +25,15 @@ typedef struct _AW_I18N_PROPSHEET_PAGE
     DLGPROC DlgProc;
 } AW_I18N_PROPSHEET_PAGE, *PAW_I18N_PROPSHEET_PAGE;
 
+extern KNS_I18N_TABLE g_I18NTable;
+
+FORCEINLINE
 PCWSTR
 AW_GetStringEx(
-    _In_ ULONG_PTR Index);
+    _In_ ULONG_PTR Index)
+{
+    return KNS_I18NGetString(&g_I18NTable, Index);
+}
 
 #define AW_GetString(x) AW_GetStringEx(Precomp4C_I18N_KNSAW_##x)
 

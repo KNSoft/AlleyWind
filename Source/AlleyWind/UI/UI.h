@@ -22,12 +22,8 @@ AW_WriteAddressDisplayString(
 HRESULT
 AW_OpenMainDialogBox(VOID);
 
-HRESULT
-AW_OpenPropDialogBoxSync(
-    _In_ HWND Window);
-
 NTSTATUS
-AW_OpenPropDialogBoxAsync(
+AW_OpenPropDialogBox(
     _In_ HWND Window);
 
 HRESULT

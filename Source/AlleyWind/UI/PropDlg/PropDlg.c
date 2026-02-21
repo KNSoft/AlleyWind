@@ -14,16 +14,18 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     UI_PropSheetWndProc(hDlg, uMsg, wParam, lParam, IDC_PROP_TAB);
     if (uMsg == WM_INITDIALOG)
     {
+        PAW_WINDOW_PROP Prop;
         WCHAR szTitle[MAX_WNDCAPTION_CCH];
         ULONG Cch;
         UI_PROPSHEET_PAGE Psp[ARRAYSIZE(g_ResPropDlgPages)];
 
         AW_InitDlgItemI18N(hDlg, g_astI18NItems, ARRAYSIZE(g_astI18NItems));
+        Prop = (PAW_WINDOW_PROP)lParam;
 
         /* Set title */
         Cch = Str_PrintfW(szTitle,
                           AW_GetString(WindowPropertiesFormat),
-                          UI_TruncateHandle32(((PAW_WINDOW_PROP)lParam)->Handle));
+                          UI_TruncateHandle32(Prop->Handle));
         AW_PostfixTitleText(szTitle + Cch, ARRAYSIZE(szTitle) - Cch);
         UI_SetWindowTextW(hDlg, szTitle);
 
@@ -54,9 +56,12 @@ PropDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-HRESULT
-AW_OpenPropDialogBoxSync(
-    _In_ HWND Window)
+static
+_Function_class_(USER_THREAD_START_ROUTINE)
+NTSTATUS
+NTAPI
+OpenPropDialogBoxThread(
+    _In_ PVOID ThreadParameter)
 {
     PAW_WINDOW_PROP Prop;
     W32ERROR Ret;
@@ -64,7 +69,7 @@ AW_OpenPropDialogBoxSync(
 
     hrCom = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
-    Ret = AW_GetWindowProp(Window, &Prop);
+    Ret = AW_GetWindowProp((HWND)ThreadParameter, &Prop);
     if (Ret == ERROR_SUCCESS)
     {
         hr = KNS_OpenModelDialogBox((HINSTANCE)&__ImageBase,
@@ -82,21 +87,11 @@ AW_OpenPropDialogBoxSync(
     {
         CoUninitialize();
     }
-    return hr;
-}
-
-static
-_Function_class_(USER_THREAD_START_ROUTINE)
-NTSTATUS
-NTAPI
-OpenPropDialogBoxThread(
-    _In_ PVOID ThreadParameter)
-{
-    return Err_HrToNtStatus(AW_OpenPropDialogBoxSync((HWND)ThreadParameter));
+    return Err_HrToNtStatus(hr);
 }
 
 NTSTATUS
-AW_OpenPropDialogBoxAsync(
+AW_OpenPropDialogBox(
     _In_ HWND Window)
 {
     return PS_CreateThread(NtCurrentProcess(), FALSE, OpenPropDialogBoxThread, (PVOID)Window, NULL, NULL);

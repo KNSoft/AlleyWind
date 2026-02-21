@@ -49,6 +49,18 @@
       <Value Locale="en">Text Files(*.txt)&#x0;*.txt&#x0;</Value>
       <Value Locale="zh-Hans">文本文档(*.txt)&#x0;*.txt&#x0;</Value>
     </String>
+    <String Name="Tool">
+      <Value Locale="en">Tool</Value>
+      <Value Locale="zh-Hans">工具</Value>
+    </String>
+    <String Name="FindWindow">
+      <Value Locale="en">Find Window	Ctrl+F3</Value>
+      <Value Locale="zh-Hans">查找窗口	Ctrl+F3</Value>
+    </String>
+    <String Name="SysInputMon">
+      <Value Locale="en">System Input Monitor</Value>
+      <Value Locale="zh-Hans">系统输入监视器</Value>
+    </String>
     <String Name="Help">
       <Value Locale="en">Help</Value>
       <Value Locale="zh-Hans">帮助</Value>
