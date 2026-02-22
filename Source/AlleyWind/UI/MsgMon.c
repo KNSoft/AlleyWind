@@ -38,8 +38,7 @@ OpenMsgMonDialogBoxThread(
 }
 
 NTSTATUS
-AW_OpenMsgMonDialogBoxAsync(
-    _In_ HWND Window)
+AW_OpenMsgMonDialogBox(VOID)
 {
     return PS_CreateThread(NtCurrentProcess(), FALSE, OpenMsgMonDialogBoxThread, NULL, NULL, NULL);
 }

@@ -32,4 +32,7 @@ AW_EditStyleValue(
     _In_ PAW_WINDOW_PROP Prop,
     _In_ AW_STYLE_VALUE_TYPE StyleType);
 
+NTSTATUS
+AW_OpenMsgMonDialogBox(VOID);
+
 EXTERN_C_END
