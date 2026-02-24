@@ -1,9 +1,9 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 KNS_INFO stKNSInfo = {
     KNS_NAME,
     TRUE,
-    { 1, 1, 0, 21224, KNS_VERSION_GA },
+    { 1, 1, 0, 60225, KNS_VERSION_GA },
     {
         RGB(255, 140, 0),
         IDI_APP,
