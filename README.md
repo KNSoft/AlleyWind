@@ -1,9 +1,10 @@
-# V2 is working in progress! ~10%
+# V2 is working in progress! ~20%
 In [Dev_V2 branch](https://github.com/KNSoft/AlleyWind/tree/Dev_V2), with overall improvement:
-- UIAccess support
 - Improved DPI scaling
+- Obtain more information that is also more accurate
 - More features
-  - Support "Always On Top"
+  - Support "Always On Top", "Run As Administrator (with UIAccess)"
+  - System input monitor
   - ...
 - ...
 
