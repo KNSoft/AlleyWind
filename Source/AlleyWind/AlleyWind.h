@@ -7,6 +7,7 @@
 #include <windowsx.h>
 #include <Tpcshrd.h>
 #include <Uxtheme.h>
+#include <shlwapi.h>
 
 #include "DB_StyleEditor.h"
 #include "DB_Message.h"
@@ -18,6 +19,7 @@
 #pragma comment(lib, LIB_PATH_WITH_CONFIG("NTAssassin.lib"))
 
 #pragma comment(lib, "UxTheme.lib")
+#pragma comment(lib, "Shlwapi.lib")
 
 #define KNS_NAME TEXT("AlleyWind")
 
