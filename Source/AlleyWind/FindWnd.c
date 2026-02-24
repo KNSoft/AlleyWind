@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 #define AW_FINDWND_CAPTUREBORDER 2
 
@@ -46,6 +46,7 @@ BOOL CALLBACK CaptureWndEnumProc(HWND hWnd, LPARAM lParam) {
     PAW_CAPTUREWNDREF   pstRef = (PAW_CAPTUREWNDREF)lParam;
     if (hWnd != pstRef->hCaptureWnd &&
         IsWindowVisible(hWnd) &&
+        (!bFindWndIgnoreTransparent || !(GetWindowLongPtrW(hWnd, GWL_EXSTYLE) & WS_EX_TRANSPARENT)) &&
         !IsIconic(hWnd) &&
         !UI_GetWindowCloackedState(hWnd) &&
         UI_GetWindowRect(hWnd, &rc) &&
