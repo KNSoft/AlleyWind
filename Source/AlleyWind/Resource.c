@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 I18N_CTLTEXT astWndPropResourceTextCtl[] = {
     { IDC_WNDPROP_RESOURCE_IMAGE_TEXT, I18NIndex_ClientAreaImage },
@@ -46,7 +46,7 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     stLVItem.mask = LVIF_TEXT;
     if (IS_ATOM(lpszProp)) {
         iCch = Str_Printf(szBuffer, TEXT("#%u"), LOWORD(lpszProp));
-        stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+        stLVItem.pszText = iCch > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
     } else
         stLVItem.pszText = lpszProp;
     stLVItem.iItem = MAXINT;
@@ -55,7 +55,7 @@ BOOL CALLBACK WndPropResourcePropEnumProc(HWND hWnd, LPTSTR lpszProp, HANDLE hDa
     if (stLVItem.iItem != -1) {
         stLVItem.iSubItem++;
         iCch = Str_Printf(szBuffer, TEXT("%p"), hData);
-        stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+        stLVItem.pszText = iCch > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
         SendMessage((HWND)lParam, LVM_SETITEM, 0, (LPARAM)&stLVItem);
     }
     return TRUE;
@@ -65,7 +65,7 @@ VOID WndPropResourceGetFont(HWND hDlg, HWND hWnd)
 {
     DWORD_PTR   dwpTemp;
     LRESULT     lResult = AW_SendMsgTO(hWnd, WM_GETFONT, 0, 0, &dwpTemp);
-    AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%p"), (HFONT)dwpTemp);
+    AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HFONT_EDIT, lResult != 0, TEXT("%08X"), (DWORD)dwpTemp);
     UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HFONT_BTN, dwpTemp != 0);
 }
 
@@ -103,10 +103,10 @@ INT_PTR WINAPI WndPropResourceDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARA
         if (!bStyleSucc || dwpStyle & WS_CHILD)
             UI_EnableDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, FALSE);
         else
-            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, TRUE, TEXT("%p"), GetMenu(hWnd));
+            AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_HMENU_EDIT, TRUE, TEXT("%08X"), UI_TruncateHandle32(GetMenu(hWnd)));
         // hIcon
         lResult = AW_SendMsgTO(hWnd, WM_GETICON, 0, 0, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_ICON_EDIT, lResult != 0, TEXT("%p"), (HICON)dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_RESOURCE_ICON_EDIT, lResult != 0, TEXT("%08X"), (DWORD)dwpTemp);
         // Hot Key
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_RESOURCE_HOTKEY_EDIT);
         lResult = AW_SendMsgTO(hWnd, WM_GETHOTKEY, 0, 0, &dwpTemp);

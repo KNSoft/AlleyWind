@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define NTA_CUSTOMENTRY "Main"
 #include "NTAssassin\NTAssassin.h"
@@ -22,6 +22,14 @@
 #define KNS_NAME TEXT("AlleyWind")
 
 #define MAX_WNDCAPTION_CCH 128
+
+FORCEINLINE
+ULONG
+UI_TruncateHandle32(
+    _In_ PVOID Handle)
+{
+    return (ULONG)(ULONG_PTR)Handle;
+}
 
 INT_PTR WINAPI MainDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR WINAPI FindWndDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

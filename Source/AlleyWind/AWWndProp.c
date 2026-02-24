@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 VOID AW_OpenWndPropDlg(HWND hWnd) {
     Proc_CreateThread(OpenWndPropDlgThread, (PVOID)hWnd, FALSE, NULL);
@@ -66,7 +66,7 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
     INT     iCch;
     stLVItem.mask = LVIF_TEXT;
     iCch = Str_Printf(szBuffer, TEXT("+%u"), dwOffset);
-    stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+    stLVItem.pszText = iCch > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
     stLVItem.iItem = MAXINT;
     stLVItem.iSubItem = 0;
     stLVItem.iItem = (INT)SendMessage((HWND)lParam, LVM_INSERTITEM, 0, (LPARAM)&stLVItem);
@@ -78,7 +78,7 @@ BOOL CALLBACK AW_WndPropExtraBytesEnumProc(DWORD dwOffset, LONG_PTR lBytes, UINT
             if (iCch > 0)
                 szBuffer[uSize * 2] = '\0';
         }
-        stLVItem.pszText = iCch > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+        stLVItem.pszText = iCch > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
         SendMessage((HWND)lParam, LVM_SETITEM, 0, (LPARAM)&stLVItem);
     }
     return TRUE;

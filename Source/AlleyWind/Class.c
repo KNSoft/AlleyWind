@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 I18N_CTLTEXT astWndPropClassTextCtl[] = {
     { IDC_WNDPROP_CLASS_NAME_TEXT, I18NIndex_Name },
@@ -67,16 +67,16 @@ INT_PTR WINAPI WndPropClassDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM l
         }
         // Icon
         bSucc = UI_GetWindowLong(hWnd, TRUE, GCLP_HICON, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HICON_EDIT, bSucc, TEXT("%p"), (HICON)dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HICON_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // Small Icon
         bSucc = UI_GetWindowLong(hWnd, TRUE, GCLP_HICONSM, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HICONSM_EDIT, bSucc, TEXT("%p"), (HICON)dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HICONSM_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // Cursor
         bSucc = UI_GetWindowLong(hWnd, TRUE, GCLP_HCURSOR, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HCURSOR_EDIT, bSucc, TEXT("%p"), (HCURSOR)dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HCURSOR_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // Background Brush
         bSucc = UI_GetWindowLong(hWnd, TRUE, GCLP_HBRBACKGROUND, &dwpTemp);
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HBRBKGD_EDIT, bSucc, TEXT("%p"), (HBRUSH)dwpTemp);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_CLASS_HBRBKGD_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpTemp);
         // Extra bytes
         hCtl = GetDlgItem(hDlg, IDC_WNDPROP_CLASS_CLSBYTE_LIST);
         Ctl_InitListCtl(hCtl, aExtraBytesListCol, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);

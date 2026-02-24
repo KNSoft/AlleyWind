@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 I18N_CTLTEXT astWndPropGeneralTextCtl[] = {
     { IDC_WNDPROP_GENERAL_CAPTION_TEXT, I18NIndex_Caption },
@@ -55,7 +55,7 @@ INT_PTR WINAPI WndPropGeneralDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM
         bSucc = UI_GetWindowLong(hWnd, FALSE, GWL_STYLE, &dwpStyle);
         bStyleSucc = bSucc;
         // Handle
-        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_HANDLE_EDIT, TRUE, TEXT("%08X"), (DWORD)(DWORD_PTR)hWnd);
+        AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_HANDLE_EDIT, TRUE, TEXT("%08X"), UI_TruncateHandle32(hWnd));
         // Style and extra style
         UI_EnableDlgItem(hDlg, IDC_WNDPROP_GENERAL_STYLE_BTN, bSucc);
         AW_SetPropCtlFormat(hDlg, IDC_WNDPROP_GENERAL_STYLE_EDIT, bSucc, TEXT("%08X"), (DWORD)dwpStyle);;
