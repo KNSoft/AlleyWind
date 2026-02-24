@@ -1,4 +1,4 @@
-#include "AlleyWind.h"
+﻿#include "AlleyWind.h"
 
 #define IDM_PROC_EXPLORE 1
 #define IDM_PROC_TERMINATE 2
@@ -78,7 +78,7 @@ VOID WndPropRelationshipUninit() {
 
 HWND WndPropRelationshipGetWindow(HWND hWnd, AW_WINDOW_RELATIONSHIP eRelationship) {
     if (eRelationship == AWWindowRelationshipParent)
-        return GetParent(hWnd);
+        return GetAncestor(hWnd, GA_PARENT);
     else if (eRelationship == AWWindowRelationshipOwner)
         return GetWindow(hWnd, GW_OWNER);
     else if (eRelationship == AWWindowRelationshipPrevious)
@@ -157,14 +157,14 @@ INT_PTR WINAPI WndPropRelationshipDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, L
             if (stLVItem.iItem != -1) {
                 stLVItem.mask = LVIF_TEXT;
                 stLVItem.iSubItem++;
-                stLVItem.pszText = hWndRelated && Str_Printf(szBuffer, TEXT("%08X"), (DWORD)(DWORD_PTR)hWndRelated) > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+                stLVItem.pszText = hWndRelated && Str_Printf(szBuffer, TEXT("%08X"), (DWORD)(DWORD_PTR)hWndRelated) > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
                 stLVItem.iSubItem++;
                 AW_GetWindowText(hWndRelated, szBuffer);
                 stLVItem.pszText = szBuffer;
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
                 stLVItem.iSubItem++;
-                stLVItem.pszText = hWndRelated && GetClassName(hWndRelated, szBuffer, ARRAYSIZE(szBuffer)) > 0 ? szBuffer : I18N_GetString(I18NIndex_NotApplicable);
+                stLVItem.pszText = hWndRelated && GetClassName(hWndRelated, szBuffer, ARRAYSIZE(szBuffer)) > 0 ? szBuffer : (PWSTR)I18N_GetString(I18NIndex_NotApplicable);
                 SendMessage(hCtl, LVM_SETITEM, 0, (LPARAM)&stLVItem);
             }
         }
