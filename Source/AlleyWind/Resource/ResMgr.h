@@ -11,6 +11,7 @@ EXTERN_C_START
 extern PCWSTR g_ResNAText;
 extern PCWSTR g_ResNAFormatStringText;
 extern PCWSTR g_ResNAFormatCodeText;
+extern PCWSTR g_ResUnrecognizedText;
 
 extern HICON g_ResWindowIcon;
 extern HBITMAP g_ResUACShieldIconBitmap;
@@ -65,7 +66,7 @@ extern LPCDLGTEMPLATEW g_ResMainDlgTemplate;
 
 /* Message monitor Dialog */
 
-extern LPCDLGTEMPLATEW g_ResMsgMonDlgTemplate;
+extern LPCDLGTEMPLATEW g_ResSysInputMonDlgTemplate;
 
 /* Properties Dialog */
 

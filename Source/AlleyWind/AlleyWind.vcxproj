@@ -196,10 +196,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Database\ClassConstants.c" />
+    <ClCompile Include="Database\MsgConstants.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="Resource\I18N.xml.g.c" />
     <ClCompile Include="Resource\ResMgr.c" />
-    <ClCompile Include="UI\MsgMon.c" />
+    <ClCompile Include="UI\SysInputMon.c" />
     <ClCompile Include="UI\MainDlg\MainDlg.c" />
     <ClCompile Include="UI\PropDlg\TabGeneral.c" />
     <ClCompile Include="UI\PropDlg\TabRelation.c" />

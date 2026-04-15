@@ -8,6 +8,7 @@
 #define IDD_PROP_RESOURCE               106
 #define IDD_PROP_RELATION               107
 #define IDD_MSGMON                      108
+#define IDD_SYSINPUTMON                 108
 #define IDC_WNDTREE                     1001
 #define IDC_PROP_REFRESH                1002
 #define IDC_PROP_TAB                    1003
@@ -44,8 +45,8 @@
 #define IDC_PROP_RECT_BTN               1027
 #define IDC_PROP_RECT_RELTIVE_CHECK     1028
 #define IDC_PROP_VIRTDESK_COMBO         1029
-#define IDC_MSGMON_CAPTURE_BTN          1033
-#define IDC_MSGMON_LIST                 1034
+#define IDC_SYSINPUTMON_CAPTURE_BTN     1033
+#define IDC_SYSINPUTMON_LIST            1034
 
 // Next default values for new objects
 // 

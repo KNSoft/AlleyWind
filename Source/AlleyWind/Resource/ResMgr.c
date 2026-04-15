@@ -21,6 +21,7 @@ AW_InitI18NArray(
 PCWSTR g_ResNAText = NULL;
 PCWSTR g_ResNAFormatStringText = NULL;
 PCWSTR g_ResNAFormatCodeText = NULL;
+PCWSTR g_ResUnrecognizedText = NULL;
 
 HICON g_ResWindowIcon = NULL;
 HBITMAP g_ResUACShieldIconBitmap = NULL;
@@ -74,7 +75,7 @@ LPCDLGTEMPLATEW g_ResMainDlgTemplate = NULL;
 
 /* Message monitor Dialog */
 
-LPCDLGTEMPLATEW g_ResMsgMonDlgTemplate = NULL;
+LPCDLGTEMPLATEW g_ResSysInputMonDlgTemplate = NULL;
 
 /* Properties Dialog */
 
@@ -138,6 +139,7 @@ AW_InitResource(VOID)
     g_ResNAText = AW_GetString(NA);
     g_ResNAFormatStringText = AW_GetString(NAFormatString);
     g_ResNAFormatCodeText = AW_GetString(NAFormatCode);
+    g_ResUnrecognizedText = AW_GetString(Unrecognized);
 
     g_ResWindowIcon = LoadImageW(NULL, MAKEINTRESOURCEW(OIC_WINLOGO), IMAGE_ICON, 0, 0, LR_SHARED);
 
@@ -176,7 +178,7 @@ AW_InitResource(VOID)
 
     g_ResMainDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MAIN));
     g_ResPropDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_PROP));
-    g_ResMsgMonDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MSGMON));
+    g_ResSysInputMonDlgTemplate = AW_LoadDialogTemplate(MAKEINTRESOURCEW(IDD_MSGMON));
 
     AW_InitPropSheetPageI18N(g_ResPropDlgPages, ARRAYSIZE(g_ResPropDlgPages));
 

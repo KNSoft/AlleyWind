@@ -363,7 +363,7 @@ MainDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         } else if (wParam == MAKEWPARAM(IDM_MAINDLG_TOOL_SYSINPUTMON, 0))
         {
             NTSTATUS Status;
-            Status = AW_OpenMsgMonDialogBox();
+            Status = AW_OpenSysInputMonDialogBox();
             if (!NT_SUCCESS(Status))
             {
                 KNS_NtStatusMessageBox(hDlg, Status);

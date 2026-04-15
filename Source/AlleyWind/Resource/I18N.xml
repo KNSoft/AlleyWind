@@ -17,6 +17,11 @@
       <Value Locale="en">(N/A: Require 64-bit main program)</Value>
       <Value Locale="zh-Hans">（不可用：需要64位主程序）</Value>
     </String>
+
+    <String Name="Unrecognized">
+      <Value Locale="en">Unrecognized</Value>
+      <Value Locale="zh-Hans">未识别</Value>
+    </String>
     
     <!-- Main dialog -->
     <String Name="Administrator">
@@ -54,8 +59,8 @@
       <Value Locale="zh-Hans">工具</Value>
     </String>
     <String Name="FindWindow">
-      <Value Locale="en">Find Window	Ctrl+F3</Value>
-      <Value Locale="zh-Hans">查找窗口	Ctrl+F3</Value>
+      <Value Locale="en">Find Window	Ctrl+F</Value>
+      <Value Locale="zh-Hans">查找窗口	Ctrl+F</Value>
     </String>
     <String Name="SysInputMon">
       <Value Locale="en">System Input Monitor</Value>
@@ -78,6 +83,16 @@
     <String Name="Properties">
       <Value Locale="en">Properties</Value>
       <Value Locale="zh-Hans">属性</Value>
+    </String>
+
+    <!-- Message Monitor dialog -->
+    <String Name="Time">
+      <Value Locale="en">Time</Value>
+      <Value Locale="zh-Hans">时间</Value>
+    </String>
+    <String Name="Message">
+      <Value Locale="en">Message</Value>
+      <Value Locale="zh-Hans">消息</Value>
     </String>
 
     <!-- Properties dialog -->

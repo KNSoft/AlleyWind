@@ -11,6 +11,9 @@
     <ClCompile Include="Database\ClassConstants.c">
       <Filter>Database</Filter>
     </ClCompile>
+    <ClCompile Include="Database\MsgConstants.c">
+      <Filter>Database</Filter>
+    </ClCompile>
     <ClCompile Include="UI\MainDlg\MainDlg.c">
       <Filter>UI\MainDlg</Filter>
     </ClCompile>
@@ -41,7 +44,7 @@
     <ClCompile Include="Util\VirtDesk.c">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="UI\MsgMon.c">
+    <ClCompile Include="UI\SysInputMon.c">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>

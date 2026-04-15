@@ -1,7 +1,5 @@
 ﻿#include "../AlleyWind.inl"
 
-#define DEFINE_CONSTANT(Value, Description) { Value, L###Value, (PCWSTR)Description }
-
 #pragma region Styles
 
 // CS_*

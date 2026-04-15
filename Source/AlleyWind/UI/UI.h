@@ -33,6 +33,6 @@ AW_EditStyleValue(
     _In_ AW_STYLE_VALUE_TYPE StyleType);
 
 NTSTATUS
-AW_OpenMsgMonDialogBox(VOID);
+AW_OpenSysInputMonDialogBox(VOID);
 
 EXTERN_C_END
