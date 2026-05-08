@@ -36,7 +36,7 @@ ExportWindowTreeToFileEnumProc(
         {
             szUTF8Buff[i] = '\t';
         }
-        IO_WriteFile(hFile, NULL, szUTF8Buff, i);
+        IO_WriteFile(hFile, NULL, szUTF8Buff, i, NULL);
     }
 
     stTVI.mask = TVIF_TEXT;
@@ -49,7 +49,7 @@ ExportWindowTreeToFileEnumProc(
         i = Str_W2U(szUTF8Buff, szUnicodeBuff);
         szUTF8Buff[i] = '\r';
         szUTF8Buff[i + 1] = '\n';
-        IO_WriteFile(hFile, NULL, szUTF8Buff, i + 2);
+        IO_WriteFile(hFile, NULL, szUTF8Buff, i + 2, NULL);
     }
 
     return TRUE;
@@ -76,7 +76,7 @@ ExportWindowTreeToFile(
         return HRESULT_FROM_NT(Status);
     }
 
-    Status = IO_WriteFile(hFile, NULL, Str_Utf8_BOM, sizeof(Str_Utf8_BOM));
+    Status = IO_WriteFile(hFile, NULL, Str_Utf8_BOM, sizeof(Str_Utf8_BOM), NULL);
     if (!NT_SUCCESS(Status))
     {
         hr = HRESULT_FROM_NT(Status);

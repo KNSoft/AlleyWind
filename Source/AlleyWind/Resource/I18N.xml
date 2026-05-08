@@ -94,6 +94,10 @@
       <Value Locale="en">Message</Value>
       <Value Locale="zh-Hans">消息</Value>
     </String>
+    <String Name="Flags">
+      <Value Locale="en">Flags</Value>
+      <Value Locale="zh-Hans">标志</Value>
+    </String>
 
     <!-- Properties dialog -->
     <String Name="WindowPropertiesFormat">

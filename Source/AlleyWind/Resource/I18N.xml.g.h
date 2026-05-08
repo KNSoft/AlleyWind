@@ -27,6 +27,7 @@ enum
     Precomp4C_I18N_KNSAW_Properties,
     Precomp4C_I18N_KNSAW_Time,
     Precomp4C_I18N_KNSAW_Message,
+    Precomp4C_I18N_KNSAW_Flags,
     Precomp4C_I18N_KNSAW_WindowPropertiesFormat,
     Precomp4C_I18N_KNSAW_Refresh,
     Precomp4C_I18N_KNSAW_General,

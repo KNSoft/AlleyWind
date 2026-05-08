@@ -1,7 +1,7 @@
 ﻿#include "../AlleyWind.inl"
 
 typedef union _AW_LLHOOKINFO
-{ 
+{
     PVOID lParam;
     PKBDLLHOOKSTRUCT Kb;
     PMSLLHOOKSTRUCT Ms;
@@ -13,7 +13,7 @@ static _Interlocked_operand_ HWND volatile g_hSysInputDialog = NULL;
 static UINT aMsgListColCx[] = { 150, 250 };
 static ULONG_PTR aMsgListColPsz[] = {
     Precomp4C_I18N_KNSAW_Time,
-    Precomp4C_I18N_KNSAW_Message,
+    Precomp4C_I18N_KNSAW_Message
 };
 _STATIC_ASSERT(ARRAYSIZE(aMsgListColCx) == ARRAYSIZE(aMsgListColPsz));
 
@@ -46,21 +46,29 @@ AppendMonitorLog(
 {
     LVITEMW lvi;
     INT ItemIndex;
-    
+
     AW_LLHOOKINFO Info = { lParam };
     LARGE_INTEGER Time;
+    LARGE_INTEGER LocalTime;
     TIME_FIELDS TimeFields;
-    WCHAR TimeText[13]; // 00:00:00:000
+    ULONG MessageTick, ElapsedMilliseconds;
+    ULONG_PTR ulpExtraInfo;
+    WCHAR Buffer[20]; // 00:00:00:000 // 0x1234567812345678
 
     if (bKeyboard)
     {
-        Time.QuadPart = Info.Kb->time;
+        MessageTick = Info.Kb->time;
     } else
     {
-        Time.QuadPart = Info.Ms->time;
+        MessageTick = Info.Ms->time;
     }
-    RtlTimeToTimeFields(&Time, &TimeFields);
-    if (Str_PrintfW(TimeText,
+
+    NtQuerySystemTime(&Time);
+    ElapsedMilliseconds = _Inline_GetTickCount() - MessageTick;
+    Time.QuadPart -= UInt32x32To64(ElapsedMilliseconds, 10 * 1000);
+    RtlSystemTimeToLocalTime(&Time, &LocalTime);
+    RtlTimeToTimeFields(&LocalTime, &TimeFields);
+    if (Str_PrintfW(Buffer,
                     L"%02hu:%02hu:%02hu.%03hu",
                     TimeFields.Hour,
                     TimeFields.Minute,
@@ -73,7 +81,7 @@ AppendMonitorLog(
     lvi.mask = LVIF_TEXT;
     lvi.iItem = MAXINT;
     lvi.iSubItem = 0;
-    lvi.pszText = TimeText;
+    lvi.pszText = Buffer;
     ItemIndex = (INT)SendMessageW(g_hList, LVM_INSERTITEMW, 0, (LPARAM)&lvi);
     if (ItemIndex == -1)
     {
@@ -117,7 +125,7 @@ LowLevelMouseHookProc(
 {
     if (nCode == HC_ACTION)
     {
-        AppendMonitorLog((UINT)wParam, (PVOID)lParam, TRUE);
+        AppendMonitorLog((UINT)wParam, (PVOID)lParam, FALSE);
     }
     return CallNextHookEx(g_hhLLMouse, nCode, wParam, lParam);
 }
@@ -209,6 +217,7 @@ SysInputMonDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         LVCOLUMNW lvc;
 
         _InterlockedCompareExchangePointer(&g_hSysInputDialog, hDlg, NULL);
+        UI_SetWindowTextW(hDlg, AW_GetString(SysInputMon));
         g_hList = GetDlgItem(hDlg, IDC_SYSINPUTMON_LIST);
         ListView_SetExtendedListViewStyle(g_hList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
         UI_SetWindowExplorerVisualStyle(g_hList);
